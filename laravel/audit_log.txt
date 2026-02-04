@@ -1,0 +1,13 @@
+Total Reseller Transactions: 2
+
+--------------------------------------------------
+Transaction Code: RES-ANNTIX-KQ60SVH8WK
+Date: 2026-01-06 23:59:27
+Reseller: Dummy Reseller <reseller@anntix.id>
+Buyer (Sent To): Summer Music Festival 2026 <hallo@anntix.id>
+--------------------------------------------------
+Transaction Code: RES-ANNTIX-JQDM3COHLS
+Date: 2026-01-07 00:02:28
+Reseller: Dummy Reseller <reseller@anntix.id>
+Buyer (Sent To): Event Punk <aanjr38@gmail.com>
+--------------------------------------------------

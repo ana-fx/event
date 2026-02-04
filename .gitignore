@@ -1,0 +1,27 @@
+# Common
+.DS_Store
+.env
+.env.local
+.env.*.local
+*.log
+
+# Backend (Go)
+backend/.env
+backend/api
+backend/api.exe
+backend/vendor/
+
+# Frontend (Next.js)
+frontend/.next/
+frontend/node_modules/
+frontend/.env.local
+frontend/.env
+
+# Laravel (Reference)
+laravel/.env
+laravel/vendor/
+laravel/node_modules/
+laravel/public/storage
+laravel/storage/*.key
+laravel/.phpunit.result.cache
+laravel/.styleci.yml
