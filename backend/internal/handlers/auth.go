@@ -3,6 +3,7 @@ package handlers
 import (
 	"encoding/json"
 	"event-backend/internal/models"
+	"fmt"
 	"net/http"
 	"time"
 
@@ -37,6 +38,7 @@ func Login(w http.ResponseWriter, r *http.Request) {
 
 	user, err := models.GetUserByEmail(req.Email)
 	if err != nil {
+		fmt.Printf("User not found or DB error for %s: %v\n", req.Email, err)
 		resp := LoginResponse{Error: "Invalid credentials"} // Generic error for security
 		w.Header().Set("Content-Type", "application/json")
 		w.WriteHeader(http.StatusUnauthorized)
@@ -45,14 +47,17 @@ func Login(w http.ResponseWriter, r *http.Request) {
 	}
 
 	// Compare password
+	fmt.Printf("Attempting login for: '%s'\n", req.Email)
 	err = bcrypt.CompareHashAndPassword([]byte(user.Password), []byte(req.Password))
 	if err != nil {
+		fmt.Printf("Password verification failed for %s: %v\n", req.Email, err)
 		resp := LoginResponse{Error: "Invalid credentials"}
 		w.Header().Set("Content-Type", "application/json")
 		w.WriteHeader(http.StatusUnauthorized)
 		json.NewEncoder(w).Encode(resp)
 		return
 	}
+	fmt.Printf("Login successful for %s\n", req.Email)
 
 	// Generate JWT
 	token := jwt.NewWithClaims(jwt.SigningMethodHS256, jwt.MapClaims{

@@ -167,6 +167,11 @@ function EventDetailsTab({ id, initialData, refresh }: { id: string, initialData
                             onChange={(e) => setFormData({ ...formData, google_map_embed: e.target.value })}
                             placeholder='<iframe src="..."></iframe>'
                         ></textarea>
+                            {formData.google_map_embed && (
+                                <div className="mt-4 rounded-xl overflow-hidden border border-(--card-border) aspect-video bg-gray-100">
+                                    <div dangerouslySetInnerHTML={{ __html: formData.google_map_embed }} className="w-full h-full [&>iframe]:w-full [&>iframe]:h-full" />
+                                </div>
+                            )}
                     </div>
 
                     <div className="md:col-span-2">

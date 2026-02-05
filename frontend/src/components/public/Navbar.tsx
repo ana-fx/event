@@ -16,7 +16,9 @@ export default function Navbar() {
                         <div className="w-12 h-12 rounded-xl bg-gray-900 flex items-center justify-center transform group-hover:scale-105 transition-all duration-500 shadow-lg shadow-gray-900/10">
                             <Ticket className="w-6 h-6 text-white" />
                         </div>
-                        <span className="font-black text-2xl tracking-tighter text-gray-900 uppercase">Anntix<span className="text-blue-600">.</span></span>
+                        <span className="text-2xl font-black tracking-tighter uppercase flex items-center gap-1">
+                            <span className="text-blue-600">IN</span>GATE
+                        </span>
                     </Link>
 
                     {/* Desktop Editorial Navigation */}

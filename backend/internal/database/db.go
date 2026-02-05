@@ -3,6 +3,7 @@ package database
 import (
 	"database/sql"
 	"log"
+	"time"
 
 	_ "github.com/lib/pq"
 )
@@ -15,6 +16,11 @@ func Connect(connStr string) { // Changed arg name to be more generic, though lo
 	if err != nil {
 		log.Fatal("Failed to connect to database:", err)
 	}
+
+	// Set connection pooling
+	DB.SetMaxOpenConns(25)
+	DB.SetMaxIdleConns(25)
+	DB.SetConnMaxLifetime(5 * time.Minute)
 
 	if err = DB.Ping(); err != nil {
 		log.Fatal("Failed to ping database:", err)

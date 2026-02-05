@@ -5,6 +5,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { Calendar, MapPin, Ticket } from "lucide-react";
 import api from "@/lib/axios";
+import Cookies from "js-cookie";
 
 interface Event {
     id: number;
@@ -32,6 +33,9 @@ export default function EventList({ initialEvents, serverNow }: { initialEvents?
 
     useEffect(() => {
         const fetchUser = async () => {
+            const token = Cookies.get("token");
+            if (!token) return;
+
             try {
                 const res = await api.get("/me");
                 setUser(res.data);

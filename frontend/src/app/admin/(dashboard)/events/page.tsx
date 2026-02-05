@@ -25,7 +25,7 @@ export default function EventList() {
         try {
             // Assuming the API supports ?search= query
             const res = await axiosInstance.get("/admin/events");
-            setEvents(res.data);
+            setEvents(res.data || []);
         } catch (error) {
             toast.error("Failed to load events");
             console.error(error);

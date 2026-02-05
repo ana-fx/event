@@ -62,7 +62,7 @@ export async function generateMetadata({ params }: { params: Promise<{ slug: str
     if (!data) return { title: "Event Not Found" };
 
     return {
-        title: `${data.event.seo_title || data.event.name} | Anntix`,
+        title: `${data.event.seo_title || data.event.name} | Ingate`,
         description: data.event.seo_description || data.event.description.substring(0, 160),
         openGraph: {
             images: data.event.thumbnail_path ? [`${process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8080'}${data.event.thumbnail_path}`] : [],
@@ -208,7 +208,7 @@ export default async function EventDetailPage({ params }: { params: Promise<{ sl
                             </div>
                             <div>
                                 <p className="text-xs font-bold text-gray-400 uppercase tracking-widest">Organized By</p>
-                                <h3 className="text-lg font-bold text-gray-900">{event.organizer_name || "Anntix Official"}</h3>
+                                <h3 className="text-lg font-bold text-gray-900">{event.organizer_name || "Ingate Official"}</h3>
                             </div>
                         </div>
                     </div>

@@ -1,4 +1,5 @@
 import { Facebook, Instagram, Twitter, MessageCircle, MapPin, Mail, Phone } from "lucide-react";
+import Link from "next/link";
 
 export default function Footer() {
     return (
@@ -11,10 +12,12 @@ export default function Footer() {
                             <div className="w-10 h-10 rounded-xl bg-white/10 flex items-center justify-center text-white">
                                 <MapPin className="w-5 h-5 text-blue-500" />
                             </div>
-                            <span className="font-black text-xl tracking-tighter uppercase">Anntix<span className="text-blue-500">.</span></span>
+                            <Link href="/" className="text-2xl font-black tracking-tighter uppercase flex items-center gap-1">
+                                <span className="text-blue-600">IN</span>GATE
+                            </Link>
                         </div>
                         <p className="text-gray-400 leading-relaxed text-sm max-w-sm">
-                            Platform terbaik untuk menemukan dan memesan tiket konser, workshop, dan pameran favorit Anda.
+                            The best platform to discover and book your favorite concert, workshop, and exhibition tickets.
                         </p>
                         <div className="flex gap-4">
                             {[Facebook, Twitter, Instagram].map((Icon, i) => (
@@ -44,12 +47,12 @@ export default function Footer() {
                                 <li className="flex items-start gap-3">
                                     <MapPin className="w-5 h-5 text-blue-500 shrink-0 mt-0.5" />
                                     <span className="leading-relaxed">
-                                        Jl. Raya Desa Sidaharja, Milangga, Rangkasbitung, Suradadi, Jawa Tengah 52182
+                                        Jl. Jendral Sudirman No. 1, Jakarta, Indonesia
                                     </span>
                                 </li>
                                 <li className="flex items-center gap-3">
                                     <Mail className="w-5 h-5 text-blue-500 shrink-0" />
-                                    <a href="mailto:hallo@anntix.id" className="hover:text-blue-500 transition-colors">hallo@anntix.id</a>
+                                    <a href="mailto:hello@ingate.id" className="hover:text-blue-500 transition-colors">hello@ingate.id</a>
                                 </li>
                                 <li className="flex items-center gap-3">
                                     <Phone className="w-5 h-5 text-blue-500 shrink-0" />
@@ -61,7 +64,7 @@ export default function Footer() {
                 </div>
 
                 <div className="border-t border-white/5 pt-8 flex flex-col md:flex-row justify-between items-center gap-4">
-                    <p className="text-gray-500 text-sm">© {new Date().getFullYear()} Anntix. All rights reserved.</p>
+                    <p>&copy; {new Date().getFullYear()} Ingate. All rights reserved.</p>
                     <div className="flex gap-6 text-sm">
                         <a href="/privacy" className="text-gray-500 hover:text-white transition-colors">Privacy Policy</a>
                         <a href="/terms" className="text-gray-500 hover:text-white transition-colors">Terms & Conditions</a>

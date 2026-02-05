@@ -62,7 +62,7 @@ func Checkout(w http.ResponseWriter, r *http.Request) {
 	totalPrice := ticket.Price * float64(req.Quantity)
 
 	// 4. Create Transaction in DB first
-	code := fmt.Sprintf("ANNTIX-%d-%d", time.Now().Unix(), rand.Intn(1000))
+	code := fmt.Sprintf("INGATE-%d-%d", time.Now().Unix(), rand.Intn(1000))
 
 	trx := models.Transaction{
 		Code:       code,

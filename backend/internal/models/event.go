@@ -47,7 +47,7 @@ func GetAllEvents() ([]Event, error) {
 	}
 	defer rows.Close()
 
-	var events []Event
+	events := []Event{}
 	for rows.Next() {
 		var e Event
 		// Scanning subset for list view
@@ -155,7 +155,7 @@ func GetPublishedEvents() ([]Event, error) {
 		       COALESCE(MIN(t.price), 0) as min_price
 		FROM events e
 		LEFT JOIN tickets t ON e.id = t.event_id AND t.deleted_at IS NULL
-		WHERE e.status = 'published' AND e.deleted_at IS NULL 
+		WHERE (e.status = 'published' OR e.status = 'active') AND e.deleted_at IS NULL 
 		GROUP BY e.id
 		ORDER BY e.created_at DESC
 	`)
@@ -164,7 +164,7 @@ func GetPublishedEvents() ([]Event, error) {
 	}
 	defer rows.Close()
 
-	var events []Event
+	events := []Event{} // Initialize as empty slice to return [] instead of null in JSON
 	for rows.Next() {
 		var e Event
 		err := rows.Scan(
