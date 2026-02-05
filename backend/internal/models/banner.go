@@ -18,7 +18,7 @@ type Banner struct {
 }
 
 func GetAllBanners() ([]Banner, error) {
-	rows, err := database.DB.Query(`SELECT id, slug, title, image_path, link_url, is_active, created_at FROM banners WHERE deleted_at IS NULL ORDER BY created_at DESC`)
+	rows, err := database.DB.Query(`SELECT id, slug, title, image_path, link_url, is_active, created_at FROM banners ORDER BY created_at DESC`)
 	if err != nil {
 		return nil, err
 	}
@@ -40,7 +40,7 @@ func GetAllBanners() ([]Banner, error) {
 }
 
 func GetActiveBanners() ([]Banner, error) {
-	rows, err := database.DB.Query(`SELECT id, slug, title, image_path, link_url, is_active, created_at FROM banners WHERE is_active = true AND deleted_at IS NULL ORDER BY created_at DESC`)
+	rows, err := database.DB.Query(`SELECT id, slug, title, image_path, link_url, is_active, created_at FROM banners WHERE is_active = true ORDER BY created_at DESC`)
 	if err != nil {
 		return nil, err
 	}

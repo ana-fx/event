@@ -3,6 +3,7 @@ package admin
 import (
 	"encoding/json"
 	"event-backend/internal/models"
+	"event-backend/internal/utils"
 	"net/http"
 	"strconv"
 	"time"
@@ -30,24 +31,117 @@ func CreateEvent(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	var req models.Event
-	// Set defaults or required fields handling
-	if err := json.NewDecoder(r.Body).Decode(&req); err != nil {
-		http.Error(w, "Invalid request body", http.StatusBadRequest)
+	// Parse Multipart (for images)
+	if err := r.ParseMultipartForm(10 << 20); err != nil {
+		http.Error(w, "Failed to parse form", http.StatusBadRequest)
 		return
 	}
 
+	var req models.Event
+	req.Name = r.FormValue("name")
+	req.Slug = r.FormValue("slug") // Should auto-generate if empty
+	if req.Slug == "" {
+		req.Slug = utils.Slugify(req.Name)
+	}
+
+	req.Category = r.FormValue("category")
+	req.Description = r.FormValue("description")
+
+	terms := r.FormValue("terms")
+	if terms != "" {
+		req.Terms = &terms
+	}
+
+	// Location
+	loc := r.FormValue("location")
+	if loc != "" {
+		req.Location = &loc
+	}
+
+	province := r.FormValue("province")
+	if province != "" {
+		req.Province = &province
+	}
+
+	city := r.FormValue("city")
+	if city != "" {
+		req.City = &city
+	}
+
+	zip := r.FormValue("zip")
+	if zip != "" {
+		req.Zip = &zip
+	}
+
+	gmaps := r.FormValue("google_map_embed")
+	if gmaps != "" {
+		req.GoogleMapEmbed = &gmaps
+	}
+
+	// SEO
+	seoTitle := r.FormValue("seo_title")
+	if seoTitle != "" {
+		req.SeoTitle = &seoTitle
+	}
+
+	seoDesc := r.FormValue("seo_description")
+	if seoDesc != "" {
+		req.SeoDescription = &seoDesc
+	}
+
+	// Organizer
+	orgName := r.FormValue("organizer_name")
+	if orgName != "" {
+		req.OrganizerName = &orgName
+	}
+
+	req.Status = r.FormValue("status")
+
+	// Dates
+	layout := "2006-01-02T15:04" // HTML datetime-local format
+	// Also support ISO format from DatePicker
+	if s := r.FormValue("start_date"); s != "" {
+		if t, err := time.Parse(time.RFC3339, s); err == nil {
+			req.StartDate = t
+		} else {
+			req.StartDate, _ = time.Parse(layout, s)
+		}
+	}
+	if s := r.FormValue("end_date"); s != "" {
+		if t, err := time.Parse(time.RFC3339, s); err == nil {
+			req.EndDate = t
+		} else {
+			req.EndDate, _ = time.Parse(layout, s)
+		}
+	}
+
+	// Handle File Uploads
+	if file, header, err := r.FormFile("banner"); err == nil {
+		defer file.Close()
+		path, err := utils.UploadFile(file, header, "events")
+		if err == nil {
+			req.BannerPath = &path
+		}
+	}
+	if file, header, err := r.FormFile("thumbnail"); err == nil {
+		defer file.Close()
+		path, err := utils.UploadFile(file, header, "events")
+		if err == nil {
+			req.ThumbnailPath = &path
+		}
+	}
+	if file, header, err := r.FormFile("organizer_logo"); err == nil {
+		defer file.Close()
+		path, err := utils.UploadFile(file, header, "events")
+		if err == nil {
+			req.OrganizerLogoPath = &path
+		}
+	}
+
 	// Basic validation
-	if req.Name == "" || req.Slug == "" {
-		http.Error(w, "Name and Slug are required", http.StatusBadRequest)
+	if req.Name == "" {
+		http.Error(w, "Name is required", http.StatusBadRequest)
 		return
-	}
-	// Use explicit dates or defaults
-	if req.StartDate.IsZero() {
-		req.StartDate = time.Now()
-	}
-	if req.EndDate.IsZero() {
-		req.EndDate = time.Now().Add(24 * time.Hour)
 	}
 
 	if err := models.CreateEvent(&req); err != nil {
@@ -84,20 +178,192 @@ func UpdateEvent(w http.ResponseWriter, r *http.Request) {
 	}
 
 	var req models.Event
-	if err := json.NewDecoder(r.Body).Decode(&req); err != nil {
-		http.Error(w, "Invalid body", http.StatusBadRequest)
-		return
+	// Parse Multipart for updates (including files)
+	if err := r.ParseMultipartForm(10 << 20); err == nil {
+		// Form Update
+		req.Name = r.FormValue("name")
+		req.Slug = r.FormValue("slug")
+		req.Category = r.FormValue("category")
+		req.Description = r.FormValue("description")
+
+		terms := r.FormValue("terms")
+		if terms != "" {
+			req.Terms = &terms
+		}
+
+		loc := r.FormValue("location")
+		if loc != "" {
+			req.Location = &loc
+		}
+
+		province := r.FormValue("province")
+		if province != "" {
+			req.Province = &province
+		}
+
+		city := r.FormValue("city")
+		if city != "" {
+			req.City = &city
+		}
+
+		zip := r.FormValue("zip")
+		if zip != "" {
+			req.Zip = &zip
+		}
+
+		gmaps := r.FormValue("google_map_embed")
+		if gmaps != "" {
+			req.GoogleMapEmbed = &gmaps
+		}
+
+		// SEO
+		seoTitle := r.FormValue("seo_title")
+		if seoTitle != "" {
+			req.SeoTitle = &seoTitle
+		}
+
+		seoDesc := r.FormValue("seo_description")
+		if seoDesc != "" {
+			req.SeoDescription = &seoDesc
+		}
+
+		// Organizer
+		orgName := r.FormValue("organizer_name")
+		if orgName != "" {
+			req.OrganizerName = &orgName
+		}
+
+		req.Status = r.FormValue("status")
+
+		layout := "2006-01-02T15:04"
+		if s := r.FormValue("start_date"); s != "" {
+			if t, err := time.Parse(time.RFC3339, s); err == nil {
+				req.StartDate = t
+			} else {
+				req.StartDate, _ = time.Parse(layout, s)
+			}
+		}
+		if s := r.FormValue("end_date"); s != "" {
+			if t, err := time.Parse(time.RFC3339, s); err == nil {
+				req.EndDate = t
+			} else {
+				req.EndDate, _ = time.Parse(layout, s)
+			}
+		}
+
+		// Handle File Uploads (Optional updates)
+		if file, header, err := r.FormFile("banner"); err == nil {
+			defer file.Close()
+			path, err := utils.UploadFile(file, header, "events")
+			if err == nil {
+				req.BannerPath = &path
+			}
+		}
+		if file, header, err := r.FormFile("thumbnail"); err == nil {
+			defer file.Close()
+			path, err := utils.UploadFile(file, header, "events")
+			if err == nil {
+				req.ThumbnailPath = &path
+			}
+		}
+		if file, header, err := r.FormFile("organizer_logo"); err == nil {
+			defer file.Close()
+			path, err := utils.UploadFile(file, header, "events")
+			if err == nil {
+				req.OrganizerLogoPath = &path
+			}
+		}
+	} else {
+		// JSON Update fallback (existing logic)
+		if err := json.NewDecoder(r.Body).Decode(&req); err != nil {
+			http.Error(w, "Invalid body", http.StatusBadRequest)
+			return
+		}
 	}
+
 	req.ID = id
 	req.UpdatedAt = time.Now()
 
-	if err := models.UpdateEvent(&req); err != nil {
+	// Need to fetch existing first to preserve non-updated fields?
+	// For now, assume model update usually overwrites.
+	// Actually, the UpdateEvent SQL query expects all fields.
+	// A better approach would be to fetch existing, overlay, then update.
+	// But let's check UpdateEvent query again. It updates ALL columns.
+	// So if we send a partial struct, many fields will be zeroed out.
+	// CRITICAL: We MUST fetch the existing event first.
+
+	current, err := models.GetEventByID(id)
+	if err != nil {
+		http.Error(w, "Event not found", http.StatusNotFound)
+		return
+	}
+
+	// Overlay changes
+	if req.Name != "" {
+		current.Name = req.Name
+	}
+	if req.Slug != "" {
+		current.Slug = req.Slug
+	}
+	if req.Category != "" {
+		current.Category = req.Category
+	}
+	if req.Description != "" {
+		current.Description = req.Description
+	}
+	if req.Terms != nil {
+		current.Terms = req.Terms
+	}
+	if req.Location != nil {
+		current.Location = req.Location
+	}
+	if req.Province != nil {
+		current.Province = req.Province
+	}
+	if req.City != nil {
+		current.City = req.City
+	}
+	if req.Zip != nil {
+		current.Zip = req.Zip
+	}
+	if req.GoogleMapEmbed != nil {
+		current.GoogleMapEmbed = req.GoogleMapEmbed
+	}
+	if req.SeoTitle != nil {
+		current.SeoTitle = req.SeoTitle
+	}
+	if req.SeoDescription != nil {
+		current.SeoDescription = req.SeoDescription
+	}
+	if req.OrganizerName != nil {
+		current.OrganizerName = req.OrganizerName
+	}
+	if req.Status != "" {
+		current.Status = req.Status
+	}
+	if !req.StartDate.IsZero() {
+		current.StartDate = req.StartDate
+	}
+	if !req.EndDate.IsZero() {
+		current.EndDate = req.EndDate
+	}
+	if req.BannerPath != nil {
+		current.BannerPath = req.BannerPath
+	}
+	if req.ThumbnailPath != nil {
+		current.ThumbnailPath = req.ThumbnailPath
+	}
+	if req.OrganizerLogoPath != nil {
+		current.OrganizerLogoPath = req.OrganizerLogoPath
+	}
+
+	if err := models.UpdateEvent(current); err != nil {
 		http.Error(w, "Failed to update: "+err.Error(), http.StatusInternalServerError)
 		return
 	}
 
 	w.WriteHeader(http.StatusOK)
-	json.NewEncoder(w).Encode(map[string]interface{}{"status": "updated", "event": req})
+	json.NewEncoder(w).Encode(map[string]interface{}{"status": "updated", "event": current})
 }
 
 func DeleteEvent(w http.ResponseWriter, r *http.Request) {

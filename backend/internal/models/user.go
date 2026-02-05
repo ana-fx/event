@@ -17,14 +17,11 @@ type User struct {
 }
 
 func GetUserByEmail(email string) (*User, error) {
-	stmt := `SELECT id, name, email, password, is_active FROM users WHERE email = $1`
+	stmt := `SELECT id, name, email, password, role, is_active FROM users WHERE email = $1`
 	row := database.DB.QueryRow(stmt, email)
 
 	var user User
-	// SQLite stores booleans as 0/1 integers often, but go-sqlite3 might handle bool.
-	// But in Laravel migrations, it's safer to check how it was created.
-	// Assuming standard scan works.
-	err := row.Scan(&user.ID, &user.Name, &user.Email, &user.Password, &user.IsActive)
+	err := row.Scan(&user.ID, &user.Name, &user.Email, &user.Password, &user.Role, &user.IsActive)
 	if err != nil {
 		if err == sql.ErrNoRows {
 			return nil, errors.New("user not found")
@@ -36,7 +33,7 @@ func GetUserByEmail(email string) (*User, error) {
 }
 
 func GetAllUsers() ([]User, error) {
-	rows, err := database.DB.Query(`SELECT id, name, email, is_active FROM users ORDER BY id DESC`)
+	rows, err := database.DB.Query(`SELECT id, name, email, role, is_active FROM users ORDER BY id DESC`)
 	if err != nil {
 		return nil, err
 	}
@@ -45,7 +42,7 @@ func GetAllUsers() ([]User, error) {
 	var users []User
 	for rows.Next() {
 		var u User
-		err := rows.Scan(&u.ID, &u.Name, &u.Email, &u.IsActive)
+		err := rows.Scan(&u.ID, &u.Name, &u.Email, &u.Role, &u.IsActive)
 		if err != nil {
 			return nil, err
 		}

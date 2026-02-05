@@ -1,36 +1,71 @@
 "use client";
 
+import { useState } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import {
     LayoutDashboard,
-    CalendarDays,
     Users,
-    Store,
-    Flag,
-    Mail,
+    Calendar,
+    BarChart3,
     Settings,
     LogOut,
-    FileText
+    Ticket,
+    Image as ImageIcon,
+    MessageSquare,
+    CreditCard,
+    ChevronRight,
+    ChevronDown,
+    Shield,
+    ScanBarcode,
+    Store,
+    X
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import Cookies from "js-cookie";
 import { useRouter } from "next/navigation";
+import { useSidebar } from "@/context/SidebarContext";
 
-const menuItems = [
-    { href: "/admin", label: "Dashboard", icon: LayoutDashboard },
-    { href: "/admin/events", label: "Events", icon: CalendarDays },
-    { href: "/admin/users", label: "Users", icon: Users },
-    { href: "/admin/resellers", label: "Resellers", icon: Store },
-    { href: "/admin/banners", label: "Banners", icon: Flag },
-    { href: "/admin/contacts", label: "Contacts", icon: Mail },
-    { href: "/admin/reports", label: "Reports", icon: FileText },
-    { href: "/admin/settings", label: "Settings", icon: Settings },
+interface MenuItem {
+    name: string;
+    href: string;
+    icon: any;
+    children?: { name: string; href: string; icon?: any }[];
+}
+
+const menuItems: MenuItem[] = [
+    { name: "Dashboard", href: "/admin", icon: LayoutDashboard },
+    { name: "Events", href: "/admin/events", icon: Calendar },
+    {
+        name: "User Management",
+        href: "#",
+        icon: Users,
+        children: [
+            { name: "Admins", href: "/admin/users?role=admin", icon: Shield },
+            { name: "Scanners", href: "/admin/users?role=scanner", icon: ScanBarcode },
+            { name: "Resellers", href: "/admin/resellers", icon: Store }, // Pointing to specialized page
+        ]
+    },
+    { name: "Banners", href: "/admin/banners", icon: ImageIcon },
+    { name: "Contacts", href: "/admin/contacts", icon: MessageSquare },
+    { name: "Reports", href: "/admin/reports", icon: BarChart3 },
+    { name: "Settings", href: "/admin/settings", icon: Settings },
 ];
 
 export default function Sidebar() {
     const pathname = usePathname();
     const router = useRouter();
+    const [openMenus, setOpenMenus] = useState<string[]>(["User Management"]); // specific menu open by default
+    const { isOpen, close } = useSidebar(); // Consume context
+
+    // Close sidebar when route changes on mobile
+    // Note: You might want to useEffect on pathname change
+
+    const toggleMenu = (name: string) => {
+        setOpenMenus(prev =>
+            prev.includes(name) ? prev.filter(item => item !== name) : [...prev, name]
+        );
+    };
 
     const handleLogout = () => {
         Cookies.remove("token");
@@ -39,43 +74,129 @@ export default function Sidebar() {
     };
 
     return (
-        <aside className="w-64 bg-white border-r border-gray-100 h-screen fixed left-0 top-0 flex flex-col z-50">
-            <div className="p-6 border-b border-gray-100">
-                <h1 className="text-2xl font-bold text-gray-900 tracking-tight">Event<span className="text-blue-600">Admin</span></h1>
-            </div>
+        <>
+            {/* Mobile Overlay */}
+            {isOpen && (
+                <div
+                    className="fixed inset-0 bg-black/50 z-40 md:hidden backdrop-blur-sm transition-opacity"
+                    onClick={close}
+                />
+            )}
 
-            <nav className="flex-1 overflow-y-auto py-4 px-3 space-y-1">
-                {menuItems.map((item) => {
-                    const Icon = item.icon;
-                    const isActive = pathname === item.href || (item.href !== "/admin" && pathname.startsWith(item.href));
+            <aside className={cn(
+                "fixed left-0 top-0 h-screen w-72 bg-[#0f172a] text-white flex flex-col shadow-2xl z-50 transition-transform duration-300 ease-in-out",
+                isOpen ? "translate-x-0" : "-translate-x-full md:translate-x-0"
+            )}>
+                {/* Logo Section */}
+                <div className="p-8 pb-4 flex justify-between items-center">
+                    <div className="flex items-center gap-3">
+                        <div className="w-10 h-10 bg-blue-600 rounded-xl flex items-center justify-center transform rotate-3 shadow-lg shadow-blue-500/30">
+                            <Ticket className="w-6 h-6 text-white" />
+                        </div>
+                        <div>
+                            <h1 className="font-bold text-xl tracking-tight">Event<span className="text-blue-500">Admin</span></h1>
+                            <p className="text-[10px] text-gray-400 uppercase tracking-widest font-semibold">Dashboard v1.0</p>
+                        </div>
+                    </div>
+                    {/* Close button for mobile */}
+                    <button
+                        onClick={close}
+                        className="md:hidden text-gray-400 hover:text-white transition-colors"
+                        aria-label="Close sidebar"
+                    >
+                        <X className="w-6 h-6" />
+                    </button>
+                </div>
 
-                    return (
-                        <Link
-                            key={item.href}
-                            href={item.href}
-                            className={cn(
-                                "flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium transition-colors",
-                                isActive
-                                    ? "bg-blue-50 text-blue-700"
-                                    : "text-gray-600 hover:bg-gray-50 hover:text-gray-900"
-                            )}
+                <div className="mx-8 h-px bg-linear-to-r from-transparent via-gray-700 to-transparent mb-6" />
+
+                {/* Navigation */}
+                <nav className="flex-1 px-4 space-y-2 overflow-y-auto no-scrollbar">
+                    <p className="px-4 text-xs font-bold text-gray-500 uppercase tracking-wider mb-2">Main Menu</p>
+                    {menuItems.map((item) => {
+                        const hasChildren = item.children && item.children.length > 0;
+                        const isActive = pathname === item.href || (hasChildren && item.children?.some(child => pathname === child.href.split('?')[0]));
+                        const isOpenMenu = openMenus.includes(item.name);
+
+                        if (hasChildren) {
+                            return (
+                                <div key={item.name} className="space-y-1">
+                                    <button
+                                        onClick={() => toggleMenu(item.name)}
+                                        className={cn(
+                                            "w-full flex items-center gap-3 px-4 py-3.5 rounded-2xl transition-all duration-300 group relative overflow-hidden text-left",
+                                            isActive || isOpenMenu ? "text-white" : "text-gray-400 hover:text-white hover:bg-gray-800/50"
+                                        )}
+                                    >
+                                        <item.icon className={cn("w-5 h-5 transition-transform duration-300", isActive ? "text-blue-500" : "text-gray-500 group-hover:text-white")} />
+                                        <span className="flex-1 font-medium">{item.name}</span>
+                                        <ChevronDown className={cn("w-4 h-4 transition-transform duration-300", isOpenMenu ? "rotate-180" : "")} />
+                                    </button>
+
+                                    {isOpenMenu && (
+                                        <div className="pl-4 space-y-1 animate-in slide-in-from-top-2 duration-200">
+                                            {item.children?.map(child => {
+                                                // Simplify active check
+                                                const isChildActive = pathname === child.href.split('?')[0];
+
+                                                return (
+                                                    <Link
+                                                        key={child.name}
+                                                        href={child.href}
+                                                        onClick={() => close()} // Close on mobile click
+                                                        className={cn(
+                                                            "flex items-center gap-3 px-4 py-2.5 rounded-xl transition-all duration-300 text-sm",
+                                                            "text-gray-400 hover:text-white hover:bg-gray-800/30",
+                                                            isChildActive ? "text-blue-400 font-semibold" : "" // Apply active styles for children
+                                                        )}
+                                                    >
+                                                        {child.icon ? <child.icon className="w-4 h-4" /> : <div className="w-1.5 h-1.5 rounded-full bg-gray-600" />}
+                                                        <span>{child.name}</span>
+                                                    </Link>
+                                                )
+                                            })}
+                                        </div>
+                                    )}
+                                </div>
+                            );
+                        }
+
+                        return (
+                            <Link
+                                key={item.href}
+                                href={item.href}
+                                onClick={() => close()} // Close on mobile click
+                                className={cn(
+                                    "flex items-center gap-3 px-4 py-3.5 rounded-2xl transition-all duration-300 group relative overflow-hidden",
+                                    isActive
+                                        ? "bg-blue-600/10 text-blue-400 font-semibold shadow-[0_0_20px_rgba(37,99,235,0.1)]"
+                                        : "text-gray-400 hover:text-white hover:bg-gray-800/50"
+                                )}
+                            >
+                                {isActive && <div className="absolute left-0 top-1/2 -translate-y-1/2 w-1 h-8 bg-blue-500 rounded-r-full" />}
+                                <item.icon className={cn("w-5 h-5 transition-transform group-hover:scale-110 duration-300", isActive ? "text-blue-500" : "text-gray-500 group-hover:text-white")} />
+                                <span className="flex-1">{item.name}</span>
+                                {isActive && <ChevronRight className="w-4 h-4 text-blue-500 animate-pulse" />}
+                            </Link>
+                        );
+                    })}
+                </nav>
+
+                {/* Logout Section */}
+                <div className="p-4 mt-auto">
+                    <div className="bg-gray-800/50 rounded-2xl p-4 border border-gray-700/50 backdrop-blur-sm">
+                        <button
+                            onClick={handleLogout}
+                            className="flex items-center gap-3 w-full text-gray-400 hover:text-red-400 transition-colors group"
                         >
-                            <Icon className={cn("w-5 h-5", isActive ? "text-blue-600" : "text-gray-400")} />
-                            {item.label}
-                        </Link>
-                    );
-                })}
-            </nav>
-
-            <div className="p-4 border-t border-gray-100">
-                <button
-                    onClick={handleLogout}
-                    className="flex w-full items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium text-red-600 hover:bg-red-50 transition-colors"
-                >
-                    <LogOut className="w-5 h-5" />
-                    Logout
-                </button>
-            </div>
-        </aside>
+                            <div className="w-8 h-8 rounded-lg bg-gray-700 flex items-center justify-center group-hover:bg-red-500/10 transition-colors">
+                                <LogOut className="w-4 h-4" />
+                            </div>
+                            <span className="font-medium text-sm">Sign Out</span>
+                        </button>
+                    </div>
+                </div>
+            </aside>
+        </>
     );
 }

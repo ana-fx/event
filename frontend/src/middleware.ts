@@ -22,9 +22,16 @@ export function middleware(request: NextRequest) {
         }
     }
 
+    // 2. Protect Portal Routes
+    if (pathname.startsWith('/scanner') || pathname.startsWith('/reseller')) {
+        if (!token) {
+            return NextResponse.redirect(new URL('/admin/login', request.url));
+        }
+    }
+
     return NextResponse.next();
 }
 
 export const config = {
-    matcher: ['/admin/:path*'],
+    matcher: ['/admin/:path*', '/scanner/:path*', '/reseller/:path*'],
 };

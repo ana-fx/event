@@ -22,17 +22,19 @@ export default function AdminLogin() {
             // Assuming backend returns { token, user: { role: 'admin', ... } }
             const { token, user } = res.data;
 
-            if (user.role !== "admin") {
-                toast.error("Unauthorized access.");
-                setLoading(false);
-                return;
-            }
-
             Cookies.set("token", token, { expires: 1 }); // 1 day
             Cookies.set("user", JSON.stringify(user), { expires: 1 });
 
             toast.success("Login successful!");
-            router.push("/admin");
+
+            // Redirect based on role
+            if (user.role === 'admin') router.push("/admin");
+            else if (user.role === 'scanner') router.push("/scanner");
+            else if (user.role === 'reseller') router.push("/reseller");
+            else {
+                toast.error("Unknown role");
+                setLoading(false);
+            }
         } catch (error: any) {
             toast.error(error.response?.data?.error || "Login failed");
         } finally {

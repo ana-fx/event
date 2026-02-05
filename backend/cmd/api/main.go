@@ -69,6 +69,22 @@ func main() {
 		}
 	}))
 
+	// Tickets
+	http.HandleFunc("/api/admin/tickets", middleware.AuthMiddleware(func(w http.ResponseWriter, r *http.Request) {
+		switch r.Method {
+		case http.MethodGet:
+			admin.ListTickets(w, r)
+		case http.MethodPost:
+			admin.CreateTicket(w, r)
+		case http.MethodPut:
+			admin.UpdateTicket(w, r)
+		case http.MethodDelete:
+			admin.DeleteTicket(w, r)
+		default:
+			http.Error(w, "Method not allowed", http.StatusMethodNotAllowed)
+		}
+	}))
+
 	// Admin User Routes
 	http.HandleFunc("/api/admin/users", middleware.AuthMiddleware(func(w http.ResponseWriter, r *http.Request) {
 		switch r.Method {
@@ -167,10 +183,25 @@ func main() {
 		}
 	}))
 
+	// Finance (Deposits)
+	http.HandleFunc("/api/admin/finance/deposits", middleware.AuthMiddleware(func(w http.ResponseWriter, r *http.Request) {
+		switch r.Method {
+		case http.MethodGet:
+			admin.GetUserDeposits(w, r)
+		case http.MethodPost:
+			admin.CreateDeposit(w, r)
+		default:
+			http.Error(w, "Method not allowed", http.StatusMethodNotAllowed)
+		}
+	}))
+	http.HandleFunc("/api/admin/finance/balance", middleware.AuthMiddleware(admin.GetResellerBalance))
+
 	// 3. Start Server
 	port := ":8080"
 	fmt.Printf("Server starting on port %s...\n", port)
-	if err := http.ListenAndServe(port, nil); err != nil {
+
+	// Wrap the default ServeMux with CORS Middleware
+	if err := http.ListenAndServe(port, middleware.CORSMiddleware(http.DefaultServeMux)); err != nil {
 		fmt.Printf("Error starting server: %s\n", err)
 	}
 }

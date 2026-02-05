@@ -62,3 +62,7 @@ func GetDeposits(userID int) ([]Deposit, error) {
 	}
 	return deposits, nil
 }
+func CreateDeposit(d *Deposit) error {
+	query := `INSERT INTO reseller_deposits (user_id, amount, note, created_at) VALUES ($1, $2, $3, $4) RETURNING id`
+	return database.DB.QueryRow(query, d.UserID, d.Amount, d.Note, time.Now()).Scan(&d.ID)
+}

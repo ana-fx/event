@@ -1,43 +1,42 @@
 package models
 
 import (
-	"database/sql"
 	"event-backend/internal/database"
 	"time"
 )
 
 type Event struct {
-	ID                     int            `json:"id"`
-	Name                   string         `json:"name"`
-	Slug                   string         `json:"slug"`
-	Category               string         `json:"category"`
-	Status                 string         `json:"status"`
-	BannerPath             sql.NullString `json:"banner_path"`
-	ThumbnailPath          sql.NullString `json:"thumbnail_path"`
-	StartDate              time.Time      `json:"start_date"`
-	EndDate                time.Time      `json:"end_date"`
-	Description            string         `json:"description"`
-	Terms                  sql.NullString `json:"terms"`
-	Location               sql.NullString `json:"location"`
-	Province               sql.NullString `json:"province"`
-	City                   sql.NullString `json:"city"`
-	Zip                    sql.NullString `json:"zip"`
-	GoogleMapEmbed         sql.NullString `json:"google_map_embed"`
-	SeoTitle               sql.NullString `json:"seo_title"`
-	SeoDescription         sql.NullString `json:"seo_description"`
-	OrganizerName          sql.NullString `json:"organizer_name"`
-	OrganizerLogoPath      sql.NullString `json:"organizer_logo_path"`
-	ResellerFeeType        string         `json:"reseller_fee_type"`
-	ResellerFeeValue       float64        `json:"reseller_fee_value"`
-	OrganizerFeeOnlineType string         `json:"organizer_fee_online_type"`
-	OrganizerFeeOnline     float64        `json:"organizer_fee_online"`
-	CreatedAt              time.Time      `json:"created_at"`
-	UpdatedAt              time.Time      `json:"updated_at"`
+	ID                     int       `json:"id"`
+	Name                   string    `json:"name"`
+	Slug                   string    `json:"slug"`
+	Category               string    `json:"category"`
+	Status                 string    `json:"status"`
+	BannerPath             *string   `json:"banner_path"`
+	ThumbnailPath          *string   `json:"thumbnail_path"`
+	StartDate              time.Time `json:"start_date"`
+	EndDate                time.Time `json:"end_date"`
+	Description            string    `json:"description"`
+	Terms                  *string   `json:"terms"`
+	Location               *string   `json:"location"`
+	Province               *string   `json:"province"`
+	City                   *string   `json:"city"`
+	Zip                    *string   `json:"zip"`
+	GoogleMapEmbed         *string   `json:"google_map_embed"`
+	SeoTitle               *string   `json:"seo_title"`
+	SeoDescription         *string   `json:"seo_description"`
+	OrganizerName          *string   `json:"organizer_name"`
+	OrganizerLogoPath      *string   `json:"organizer_logo_path"`
+	ResellerFeeType        string    `json:"reseller_fee_type"`
+	ResellerFeeValue       float64   `json:"reseller_fee_value"`
+	OrganizerFeeOnlineType string    `json:"organizer_fee_online_type"`
+	OrganizerFeeOnline     float64   `json:"organizer_fee_online"`
+	CreatedAt              time.Time `json:"created_at"`
+	UpdatedAt              time.Time `json:"updated_at"`
 }
 
 func GetAllEvents() ([]Event, error) {
 	rows, err := database.DB.Query(`
-		SELECT id, name, slug, category, status, start_date, end_date, description, location, city, created_at 
+		SELECT id, name, slug, category, status, start_date, end_date, description, location, city, organizer_name, created_at 
 		FROM events 
 		WHERE deleted_at IS NULL 
 		ORDER BY created_at DESC
@@ -54,7 +53,7 @@ func GetAllEvents() ([]Event, error) {
 		err := rows.Scan(
 			&e.ID, &e.Name, &e.Slug, &e.Category, &e.Status,
 			&e.StartDate, &e.EndDate, &e.Description,
-			&e.Location, &e.City, &e.CreatedAt,
+			&e.Location, &e.City, &e.OrganizerName, &e.CreatedAt,
 		)
 		if err != nil {
 			return nil, err
@@ -67,16 +66,29 @@ func GetAllEvents() ([]Event, error) {
 func CreateEvent(e *Event) error {
 	query := `
 		INSERT INTO events (
-			name, slug, category, status, start_date, end_date, description, location, 
+			name, slug, category, status, start_date, end_date, description, terms, 
+			location, province, city, zip, google_map_embed,
+			seo_title, seo_description,
+			organizer_name, banner_path, thumbnail_path, organizer_logo_path,
 			reseller_fee_type, reseller_fee_value, 
 			organizer_fee_online_type, organizer_fee_online,
 			organizer_fee_reseller_type, organizer_fee_reseller,
 			created_at, updated_at
-		) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, 'fixed', 0, 'fixed', 0, 'fixed', 0, $9, $10)
+		) VALUES (
+			$1, $2, $3, $4, $5, $6, $7, $8, 
+			$9, $10, $11, $12, $13,
+			$14, $15,
+			$16, $17, $18, $19,
+			'fixed', 0, 'fixed', 0, 'fixed', 0, 
+			$20, $21
+		)
 		RETURNING id`
 
 	err := database.DB.QueryRow(query,
-		e.Name, e.Slug, e.Category, e.Status, e.StartDate, e.EndDate, e.Description, e.Location,
+		e.Name, e.Slug, e.Category, e.Status, e.StartDate, e.EndDate, e.Description, e.Terms,
+		e.Location, e.Province, e.City, e.Zip, e.GoogleMapEmbed,
+		e.SeoTitle, e.SeoDescription,
+		e.OrganizerName, e.BannerPath, e.ThumbnailPath, e.OrganizerLogoPath,
 		time.Now(), time.Now(),
 	).Scan(&e.ID)
 
@@ -86,11 +98,18 @@ func CreateEvent(e *Event) error {
 func UpdateEvent(e *Event) error {
 	query := `
 		UPDATE events 
-		SET name=$1, slug=$2, category=$3, status=$4, start_date=$5, end_date=$6, description=$7, location=$8, updated_at=$9
-		WHERE id=$10`
+		SET name=$1, slug=$2, category=$3, status=$4, start_date=$5, end_date=$6, description=$7, terms=$8,
+		    location=$9, province=$10, city=$11, zip=$12, google_map_embed=$13,
+			seo_title=$14, seo_description=$15,
+			organizer_name=$16, banner_path=$17, thumbnail_path=$18, organizer_logo_path=$19,
+			updated_at=$20
+		WHERE id=$21`
 
 	_, err := database.DB.Exec(query,
-		e.Name, e.Slug, e.Category, e.Status, e.StartDate, e.EndDate, e.Description, e.Location,
+		e.Name, e.Slug, e.Category, e.Status, e.StartDate, e.EndDate, e.Description, e.Terms,
+		e.Location, e.Province, e.City, e.Zip, e.GoogleMapEmbed,
+		e.SeoTitle, e.SeoDescription,
+		e.OrganizerName, e.BannerPath, e.ThumbnailPath, e.OrganizerLogoPath,
 		time.Now(), e.ID,
 	)
 	return err
@@ -104,12 +123,24 @@ func DeleteEvent(id int) error {
 }
 
 func GetEventByID(id int) (*Event, error) {
-	query := `SELECT id, name, slug, category, status, start_date, end_date, description, location, created_at FROM events WHERE id=$1 AND deleted_at IS NULL`
+	query := `
+		SELECT 
+			id, name, slug, category, status, start_date, end_date, description, terms,
+			location, province, city, zip, google_map_embed,
+			seo_title, seo_description,
+			organizer_name, banner_path, thumbnail_path, organizer_logo_path,
+			created_at 
+		FROM events 
+		WHERE id=$1 AND deleted_at IS NULL`
+
 	var e Event
 	err := database.DB.QueryRow(query, id).Scan(
 		&e.ID, &e.Name, &e.Slug, &e.Category, &e.Status,
-		&e.StartDate, &e.EndDate, &e.Description,
-		&e.Location, &e.CreatedAt,
+		&e.StartDate, &e.EndDate, &e.Description, &e.Terms,
+		&e.Location, &e.Province, &e.City, &e.Zip, &e.GoogleMapEmbed,
+		&e.SeoTitle, &e.SeoDescription,
+		&e.OrganizerName, &e.BannerPath, &e.ThumbnailPath, &e.OrganizerLogoPath,
+		&e.CreatedAt,
 	)
 	if err != nil {
 		return nil, err
@@ -146,12 +177,23 @@ func GetPublishedEvents() ([]Event, error) {
 }
 
 func GetEventBySlug(slug string) (*Event, error) {
-	query := `SELECT id, name, slug, category, status, start_date, end_date, description, location, city, banner_path, created_at FROM events WHERE slug=$1 AND deleted_at IS NULL`
+	query := `
+		SELECT 
+			id, name, slug, category, status, start_date, end_date, description, terms,
+			location, province, city, zip, google_map_embed,
+			seo_title, seo_description,
+			organizer_name, banner_path, thumbnail_path, organizer_logo_path,
+			created_at 
+		FROM events 
+		WHERE slug=$1 AND deleted_at IS NULL`
 	var e Event
 	err := database.DB.QueryRow(query, slug).Scan(
 		&e.ID, &e.Name, &e.Slug, &e.Category, &e.Status,
-		&e.StartDate, &e.EndDate, &e.Description,
-		&e.Location, &e.City, &e.BannerPath, &e.CreatedAt,
+		&e.StartDate, &e.EndDate, &e.Description, &e.Terms,
+		&e.Location, &e.Province, &e.City, &e.Zip, &e.GoogleMapEmbed,
+		&e.SeoTitle, &e.SeoDescription,
+		&e.OrganizerName, &e.BannerPath, &e.ThumbnailPath, &e.OrganizerLogoPath,
+		&e.CreatedAt,
 	)
 	if err != nil {
 		return nil, err
