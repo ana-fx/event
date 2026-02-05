@@ -102,39 +102,39 @@ export default function CreateEvent() {
             <div className="flex items-center gap-4 mb-8">
                 <Link
                     href="/admin/events"
-                    className="p-2 hover:bg-gray-100 rounded-lg text-gray-500 transition-colors"
+                    className="p-2 hover:bg-(--card) border border-transparent hover:border-(--card-border) rounded-lg text-gray-500 transition-all"
                 >
                     <ChevronLeft className="w-5 h-5" />
                 </Link>
                 <div>
-                    <h2 className="text-2xl font-bold text-gray-900">Create New Event</h2>
+                    <h2 className="text-2xl font-bold text-(--foreground)">Create New Event</h2>
                     <p className="text-gray-500 text-sm">Fill in the details to publish a new event.</p>
                 </div>
             </div>
 
             <form onSubmit={handleSubmit} className="space-y-8">
                 {/* 1. Basic Info */}
-                <div className="bg-white p-6 rounded-2xl border border-gray-100 shadow-sm space-y-6">
-                    <h3 className="text-lg font-bold text-gray-900 border-b border-gray-100 pb-4">Basic Details</h3>
+                <div className="bg-(--card) p-6 rounded-2xl border border-(--card-border) shadow-sm space-y-6">
+                    <h3 className="text-lg font-bold text-(--foreground) border-b border-(--card-border) pb-4">Basic Details</h3>
 
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                         <div className="md:col-span-2">
-                            <label className="block text-sm font-bold text-gray-700 mb-2">Event Name</label>
+                            <label className="block text-sm font-bold text-(--foreground) opacity-70 mb-2">Event Name</label>
                             <input
                                 type="text"
                                 required
-                                className="w-full px-4 py-2.5 rounded-lg border border-gray-200 focus:border-blue-500 focus:ring-2 focus:ring-blue-100 outline-none transition-all"
+                                className="w-full px-4 py-2.5 rounded-lg border border-(--card-border) bg-(--background) text-(--foreground) focus:border-blue-500 focus:ring-4 focus:ring-blue-500/10 outline-none transition-all"
                                 value={formData.name}
                                 onChange={(e) => setFormData({ ...formData, name: e.target.value })}
                             />
                         </div>
 
                         <div>
-                            <label className="block text-sm font-bold text-gray-700 mb-2">Category</label>
+                            <label className="block text-sm font-bold text-(--foreground) opacity-70 mb-2">Category</label>
                             <input
                                 type="text"
                                 required
-                                className="w-full px-4 py-2.5 rounded-lg border border-gray-200 focus:border-blue-500 focus:ring-2 focus:ring-blue-100 outline-none transition-all"
+                                className="w-full px-4 py-2.5 rounded-lg border border-(--card-border) bg-(--background) text-(--foreground) focus:border-blue-500 focus:ring-4 focus:ring-blue-500/10 outline-none transition-all"
                                 value={formData.category}
                                 onChange={(e) => setFormData({ ...formData, category: e.target.value })}
                             />
@@ -161,10 +161,10 @@ export default function CreateEvent() {
                         </div>
 
                         <div className="md:col-span-2">
-                            <label className="block text-sm font-bold text-gray-700 mb-2">Maps Embed (HTML)</label>
+                            <label className="block text-sm font-bold text-(--foreground) opacity-70 mb-2">Maps Embed (HTML)</label>
                             <textarea
                                 rows={3}
-                                className="w-full px-4 py-2.5 rounded-lg border border-gray-200 focus:border-blue-500 focus:ring-2 focus:ring-blue-100 outline-none transition-all font-mono text-xs"
+                                className="w-full px-4 py-2.5 rounded-lg border border-(--card-border) bg-(--background) text-(--foreground) focus:border-blue-500 focus:ring-4 focus:ring-blue-500/10 outline-none transition-all font-mono text-xs"
                                 value={formData.google_map_embed || ''}
                                 onChange={(e) => setFormData({ ...formData, google_map_embed: e.target.value })}
                                 placeholder='<iframe src="..."></iframe>'
@@ -182,20 +182,20 @@ export default function CreateEvent() {
                 </div>
 
                 {/* 2. Media Uploads */}
-                <div className="bg-white p-6 rounded-2xl border border-gray-100 shadow-sm space-y-6">
-                    <h3 className="text-lg font-bold text-gray-900 border-b border-gray-100 pb-4">Media</h3>
+                <div className="bg-(--card) p-6 rounded-2xl border border-(--card-border) shadow-sm space-y-6">
+                    <h3 className="text-lg font-bold text-(--foreground) border-b border-(--card-border) pb-4">Media</h3>
 
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                         {/* Banner */}
                         <div>
-                            <label className="block text-sm font-bold text-gray-700 mb-2">Event Banner</label>
-                            <div className="border-2 border-dashed border-gray-300 rounded-xl aspect-video relative flex items-center justify-center bg-gray-50 hover:border-blue-500 transition-colors cursor-pointer overflow-hidden group">
+                            <label className="block text-sm font-bold text-(--foreground) opacity-70 mb-2">Event Banner</label>
+                            <div className="border-2 border-dashed border-(--card-border) rounded-xl aspect-video relative flex items-center justify-center bg-(--background) hover:border-blue-500 transition-colors cursor-pointer overflow-hidden group">
                                 {previews.banner ? (
                                     <img src={previews.banner} alt="Preview" className="w-full h-full object-cover" />
                                 ) : (
                                     <div className="text-center p-4">
                                         <Upload className="w-8 h-8 text-gray-400 mx-auto mb-2" />
-                                        <p className="text-sm text-gray-500">Click to upload banner</p>
+                                        <p className="text-sm text-gray-500 font-medium">Click to upload banner</p>
                                         <p className="text-xs text-gray-400 mt-1">16:9 recommended</p>
                                     </div>
                                 )}
@@ -251,10 +251,10 @@ export default function CreateEvent() {
                         </div>
 
                         <div className="md:col-span-2">
-                            <label className="block text-sm font-bold text-gray-700 mb-2">Organizer Name</label>
+                            <label className="block text-sm font-bold text-(--foreground) opacity-70 mb-2">Organizer Name</label>
                             <input
                                 type="text"
-                                className="w-full px-4 py-2.5 rounded-lg border border-gray-200 focus:border-blue-500 focus:ring-2 focus:ring-blue-100 outline-none transition-all"
+                                className="w-full px-4 py-2.5 rounded-lg border border-(--card-border) bg-(--background) text-(--foreground) focus:border-blue-500 focus:ring-4 focus:ring-blue-500/10 outline-none transition-all"
                                 value={formData.organizer_name}
                                 onChange={(e) => setFormData({ ...formData, organizer_name: e.target.value })}
                             />
@@ -263,8 +263,8 @@ export default function CreateEvent() {
                 </div>
 
                 {/* 3. Dates & Location */}
-                <div className="bg-white p-6 rounded-2xl border border-gray-100 shadow-sm space-y-6">
-                    <h3 className="text-lg font-bold text-gray-900 border-b border-gray-100 pb-4">Date & Location</h3>
+                <div className="bg-(--card) p-6 rounded-2xl border border-(--card-border) shadow-sm space-y-6">
+                    <h3 className="text-lg font-bold text-(--foreground) border-b border-(--card-border) pb-4">Date & Location</h3>
 
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                         <div>
@@ -283,39 +283,39 @@ export default function CreateEvent() {
                         </div>
 
                         <div className="md:col-span-2">
-                            <label className="block text-sm font-bold text-gray-700 mb-2">Venue Name</label>
+                            <label className="block text-sm font-bold text-(--foreground) opacity-70 mb-2">Venue Name</label>
                             <input
                                 type="text"
                                 placeholder="e.g. Jakarta Convention Center"
-                                className="w-full px-4 py-2.5 rounded-lg border border-gray-200 focus:border-blue-500 focus:ring-2 focus:ring-blue-100 outline-none transition-all"
+                                className="w-full px-4 py-2.5 rounded-lg border border-(--card-border) bg-(--background) text-(--foreground) focus:border-blue-500 focus:ring-4 focus:ring-blue-500/10 outline-none transition-all"
                                 value={formData.location}
                                 onChange={(e) => setFormData({ ...formData, location: e.target.value })}
                             />
                         </div>
                         <div>
-                            <label className="block text-sm font-bold text-gray-700 mb-2">City</label>
+                            <label className="block text-sm font-bold text-(--foreground) opacity-70 mb-2">City</label>
                             <input
                                 type="text"
-                                className="w-full px-4 py-2.5 rounded-lg border border-gray-200 focus:border-blue-500 focus:ring-2 focus:ring-blue-100 outline-none transition-all"
+                                className="w-full px-4 py-2.5 rounded-lg border border-(--card-border) bg-(--background) text-(--foreground) focus:border-blue-500 focus:ring-4 focus:ring-blue-500/10 outline-none transition-all"
                                 value={formData.city}
                                 onChange={(e) => setFormData({ ...formData, city: e.target.value })}
                             />
                         </div>
 
                         <div>
-                            <label className="block text-sm font-bold text-gray-700 mb-2">Province</label>
+                            <label className="block text-sm font-bold text-(--foreground) opacity-70 mb-2">Province</label>
                             <input
                                 type="text"
-                                className="w-full px-4 py-2.5 rounded-lg border border-gray-200 focus:border-blue-500 focus:ring-2 focus:ring-blue-100 outline-none transition-all"
+                                className="w-full px-4 py-2.5 rounded-lg border border-(--card-border) bg-(--background) text-(--foreground) focus:border-blue-500 focus:ring-4 focus:ring-blue-500/10 outline-none transition-all"
                                 value={formData.province}
                                 onChange={(e) => setFormData({ ...formData, province: e.target.value })}
                             />
                         </div>
                         <div>
-                            <label className="block text-sm font-bold text-gray-700 mb-2">ZIP Code</label>
+                            <label className="block text-sm font-bold text-(--foreground) opacity-70 mb-2">ZIP Code</label>
                             <input
                                 type="text"
-                                className="w-full px-4 py-2.5 rounded-lg border border-gray-200 focus:border-blue-500 focus:ring-2 focus:ring-blue-100 outline-none transition-all"
+                                className="w-full px-4 py-2.5 rounded-lg border border-(--card-border) bg-(--background) text-(--foreground) focus:border-blue-500 focus:ring-4 focus:ring-blue-500/10 outline-none transition-all"
                                 value={formData.zip}
                                 onChange={(e) => setFormData({ ...formData, zip: e.target.value })}
                             />
@@ -324,23 +324,23 @@ export default function CreateEvent() {
                 </div>
 
                 {/* 4. SEO */}
-                <div className="bg-white p-6 rounded-2xl border border-gray-100 shadow-sm space-y-6">
-                    <h3 className="text-lg font-bold text-gray-900 border-b border-gray-100 pb-4">SEO Settings</h3>
+                <div className="bg-(--card) p-6 rounded-2xl border border-(--card-border) shadow-sm space-y-6">
+                    <h3 className="text-lg font-bold text-(--foreground) border-b border-(--card-border) pb-4">SEO Settings</h3>
                     <div className="grid grid-cols-1 gap-6">
                         <div>
-                            <label className="block text-sm font-bold text-gray-700 mb-2">Meta Title</label>
+                            <label className="block text-sm font-bold text-(--foreground) opacity-70 mb-2">Meta Title</label>
                             <input
                                 type="text"
-                                className="w-full px-4 py-2.5 rounded-lg border border-gray-200 focus:border-blue-500 focus:ring-2 focus:ring-blue-100 outline-none transition-all"
+                                className="w-full px-4 py-2.5 rounded-lg border border-(--card-border) bg-(--background) text-(--foreground) focus:border-blue-500 focus:ring-4 focus:ring-blue-500/10 outline-none transition-all"
                                 value={formData.seo_title}
                                 onChange={(e) => setFormData({ ...formData, seo_title: e.target.value })}
                             />
                         </div>
                         <div>
-                            <label className="block text-sm font-bold text-gray-700 mb-2">Meta Description</label>
+                            <label className="block text-sm font-bold text-(--foreground) opacity-70 mb-2">Meta Description</label>
                             <textarea
                                 rows={2}
-                                className="w-full px-4 py-2.5 rounded-lg border border-gray-200 focus:border-blue-500 focus:ring-2 focus:ring-blue-100 outline-none transition-all"
+                                className="w-full px-4 py-2.5 rounded-lg border border-(--card-border) bg-(--background) text-(--foreground) focus:border-blue-500 focus:ring-4 focus:ring-blue-500/10 outline-none transition-all"
                                 value={formData.seo_description}
                                 onChange={(e) => setFormData({ ...formData, seo_description: e.target.value })}
                             ></textarea>

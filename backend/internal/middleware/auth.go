@@ -2,17 +2,13 @@ package middleware
 
 import (
 	"context"
-	"event-backend/internal/handlers"
+	"event-backend/internal/models"
 	"fmt"
 	"net/http"
 	"strings"
 
 	"github.com/golang-jwt/jwt/v5"
 )
-
-type contextKey string
-
-const UserIDKey contextKey = "userID"
 
 func AuthMiddleware(next http.HandlerFunc) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
@@ -33,7 +29,7 @@ func AuthMiddleware(next http.HandlerFunc) http.HandlerFunc {
 			if _, ok := token.Method.(*jwt.SigningMethodHMAC); !ok {
 				return nil, fmt.Errorf("unexpected signing method: %v", token.Header["alg"])
 			}
-			return handlers.SecretKey, nil
+			return models.SecretKey, nil
 		})
 
 		if err != nil || !token.Valid {
@@ -55,11 +51,7 @@ func AuthMiddleware(next http.HandlerFunc) http.HandlerFunc {
 		}
 		userID := int(userIDStr)
 
-		// Check Role (Optional: You might want to hit DB or include role in JWT)
-		// For now, let's just assume valid token = basic auth.
-		// Detailed role check usually requires DB lookup or Role inside JWT.
-
-		ctx := context.WithValue(r.Context(), UserIDKey, userID)
+		ctx := context.WithValue(r.Context(), models.UserIDKey, userID)
 		next(w, r.WithContext(ctx))
 	}
 }

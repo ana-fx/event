@@ -89,9 +89,22 @@ func SumPaidRevenue() (float64, error) {
 }
 
 func UpdateTransactionSnapToken(id int, token string, redirectURL string) error {
-	// Note: We might want to store redirectURL too if schema allows, but for now just token usually enough.
-	// But wait, user schema might not have redirect_url column.
-	// Checked schema via struct: SnapToken is there.
 	_, err := database.DB.Exec(`UPDATE transactions SET snap_token=$1, updated_at=$2 WHERE id=$3`, token, time.Now(), id)
 	return err
+}
+
+func GetTransactionByCode(code string) (*Transaction, error) {
+	query := `
+		SELECT id, code, event_id, ticket_id, name, email, phone, quantity, total_price, status, created_at 
+		FROM transactions 
+		WHERE code = $1 AND deleted_at IS NULL`
+	var t Transaction
+	err := database.DB.QueryRow(query, code).Scan(
+		&t.ID, &t.Code, &t.EventID, &t.TicketID, &t.Name, &t.Email, &t.Phone,
+		&t.Quantity, &t.TotalPrice, &t.Status, &t.CreatedAt,
+	)
+	if err != nil {
+		return nil, err
+	}
+	return &t, nil
 }

@@ -48,6 +48,7 @@ func main() {
 	http.HandleFunc("/api/reseller/transactions", middleware.AuthMiddleware(reseller.CreateTransaction))
 
 	http.HandleFunc("/api/login", handlers.Login)
+	http.HandleFunc("/api/me", middleware.AuthMiddleware(handlers.GetMe))
 
 	// Admin Routes
 	// Dashboard

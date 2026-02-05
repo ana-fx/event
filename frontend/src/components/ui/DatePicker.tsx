@@ -91,7 +91,7 @@ export function DatePicker({
     return (
         <div className={cn("space-y-2", containerClassName)} ref={containerRef}>
             {label && (
-                <label className="block text-sm font-bold text-gray-700">
+                <label className="block text-sm font-bold text-(--foreground) opacity-70">
                     {label}
                 </label>
             )}
@@ -100,8 +100,8 @@ export function DatePicker({
                     type="button"
                     onClick={toggleOpen}
                     className={cn(
-                        "w-full text-left px-4 py-2.5 rounded-lg border border-gray-200 bg-white text-gray-900 font-medium transition-all flex items-center gap-2 outline-none",
-                        "hover:border-blue-400 focus:ring-2 focus:ring-blue-100",
+                        "w-full text-left px-4 py-2.5 rounded-lg border border-(--card-border) bg-(--card) text-(--foreground) font-medium transition-all flex items-center gap-2 outline-none",
+                        "hover:border-blue-400 focus:ring-2 focus:ring-blue-100 dark:focus:ring-blue-900/30",
                         error ? "border-red-500 focus:ring-red-100" : ""
                     )}
                 >
@@ -113,12 +113,12 @@ export function DatePicker({
 
                 {/* Popover */}
                 {isOpen && (
-                    <div className="absolute z-50 mt-2 p-4 bg-white rounded-xl shadow-xl border border-gray-100 w-[300px] animate-in fade-in zoom-in-95 duration-200">
+                    <div className="absolute z-50 mt-2 p-4 bg-(--card) rounded-xl shadow-xl border border-(--card-border) w-[300px] animate-in fade-in zoom-in-95 duration-200 backdrop-blur-xl">
                         {/* Header */}
                         <div className="flex justify-between items-center mb-4">
-                            <button onClick={prevMonth} type="button" className="p-1 hover:bg-gray-100 rounded-lg"><ChevronLeft className="w-5 h-5 text-gray-500" /></button>
-                            <span className="font-bold text-gray-700">{format(viewDate, "MMMM yyyy")}</span>
-                            <button onClick={nextMonth} type="button" className="p-1 hover:bg-gray-100 rounded-lg"><ChevronRight className="w-5 h-5 text-gray-500" /></button>
+                            <button onClick={prevMonth} type="button" className="p-1 hover:bg-(--background) rounded-lg"><ChevronLeft className="w-5 h-5 text-gray-500" /></button>
+                            <span className="font-bold text-(--foreground)">{format(viewDate, "MMMM yyyy")}</span>
+                            <button onClick={nextMonth} type="button" className="p-1 hover:bg-(--background) rounded-lg"><ChevronRight className="w-5 h-5 text-gray-500" /></button>
                         </div>
 
                         {/* Days Header */}
@@ -138,8 +138,8 @@ export function DatePicker({
                                         onClick={() => handleDayClick(day)}
                                         className={cn(
                                             "h-9 w-9 rounded-lg flex items-center justify-center text-sm transition-colors",
-                                            !isCurrentMonth && "text-gray-300",
-                                            isSelected ? "bg-blue-600 text-white font-bold shadow-md shadow-blue-200" : "hover:bg-blue-50 text-gray-700",
+                                            !isCurrentMonth && "text-gray-300 dark:text-gray-600",
+                                            isSelected ? "bg-blue-600 text-white font-bold shadow-md shadow-blue-200 dark:shadow-blue-900/20" : "hover:bg-blue-600/10 text-(--foreground)",
                                             !isSelected && isCurrentMonth && "font-medium"
                                         )}
                                     >
@@ -150,15 +150,15 @@ export function DatePicker({
                         </div>
 
                         {/* Time Picker */}
-                        <div className="border-t border-gray-100 pt-4 flex items-center justify-between">
-                            <div className="flex items-center gap-2 text-sm text-gray-500 font-medium">
+                        <div className="border-t border-(--card-border) pt-4 flex items-center justify-between">
+                            <div className="flex items-center gap-2 text-sm text-(--foreground) opacity-60 font-medium">
                                 <Clock className="w-4 h-4" /> Time
                             </div>
                             <div className="flex items-center gap-1">
                                 <input
                                     type="number"
                                     min="0" max="23"
-                                    className="w-12 p-1 text-center border border-gray-200 rounded-md focus:border-blue-500 outline-none text-sm font-bold"
+                                    className="w-12 p-1 text-center border border-(--card-border) bg-(--background) rounded-md focus:border-blue-500 outline-none text-sm font-bold text-(--foreground)"
                                     value={format(selectedDate, "HH")}
                                     onChange={(e) => handleTimeChange('hours', e.target.value)}
                                 />
@@ -166,7 +166,7 @@ export function DatePicker({
                                 <input
                                     type="number"
                                     min="0" max="59"
-                                    className="w-12 p-1 text-center border border-gray-200 rounded-md focus:border-blue-500 outline-none text-sm font-bold"
+                                    className="w-12 p-1 text-center border border-(--card-border) bg-(--background) rounded-md focus:border-blue-500 outline-none text-sm font-bold text-(--foreground)"
                                     value={format(selectedDate, "mm")}
                                     onChange={(e) => handleTimeChange('minutes', e.target.value)}
                                 />

@@ -40,6 +40,21 @@ func GetEvent(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
+	tickets, err := models.GetTicketsByEventID(event.ID)
+	if err != nil {
+		// Log error but render event? Or fail? Let's treat as empty tickets for now if fail, or just log.
+		// For simplicity, return empty slice if error, or handle error.
+		tickets = []models.Ticket{}
+	}
+
+	response := struct {
+		Event   *models.Event   `json:"event"`
+		Tickets []models.Ticket `json:"tickets"`
+	}{
+		Event:   event,
+		Tickets: tickets,
+	}
+
 	w.Header().Set("Content-Type", "application/json")
-	json.NewEncoder(w).Encode(event)
+	json.NewEncoder(w).Encode(response)
 }

@@ -1,39 +1,74 @@
+import { Facebook, Instagram, Twitter, MessageCircle, MapPin, Mail, Phone } from "lucide-react";
+
 export default function Footer() {
     return (
-        <footer className="bg-gray-900 text-white pt-16 pb-8">
-            <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-                <div className="grid grid-cols-1 md:grid-cols-4 gap-12 mb-12">
-                    <div className="col-span-1 md:col-span-2">
-                        <h2 className="text-2xl font-bold mb-4">EventHub</h2>
-                        <p className="text-gray-400 max-w-sm">
-                            The best platform to discover and book tickets for your favorite concerts, workshops, and exhibitions.
+        <footer className="bg-gray-900 text-white pt-20 pb-10 border-t border-white/5">
+            <div className="max-w-7xl mx-auto px-6 lg:px-10">
+                <div className="flex flex-col lg:flex-row justify-between gap-12 lg:gap-24 mb-16">
+                    {/* Brand Section */}
+                    <div className="lg:w-5/12 space-y-8">
+                        <div className="flex items-center gap-3">
+                            <div className="w-10 h-10 rounded-xl bg-white/10 flex items-center justify-center text-white">
+                                <MapPin className="w-5 h-5 text-blue-500" />
+                            </div>
+                            <span className="font-black text-xl tracking-tighter uppercase">Anntix<span className="text-blue-500">.</span></span>
+                        </div>
+                        <p className="text-gray-400 leading-relaxed text-sm max-w-sm">
+                            Platform terbaik untuk menemukan dan memesan tiket konser, workshop, dan pameran favorit Anda.
                         </p>
+                        <div className="flex gap-4">
+                            {[Facebook, Twitter, Instagram].map((Icon, i) => (
+                                <a key={i} href="#" className="w-10 h-10 rounded-full bg-white/5 hover:bg-blue-600 flex items-center justify-center transition-all hover:-translate-y-1">
+                                    <Icon className="w-5 h-5" />
+                                </a>
+                            ))}
+                            <a href="https://wa.me/6287750581589" target="_blank" className="w-10 h-10 rounded-full bg-white/5 hover:bg-green-600 flex items-center justify-center transition-all hover:-translate-y-1">
+                                <MessageCircle className="w-5 h-5" />
+                            </a>
+                        </div>
                     </div>
-                    <div>
-                        <h3 className="font-bold mb-4">Quick Links</h3>
-                        <ul className="space-y-2 text-gray-400 text-sm">
-                            <li><a href="#" className="hover:text-blue-400 transition-colors">About Us</a></li>
-                            <li><a href="#" className="hover:text-blue-400 transition-colors">Explore Events</a></li>
-                            <li><a href="#" className="hover:text-blue-400 transition-colors">Contact Support</a></li>
-                            <li><a href="#" className="hover:text-blue-400 transition-colors">Terms of Service</a></li>
-                        </ul>
-                    </div>
-                    <div>
-                        <h3 className="font-bold mb-4">Connect</h3>
-                        <ul className="space-y-2 text-gray-400 text-sm">
-                            <li><a href="#" className="hover:text-blue-400 transition-colors">Instagram</a></li>
-                            <li><a href="#" className="hover:text-blue-400 transition-colors">Twitter</a></li>
-                            <li><a href="#" className="hover:text-blue-400 transition-colors">Facebook</a></li>
-                            <li><a href="#" className="hover:text-blue-400 transition-colors">LinkedIn</a></li>
-                        </ul>
+
+                    {/* Links Section */}
+                    <div className="lg:w-6/12 grid grid-cols-2 gap-8 md:gap-12">
+                        <div>
+                            <h3 className="font-bold text-white mb-6 uppercase text-[11px] tracking-widest">Company</h3>
+                            <ul className="space-y-3 text-sm text-gray-400">
+                                <li><a href="/about" className="hover:text-blue-500 transition-colors">About Us</a></li>
+                                <li><a href="/contact" className="hover:text-blue-500 transition-colors">Contact</a></li>
+                                <li><a href="/admin/login" className="hover:text-blue-500 transition-colors">Staff Login</a></li>
+                            </ul>
+                        </div>
+                        <div>
+                            <h3 className="font-bold text-white mb-6 uppercase text-[11px] tracking-widest">Get in Touch</h3>
+                            <ul className="space-y-4 text-sm text-gray-400">
+                                <li className="flex items-start gap-3">
+                                    <MapPin className="w-5 h-5 text-blue-500 shrink-0 mt-0.5" />
+                                    <span className="leading-relaxed">
+                                        Jl. Raya Desa Sidaharja, Milangga, Rangkasbitung, Suradadi, Jawa Tengah 52182
+                                    </span>
+                                </li>
+                                <li className="flex items-center gap-3">
+                                    <Mail className="w-5 h-5 text-blue-500 shrink-0" />
+                                    <a href="mailto:hallo@anntix.id" className="hover:text-blue-500 transition-colors">hallo@anntix.id</a>
+                                </li>
+                                <li className="flex items-center gap-3">
+                                    <Phone className="w-5 h-5 text-blue-500 shrink-0" />
+                                    <a href="https://wa.me/6287750581589" className="hover:text-blue-500 transition-colors">0877-5058-1589</a>
+                                </li>
+                            </ul>
+                        </div>
                     </div>
                 </div>
 
-                <div className="border-t border-gray-800 pt-8 flex flex-col md:flex-row justify-between items-center gap-4">
-                    <p className="text-gray-500 text-sm">© {new Date().getFullYear()} EventHub. All rights reserved.</p>
-                    <p className="text-gray-600 text-xs">Built with ❤️ by Artisan IT</p>
+                <div className="border-t border-white/5 pt-8 flex flex-col md:flex-row justify-between items-center gap-4">
+                    <p className="text-gray-500 text-sm">© {new Date().getFullYear()} Anntix. All rights reserved.</p>
+                    <div className="flex gap-6 text-sm">
+                        <a href="/privacy" className="text-gray-500 hover:text-white transition-colors">Privacy Policy</a>
+                        <a href="/terms" className="text-gray-500 hover:text-white transition-colors">Terms & Conditions</a>
+                    </div>
                 </div>
             </div>
         </footer>
     );
 }
+

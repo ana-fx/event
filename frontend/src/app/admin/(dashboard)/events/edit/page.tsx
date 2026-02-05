@@ -128,16 +128,16 @@ function EventDetailsTab({ id, initialData, refresh }: { id: string, initialData
 
     return (
         <form onSubmit={handleSubmit} className="space-y-8 mt-6">
-            <div className="bg-white p-6 rounded-2xl border border-gray-100 shadow-sm space-y-6">
-                <h3 className="text-lg font-bold text-gray-900 border-b border-gray-100 pb-4">Basic Details</h3>
+            <div className="bg-(--card) p-6 rounded-2xl border border-(--card-border) shadow-sm space-y-6">
+                <h3 className="text-lg font-bold text-(--foreground) border-b border-(--card-border) pb-4">Basic Details</h3>
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                     <div className="md:col-span-2">
-                        <label className="block text-sm font-bold text-gray-700 mb-2">Event Name</label>
-                        <input type="text" required className="w-full px-4 py-2.5 rounded-lg border border-gray-200 focus:border-blue-500 focus:ring-2 focus:ring-blue-100 outline-none transition-all bg-white" value={formData.name} onChange={(e) => setFormData({ ...formData, name: e.target.value })} />
+                        <label className="block text-sm font-bold text-(--foreground) opacity-70 mb-2">Event Name</label>
+                        <input type="text" required className="w-full px-4 py-2.5 rounded-lg border border-(--card-border) focus:border-blue-500 focus:ring-2 focus:ring-blue-100 dark:focus:ring-blue-900/30 outline-none transition-all bg-(--background) text-(--foreground) placeholder:opacity-50" value={formData.name} onChange={(e) => setFormData({ ...formData, name: e.target.value })} />
                     </div>
                     <div>
-                        <label className="block text-sm font-bold text-gray-700 mb-2">Category</label>
-                        <input type="text" required className="w-full px-4 py-2.5 rounded-lg border border-gray-200 focus:border-blue-500 focus:ring-2 focus:ring-blue-100 outline-none transition-all bg-white" value={formData.category} onChange={(e) => setFormData({ ...formData, category: e.target.value })} />
+                        <label className="block text-sm font-bold text-(--foreground) opacity-70 mb-2">Category</label>
+                        <input type="text" required className="w-full px-4 py-2.5 rounded-lg border border-(--card-border) focus:border-blue-500 focus:ring-2 focus:ring-blue-100 dark:focus:ring-blue-900/30 outline-none transition-all bg-(--background) text-(--foreground) placeholder:opacity-50" value={formData.category} onChange={(e) => setFormData({ ...formData, category: e.target.value })} />
                     </div>
                     <div>
                         <Select
@@ -159,10 +159,10 @@ function EventDetailsTab({ id, initialData, refresh }: { id: string, initialData
                     </div>
 
                     <div className="md:col-span-2">
-                        <label className="block text-sm font-bold text-gray-700 mb-2">Maps Embed (HTML)</label>
+                        <label className="block text-sm font-bold text-(--foreground) opacity-70 mb-2">Maps Embed (HTML)</label>
                         <textarea
                             rows={3}
-                            className="w-full px-4 py-2.5 rounded-lg border border-gray-200 focus:border-blue-500 focus:ring-2 focus:ring-blue-100 outline-none transition-all font-mono text-xs"
+                            className="w-full px-4 py-2.5 rounded-lg border border-(--card-border) bg-(--background) text-(--foreground) focus:border-blue-500 focus:ring-2 focus:ring-blue-100 dark:focus:ring-blue-900/30 outline-none transition-all font-mono text-xs"
                             value={formData.google_map_embed || ''}
                             onChange={(e) => setFormData({ ...formData, google_map_embed: e.target.value })}
                             placeholder='<iframe src="..."></iframe>'
@@ -180,20 +180,20 @@ function EventDetailsTab({ id, initialData, refresh }: { id: string, initialData
             </div>
 
             {/* Media Section */}
-            <div className="bg-white p-6 rounded-2xl border border-gray-100 shadow-sm space-y-6">
-                <h3 className="text-lg font-bold text-gray-900 border-b border-gray-100 pb-4">Media</h3>
+            <div className="bg-(--card) p-6 rounded-2xl border border-(--card-border) shadow-sm space-y-6">
+                <h3 className="text-lg font-bold text-(--foreground) border-b border-(--card-border) pb-4">Media</h3>
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                     <div>
-                        <label className="block text-sm font-bold text-gray-700 mb-2">Banner</label>
-                        <div className="border-2 border-dashed border-gray-300 rounded-xl aspect-video relative flex items-center justify-center bg-gray-50 overflow-hidden">
+                        <label className="block text-sm font-bold text-(--foreground) opacity-70 mb-2">Banner</label>
+                        <div className="border-2 border-dashed border-(--card-border) rounded-xl aspect-video relative flex items-center justify-center bg-(--background) overflow-hidden">
                             {previews.banner && <img src={previews.banner} className="w-full h-full object-cover" />}
                             <input type="file" accept="image/*" className="absolute inset-0 opacity-0 cursor-pointer" onChange={(e) => handleFileChange(e, "banner")} />
                             {!previews.banner && <span className="text-gray-400">Upload Banner</span>}
                         </div>
                     </div>
                     <div>
-                        <label className="block text-sm font-bold text-gray-700 mb-2">Thumbnail</label>
-                        <div className="border-2 border-dashed border-gray-300 rounded-xl aspect-square w-48 relative flex items-center justify-center bg-gray-50 overflow-hidden">
+                        <label className="block text-sm font-bold text-(--foreground) opacity-70 mb-2">Thumbnail</label>
+                        <div className="border-2 border-dashed border-(--card-border) rounded-xl aspect-square w-48 relative flex items-center justify-center bg-(--background) overflow-hidden">
                             {previews.thumbnail && <img src={previews.thumbnail} className="w-full h-full object-cover" />}
                             <input type="file" accept="image/*" className="absolute inset-0 opacity-0 cursor-pointer" onChange={(e) => handleFileChange(e, "thumbnail")} />
                             {!previews.thumbnail && <span className="text-gray-400 text-sm">Upload</span>}
@@ -201,14 +201,14 @@ function EventDetailsTab({ id, initialData, refresh }: { id: string, initialData
                     </div>
 
                     <div>
-                        <label className="block text-sm font-bold text-gray-700 mb-2">Organizer Logo</label>
-                        <div className="border-2 border-dashed border-gray-300 rounded-xl aspect-square w-48 relative flex items-center justify-center bg-gray-50 hover:border-blue-500 transition-colors cursor-pointer overflow-hidden">
+                        <label className="block text-sm font-bold text-(--foreground) opacity-70 mb-2">Organizer Logo</label>
+                        <div className="border-2 border-dashed border-(--card-border) rounded-xl aspect-square w-48 relative flex items-center justify-center bg-(--background) hover:border-blue-500 transition-colors cursor-pointer overflow-hidden">
                             {previews.organizerLogo ? (
                                 <img src={previews.organizerLogo} alt="Preview" className="w-full h-full object-cover" />
                             ) : (
                                 <div className="text-center p-4">
                                     <Upload className="w-8 h-8 text-gray-400 mx-auto mb-2" />
-                                    <p className="text-sm text-gray-500">Upload logo</p>
+                                    <p className="text-sm text-gray-500 opacity-60">Upload logo</p>
                                 </div>
                             )}
                             <input
@@ -221,10 +221,10 @@ function EventDetailsTab({ id, initialData, refresh }: { id: string, initialData
                     </div>
 
                     <div className="md:col-span-2">
-                        <label className="block text-sm font-bold text-gray-700 mb-2">Organizer Name</label>
+                        <label className="block text-sm font-bold text-(--foreground) opacity-70 mb-2">Organizer Name</label>
                         <input
                             type="text"
-                            className="w-full px-4 py-2.5 rounded-lg border border-gray-200 focus:border-blue-500 focus:ring-2 focus:ring-blue-100 outline-none transition-all"
+                            className="w-full px-4 py-2.5 rounded-lg border border-(--card-border) bg-(--background) text-(--foreground) focus:border-blue-500 focus:ring-2 focus:ring-blue-100 dark:focus:ring-blue-900/30 outline-none transition-all"
                             value={formData.organizer_name || ''}
                             onChange={(e) => setFormData({ ...formData, organizer_name: e.target.value })}
                         />
@@ -233,28 +233,28 @@ function EventDetailsTab({ id, initialData, refresh }: { id: string, initialData
             </div>
 
             {/* Date & Location */}
-            <div className="bg-white p-6 rounded-2xl border border-gray-100 shadow-sm space-y-6">
-                <h3 className="text-lg font-bold text-gray-900 border-b border-gray-100 pb-4">Date & Location</h3>
+            <div className="bg-(--card) p-6 rounded-2xl border border-(--card-border) shadow-sm space-y-6">
+                <h3 className="text-lg font-bold text-(--foreground) border-b border-(--card-border) pb-4">Date & Location</h3>
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                     <div><DatePicker label="Start Date" value={formData.start_date} onChange={(val) => setFormData({ ...formData, start_date: val })} /></div>
                     <div><DatePicker label="End Date" value={formData.end_date} onChange={(val) => setFormData({ ...formData, end_date: val })} /></div>
-                    <div className="md:col-span-2"><label className="block text-sm font-bold text-gray-700 mb-2">Location</label><input type="text" className="w-full px-4 py-2.5 rounded-lg border border-gray-200 focus:border-blue-500 focus:ring-2 focus:ring-blue-100 outline-none transition-all bg-white" value={formData.location} onChange={(e) => setFormData({ ...formData, location: e.target.value })} /></div>
-                    <div><label className="block text-sm font-bold text-gray-700 mb-2">City</label><input type="text" className="w-full px-4 py-2.5 rounded-lg border border-gray-200 focus:border-blue-500 focus:ring-2 focus:ring-blue-100 outline-none transition-all bg-white" value={formData.city} onChange={(e) => setFormData({ ...formData, city: e.target.value })} /></div>
+                    <div className="md:col-span-2"><label className="block text-sm font-bold text-(--foreground) opacity-70 mb-2">Location</label><input type="text" className="w-full px-4 py-2.5 rounded-lg border border-(--card-border) focus:border-blue-500 focus:ring-2 focus:ring-blue-100 dark:focus:ring-blue-900/30 outline-none transition-all bg-(--background) text-(--foreground)" value={formData.location} onChange={(e) => setFormData({ ...formData, location: e.target.value })} /></div>
+                    <div><label className="block text-sm font-bold text-(--foreground) opacity-70 mb-2">City</label><input type="text" className="w-full px-4 py-2.5 rounded-lg border border-(--card-border) focus:border-blue-500 focus:ring-2 focus:ring-blue-100 dark:focus:ring-blue-900/30 outline-none transition-all bg-(--background) text-(--foreground)" value={formData.city} onChange={(e) => setFormData({ ...formData, city: e.target.value })} /></div>
 
                     <div>
-                        <label className="block text-sm font-bold text-gray-700 mb-2">Province</label>
+                        <label className="block text-sm font-bold text-(--foreground) opacity-70 mb-2">Province</label>
                         <input
                             type="text"
-                            className="w-full px-4 py-2.5 rounded-lg border border-gray-200 focus:border-blue-500 focus:ring-2 focus:ring-blue-100 outline-none transition-all"
+                            className="w-full px-4 py-2.5 rounded-lg border border-(--card-border) bg-(--background) text-(--foreground) focus:border-blue-500 focus:ring-2 focus:ring-blue-100 dark:focus:ring-blue-900/30 outline-none transition-all"
                             value={formData.province || ''}
                             onChange={(e) => setFormData({ ...formData, province: e.target.value })}
                         />
                     </div>
                     <div>
-                        <label className="block text-sm font-bold text-gray-700 mb-2">ZIP Code</label>
+                        <label className="block text-sm font-bold text-(--foreground) opacity-70 mb-2">ZIP Code</label>
                         <input
                             type="text"
-                            className="w-full px-4 py-2.5 rounded-lg border border-gray-200 focus:border-blue-500 focus:ring-2 focus:ring-blue-100 outline-none transition-all"
+                            className="w-full px-4 py-2.5 rounded-lg border border-(--card-border) bg-(--background) text-(--foreground) focus:border-blue-500 focus:ring-2 focus:ring-blue-100 dark:focus:ring-blue-900/30 outline-none transition-all"
                             value={formData.zip || ''}
                             onChange={(e) => setFormData({ ...formData, zip: e.target.value })}
                         />
@@ -263,23 +263,23 @@ function EventDetailsTab({ id, initialData, refresh }: { id: string, initialData
             </div>
 
             {/* 4. SEO */}
-            <div className="bg-white p-6 rounded-2xl border border-gray-100 shadow-sm space-y-6">
-                <h3 className="text-lg font-bold text-gray-900 border-b border-gray-100 pb-4">SEO Settings</h3>
+            <div className="bg-(--card) p-6 rounded-2xl border border-(--card-border) shadow-sm space-y-6">
+                <h3 className="text-lg font-bold text-(--foreground) border-b border-(--card-border) pb-4">SEO Settings</h3>
                 <div className="grid grid-cols-1 gap-6">
                     <div>
-                        <label className="block text-sm font-bold text-gray-700 mb-2">Meta Title</label>
+                        <label className="block text-sm font-bold text-(--foreground) opacity-70 mb-2">Meta Title</label>
                         <input
                             type="text"
-                            className="w-full px-4 py-2.5 rounded-lg border border-gray-200 focus:border-blue-500 focus:ring-2 focus:ring-blue-100 outline-none transition-all"
+                            className="w-full px-4 py-2.5 rounded-lg border border-(--card-border) bg-(--background) text-(--foreground) focus:border-blue-500 focus:ring-2 focus:ring-blue-100 dark:focus:ring-blue-900/30 outline-none transition-all"
                             value={formData.seo_title || ''}
                             onChange={(e) => setFormData({ ...formData, seo_title: e.target.value })}
                         />
                     </div>
                     <div>
-                        <label className="block text-sm font-bold text-gray-700 mb-2">Meta Description</label>
+                        <label className="block text-sm font-bold text-(--foreground) opacity-70 mb-2">Meta Description</label>
                         <textarea
                             rows={2}
-                            className="w-full px-4 py-2.5 rounded-lg border border-gray-200 focus:border-blue-500 focus:ring-2 focus:ring-blue-100 outline-none transition-all"
+                            className="w-full px-4 py-2.5 rounded-lg border border-(--card-border) bg-(--background) text-(--foreground) focus:border-blue-500 focus:ring-2 focus:ring-blue-100 dark:focus:ring-blue-900/30 outline-none transition-all"
                             value={formData.seo_description || ''}
                             onChange={(e) => setFormData({ ...formData, seo_description: e.target.value })}
                         ></textarea>
@@ -377,18 +377,18 @@ function AssignmentsTab({ eventId }: { eventId: string }) {
             {/* Scanners Section */}
             <div className="relative group">
                 <div className="absolute -inset-0.5 bg-linear-to-r from-blue-600 to-indigo-600 rounded-2xl opacity-20 group-hover:opacity-30 transition duration-500 blur-sm"></div>
-                <div className="relative bg-white p-8 rounded-2xl border border-gray-100 shadow-xl">
-                    <div className="flex justify-between items-center mb-6 border-b border-gray-100 pb-4">
+                <div className="relative bg-(--card) p-8 rounded-2xl border border-(--card-border) shadow-xl">
+                    <div className="flex justify-between items-center mb-6 border-b border-(--card-border) pb-4">
                         <div>
-                            <h3 className="text-xl font-bold text-gray-900">Assigned Scanners</h3>
+                            <h3 className="text-xl font-bold text-(--foreground)">Assigned Scanners</h3>
                             <p className="text-sm text-gray-500 mt-1">Manage personnel who can scan tickets for this event.</p>
                         </div>
-                        <div className="w-10 h-10 bg-blue-50 rounded-full flex items-center justify-center text-blue-600">
+                        <div className="w-10 h-10 bg-blue-500/10 rounded-full flex items-center justify-center text-blue-500">
                             <ScanBarcode className="w-5 h-5" />
                         </div>
                     </div>
 
-                    <div className="flex flex-col md:flex-row gap-4 mb-8 bg-gray-50 p-4 rounded-xl border border-gray-100">
+                    <div className="flex flex-col md:flex-row gap-4 mb-8 bg-(--background) p-4 rounded-xl border border-(--card-border)">
                         <div className="flex-1 relative">
                             <Select
                                 value={selectedScanner}
@@ -410,13 +410,13 @@ function AssignmentsTab({ eventId }: { eventId: string }) {
 
                     <div className="space-y-3">
                         {scanners.map(s => (
-                            <div key={s.id} className="flex items-center justify-between p-4 bg-white border border-gray-100 rounded-xl hover:border-blue-200 hover:shadow-md transition-all group/item">
+                            <div key={s.id} className="flex items-center justify-between p-4 bg-(--card) border border-(--card-border) rounded-xl hover:border-blue-200 dark:hover:border-blue-800 hover:shadow-md transition-all group/item">
                                 <div className="flex items-center gap-4">
                                     <div className="w-10 h-10 rounded-full bg-linear-to-br from-blue-500 to-indigo-600 flex items-center justify-center text-white font-bold shadow-md">
                                         {s.name.charAt(0)}
                                     </div>
                                     <div>
-                                        <p className="font-bold text-gray-900 group-hover/item:text-blue-600 transition-colors">{s.name}</p>
+                                        <p className="font-bold text-(--foreground) group-hover/item:text-blue-600 dark:group-hover/item:text-blue-400 transition-colors">{s.name}</p>
                                         <p className="text-sm text-gray-500">{s.email}</p>
                                     </div>
                                 </div>
@@ -430,9 +430,9 @@ function AssignmentsTab({ eventId }: { eventId: string }) {
                             </div>
                         ))}
                         {scanners.length === 0 && (
-                            <div className="text-center py-12 bg-gray-50/50 rounded-2xl border-2 border-dashed border-gray-200">
+                            <div className="text-center py-12 bg-(--background) rounded-2xl border-2 border-dashed border-(--card-border)">
                                 <ScanBarcode className="w-12 h-12 text-gray-300 mx-auto mb-3" />
-                                <p className="text-gray-500 font-medium">No scanners assigned yet.</p>
+                                <p className="text-gray-500 font-bold opacity-60">No scanners assigned yet.</p>
                                 <p className="text-xs text-gray-400 mt-1">Select a user above to get started.</p>
                             </div>
                         )}
@@ -443,25 +443,25 @@ function AssignmentsTab({ eventId }: { eventId: string }) {
             {/* Resellers Section */}
             <div className="relative group">
                 <div className="absolute -inset-0.5 bg-linear-to-r from-emerald-500 to-teal-500 rounded-2xl opacity-20 group-hover:opacity-30 transition duration-500 blur-sm"></div>
-                <div className="relative bg-white p-8 rounded-2xl border border-gray-100 shadow-xl">
-                    <div className="flex justify-between items-center mb-6 border-b border-gray-100 pb-4">
+                <div className="relative bg-(--card) p-8 rounded-2xl border border-(--card-border) shadow-xl">
+                    <div className="flex justify-between items-center mb-6 border-b border-(--card-border) pb-4">
                         <div>
-                            <h3 className="text-xl font-bold text-gray-900">Assigned Resellers</h3>
+                            <h3 className="text-xl font-bold text-(--foreground)">Assigned Resellers</h3>
                             <p className="text-sm text-gray-500 mt-1">Set up commission rates and assign resellers.</p>
                         </div>
-                        <div className="w-10 h-10 bg-emerald-50 rounded-full flex items-center justify-center text-emerald-600">
+                        <div className="w-10 h-10 bg-emerald-500/10 rounded-full flex items-center justify-center text-emerald-600">
                             <Store className="w-5 h-5" />
                         </div>
                     </div>
 
-                    <div className="bg-gray-50 p-6 rounded-2xl border border-gray-100 mb-8">
+                    <div className="bg-(--background) p-6 rounded-2xl border border-(--card-border) mb-8">
                         <div className="grid grid-cols-1 md:grid-cols-12 gap-4 items-end">
                             <div className="md:col-span-12 lg:col-span-5">
                                 <Select
                                     label="Select Reseller"
                                     value={selectedReseller}
                                     onChange={(val) => setSelectedReseller(val)}
-                                    className="py-3 rounded-xl border-emerald-200 focus:border-emerald-500"
+                                    className="py-3 rounded-xl border-emerald-200 dark:border-emerald-900/50 focus:border-emerald-500"
                                     placeholder="Choose a partner..."
                                     options={availableResellersList.map(u => ({ label: `${u.name} (${u.email})`, value: String(u.id) }))}
                                 />
@@ -472,7 +472,7 @@ function AssignmentsTab({ eventId }: { eventId: string }) {
                                     label="Type"
                                     value={commissionType}
                                     onChange={(val) => setCommissionType(val)}
-                                    className="py-3 rounded-xl border-emerald-200 focus:border-emerald-500"
+                                    className="py-3 rounded-xl border-emerald-200 dark:border-emerald-900/50 focus:border-emerald-500"
                                     options={[
                                         { label: "Fixed Amount (Rp)", value: "fixed" },
                                         { label: "Percentage (%)", value: "percent" }
@@ -484,7 +484,7 @@ function AssignmentsTab({ eventId }: { eventId: string }) {
                                 <label className="block text-xs font-bold text-gray-500 uppercase tracking-wider mb-2 ml-1">Commission</label>
                                 <input
                                     type="number"
-                                    className="w-full px-4 py-3 rounded-xl border border-gray-200 focus:border-emerald-500 focus:ring-4 focus:ring-emerald-500/10 outline-none transition-all bg-white font-medium"
+                                    className="w-full px-4 py-3 rounded-xl border border-(--card-border) focus:border-emerald-500 focus:ring-4 focus:ring-emerald-500/10 outline-none transition-all bg-(--background) text-(--foreground) font-medium"
                                     value={commissionValue}
                                     min="0"
                                     onChange={e => setCommissionValue(e.target.value)}
@@ -505,14 +505,14 @@ function AssignmentsTab({ eventId }: { eventId: string }) {
 
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                         {resellers.map(r => (
-                            <div key={r.id} className="relative p-5 bg-white border border-gray-100 rounded-2xl hover:border-emerald-200 hover:shadow-lg transition-all group/card">
+                            <div key={r.id} className="relative p-5 bg-(--card) border border-(--card-border) rounded-2xl hover:border-emerald-200 hover:shadow-lg transition-all group/card">
                                 <div className="flex justify-between items-start mb-3">
                                     <div className="flex items-center gap-3">
-                                        <div className="w-10 h-10 rounded-full bg-emerald-100 text-emerald-600 flex items-center justify-center font-bold">
+                                        <div className="w-10 h-10 rounded-full bg-emerald-500/10 text-emerald-600 flex items-center justify-center font-bold">
                                             {r.name.charAt(0)}
                                         </div>
                                         <div>
-                                            <p className="font-bold text-gray-900 line-clamp-1">{r.name}</p>
+                                            <p className="font-bold text-(--foreground) line-clamp-1">{r.name}</p>
                                             <p className="text-xs text-gray-500">{r.email}</p>
                                         </div>
                                     </div>
@@ -523,18 +523,18 @@ function AssignmentsTab({ eventId }: { eventId: string }) {
                                         <Trash className="w-4 h-4" />
                                     </button>
                                 </div>
-                                <div className="flex items-center gap-2 bg-emerald-50/50 p-2 rounded-lg border border-emerald-100/50">
-                                    <span className="text-xs font-bold text-emerald-800 uppercase tracking-wide">Commission:</span>
-                                    <span className="text-sm font-bold text-emerald-600">
+                                <div className="flex items-center gap-2 bg-emerald-500/5 p-2 rounded-lg border border-emerald-500/10">
+                                    <span className="text-xs font-bold text-emerald-800 dark:text-emerald-400 uppercase tracking-wide">Commission:</span>
+                                    <span className="text-sm font-bold text-emerald-600 dark:text-emerald-400">
                                         {r.commission_type === 'fixed' ? 'Rp ' : ''}{new Intl.NumberFormat('id-ID').format(r.commission_value)}{r.commission_type === 'percent' ? '%' : ''}
                                     </span>
                                 </div>
                             </div>
                         ))}
                         {resellers.length === 0 && (
-                            <div className="col-span-full text-center py-12 bg-gray-50/50 rounded-2xl border-2 border-dashed border-gray-200">
+                            <div className="col-span-full text-center py-12 bg-(--background) rounded-2xl border-2 border-dashed border-(--card-border)">
                                 <Store className="w-12 h-12 text-gray-300 mx-auto mb-3" />
-                                <p className="text-gray-500 font-medium">No resellers assigned yet.</p>
+                                <p className="text-gray-500 font-bold opacity-60">No resellers assigned yet.</p>
                                 <p className="text-xs text-gray-400 mt-1">Add users above to start tracking commissions.</p>
                             </div>
                         )}
@@ -620,7 +620,7 @@ function TicketsTab({ eventId }: { eventId: string }) {
     return (
         <div className="space-y-6 mt-8">
             <div className="flex justify-between items-center">
-                <h3 className="text-xl font-bold text-gray-900">Ticket Configuration</h3>
+                <h3 className="text-xl font-bold text-(--foreground)">Ticket Configuration</h3>
                 <button onClick={() => handleOpenModal()} className="px-4 py-2 bg-blue-600 text-white font-bold rounded-lg hover:bg-blue-700 flex items-center gap-2">
                     <Plus className="w-5 h-5" /> Add Ticket
                 </button>
@@ -629,24 +629,24 @@ function TicketsTab({ eventId }: { eventId: string }) {
             {loading ? <div>Loading tickets...</div> : (
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
                     {tickets.map(t => (
-                        <div key={t.id} className="bg-white border border-gray-100 rounded-xl p-6 hover:shadow-lg transition-all relative group">
+                        <div key={t.id} className="bg-(--card) border border-(--card-border) rounded-xl p-6 hover:shadow-lg transition-all relative group">
                             <div className="flex justify-between items-start mb-4">
                                 <div>
-                                    <h4 className="font-bold text-lg text-gray-900">{t.name}</h4>
-                                    <span className={`text-xs px-2 py-1 rounded-full font-bold ${t.is_active ? 'bg-green-100 text-green-700' : 'bg-red-100 text-red-700'}`}>
+                                    <h4 className="font-bold text-lg text-(--foreground)">{t.name}</h4>
+                                    <span className={`text-xs px-2 py-1 rounded-full font-bold ${t.is_active ? 'bg-green-500/10 text-green-600' : 'bg-red-500/10 text-red-600'}`}>
                                         {t.is_active ? 'Active' : 'Inactive'}
                                     </span>
                                 </div>
                                 <div className="flex gap-2 opacity-0 group-hover:opacity-100 transition-opacity">
-                                    <button onClick={() => handleOpenModal(t)} className="p-2 text-blue-600 hover:bg-blue-50 rounded-lg">Edit</button>
-                                    <button onClick={() => handleDelete(t.id)} className="p-2 text-red-600 hover:bg-red-50 rounded-lg"><Trash className="w-4 h-4" /></button>
+                                    <button onClick={() => handleOpenModal(t)} className="p-2 text-blue-600 hover:bg-blue-500/10 rounded-lg">Edit</button>
+                                    <button onClick={() => handleDelete(t.id)} className="p-2 text-red-600 hover:bg-red-500/10 rounded-lg"><Trash className="w-4 h-4" /></button>
                                 </div>
                             </div>
-                            <div className="space-y-2 text-sm text-gray-600">
-                                <div className="flex justify-between"><span>Price:</span> <span className="font-bold text-gray-900">Rp {new Intl.NumberFormat('id-ID').format(t.price)}</span></div>
-                                <div className="flex justify-between"><span>Quota:</span> <span className="font-bold">{t.quota}</span></div>
-                                <div className="flex justify-between"><span>Max/User:</span> <span className="font-bold">{t.max_purchase_per_user}</span></div>
-                                <div className="border-t pt-2 mt-2 text-xs text-gray-400">
+                            <div className="space-y-2 text-sm text-gray-500">
+                                <div className="flex justify-between"><span>Price:</span> <span className="font-bold text-(--foreground)">Rp {new Intl.NumberFormat('id-ID').format(t.price)}</span></div>
+                                <div className="flex justify-between"><span>Quota:</span> <span className="font-bold text-(--foreground) opacity-80">{t.quota}</span></div>
+                                <div className="flex justify-between"><span>Max/User:</span> <span className="font-bold text-(--foreground) opacity-80">{t.max_purchase_per_user}</span></div>
+                                <div className="border-t border-(--card-border) pt-2 mt-2 text-xs text-gray-400">
                                     {new Date(t.start_date).toLocaleDateString()} - {new Date(t.end_date).toLocaleDateString()}
                                 </div>
                             </div>
@@ -657,23 +657,23 @@ function TicketsTab({ eventId }: { eventId: string }) {
             )}
 
             {isModalOpen && (
-                <div className="fixed inset-0 bg-black/50 z-50 flex items-center justify-center p-4">
-                    <div className="bg-white rounded-2xl w-full max-w-2xl max-h-[90vh] overflow-y-auto">
-                        <div className="p-6 border-b border-gray-100 flex justify-between items-center bg-gray-50 sticky top-0 z-10">
-                            <h3 className="font-bold text-xl">{editingTicket ? 'Edit Ticket' : 'Create Ticket'}</h3>
-                            <button onClick={() => setIsModalOpen(false)} className="text-gray-400 hover:text-gray-600">Close</button>
+                <div className="fixed inset-0 bg-black/60 backdrop-blur-sm z-50 flex items-center justify-center p-4">
+                    <div className="bg-(--card) border border-(--card-border) rounded-2xl w-full max-w-2xl max-h-[90vh] overflow-y-auto shadow-2xl">
+                        <div className="p-6 border-b border-(--card-border) flex justify-between items-center bg-(--background) sticky top-0 z-10">
+                            <h3 className="font-bold text-xl text-(--foreground)">{editingTicket ? 'Edit Ticket' : 'Create Ticket'}</h3>
+                            <button onClick={() => setIsModalOpen(false)} className="text-gray-400 hover:text-(--foreground) transition-colors">Close</button>
                         </div>
                         <form onSubmit={handleSubmit} className="p-6 space-y-4">
-                            <div><label className="block text-sm font-bold mb-1">Name</label><input required className="w-full border rounded-lg px-4 py-2" value={formData.name} onChange={e => setFormData({ ...formData, name: e.target.value })} /></div>
+                            <div><label className="block text-sm font-bold text-(--foreground) opacity-70 mb-1">Name</label><input required className="w-full border border-(--card-border) rounded-lg px-4 py-2 bg-(--background) text-(--foreground) outline-none focus:border-blue-500" value={formData.name} onChange={e => setFormData({ ...formData, name: e.target.value })} /></div>
                             <div className="grid grid-cols-2 gap-4">
-                                <div><label className="block text-sm font-bold mb-1">Price (Rp)</label><input type="number" required className="w-full border rounded-lg px-4 py-2" value={formData.price} onChange={e => setFormData({ ...formData, price: Number(e.target.value) })} /></div>
-                                <div><label className="block text-sm font-bold mb-1">Quota</label><input type="number" required className="w-full border rounded-lg px-4 py-2" value={formData.quota} onChange={e => setFormData({ ...formData, quota: Number(e.target.value) })} /></div>
+                                <div><label className="block text-sm font-bold text-(--foreground) opacity-70 mb-1">Price (Rp)</label><input type="number" required className="w-full border border-(--card-border) rounded-lg px-4 py-2 bg-(--background) text-(--foreground) outline-none focus:border-blue-500" value={formData.price} onChange={e => setFormData({ ...formData, price: Number(e.target.value) })} /></div>
+                                <div><label className="block text-sm font-bold text-(--foreground) opacity-70 mb-1">Quota</label><input type="number" required className="w-full border border-(--card-border) rounded-lg px-4 py-2 bg-(--background) text-(--foreground) outline-none focus:border-blue-500" value={formData.quota} onChange={e => setFormData({ ...formData, quota: Number(e.target.value) })} /></div>
                             </div>
                             <div className="grid grid-cols-2 gap-4">
-                                <div><label className="block text-sm font-bold mb-1">Max Per User</label><input type="number" required className="w-full border rounded-lg px-4 py-2" value={formData.max_purchase_per_user} onChange={e => setFormData({ ...formData, max_purchase_per_user: Number(e.target.value) })} /></div>
+                                <div><label className="block text-sm font-bold text-(--foreground) opacity-70 mb-1">Max Per User</label><input type="number" required className="w-full border border-(--card-border) rounded-lg px-4 py-2 bg-(--background) text-(--foreground) outline-none focus:border-blue-500" value={formData.max_purchase_per_user} onChange={e => setFormData({ ...formData, max_purchase_per_user: Number(e.target.value) })} /></div>
                                 <div className="flex items-center gap-2 pt-6">
-                                    <input type="checkbox" checked={formData.is_active} onChange={e => setFormData({ ...formData, is_active: e.target.checked })} className="w-5 h-5 rounded border-gray-300 text-blue-600 focus:ring-blue-500" />
-                                    <label className="font-bold text-gray-700">Active</label>
+                                    <input type="checkbox" checked={formData.is_active} onChange={e => setFormData({ ...formData, is_active: e.target.checked })} className="w-5 h-5 rounded border-(--card-border) text-blue-600 focus:ring-blue-500 bg-(--background)" />
+                                    <label className="font-bold text-(--foreground) opacity-70">Active</label>
                                 </div>
                             </div>
                             <div className="grid grid-cols-2 gap-4">
@@ -722,9 +722,9 @@ function EditEventWrapper() {
     return (
         <div className="max-w-5xl mx-auto pb-20">
             <div className="flex items-center gap-4 mb-6">
-                <Link href="/admin/events" className="p-2 hover:bg-gray-100 rounded-lg text-gray-500"><ChevronLeft className="w-5 h-5" /></Link>
+                <Link href="/admin/events" className="p-2 hover:bg-(--card) border border-transparent hover:border-(--card-border) rounded-lg text-gray-500 transition-all"><ChevronLeft className="w-5 h-5" /></Link>
                 <div>
-                    <h2 className="text-2xl font-bold text-gray-900">Edit Event: {eventData?.name}</h2>
+                    <h2 className="text-2xl font-bold text-(--foreground)">Edit Event: {eventData?.name}</h2>
                     <p className="text-gray-500 text-sm">Manage details and assignments.</p>
                 </div>
             </div>

@@ -3,7 +3,6 @@ package reseller
 import (
 	"database/sql"
 	"encoding/json"
-	"event-backend/internal/middleware"
 	"event-backend/internal/models"
 	"fmt"
 	"math/rand"
@@ -17,7 +16,7 @@ func GetStart(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	userID := r.Context().Value(middleware.UserIDKey).(int)
+	userID := r.Context().Value(models.UserIDKey).(int)
 
 	balance, err := models.GetResellerBalance(userID)
 	if err != nil {
@@ -46,7 +45,7 @@ func CreateTransaction(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	userID := r.Context().Value(middleware.UserIDKey).(int)
+	userID := r.Context().Value(models.UserIDKey).(int)
 
 	var req struct {
 		EventID  int    `json:"event_id"`

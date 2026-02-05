@@ -4,7 +4,7 @@ import (
 	"database/sql"
 	"encoding/json"
 	"event-backend/internal/database"
-	"event-backend/internal/middleware"
+	"event-backend/internal/models"
 	"net/http"
 	"time"
 )
@@ -76,7 +76,7 @@ func Redeem(w http.ResponseWriter, r *http.Request) {
 	}
 
 	// Validate Auth User (Scanner)
-	scannerID, ok := r.Context().Value(middleware.UserIDKey).(int)
+	scannerID, ok := r.Context().Value(models.UserIDKey).(int)
 	if !ok {
 		http.Error(w, "Unauthorized", http.StatusUnauthorized)
 		return

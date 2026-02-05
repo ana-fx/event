@@ -3,6 +3,8 @@ package public
 import (
 	"encoding/json"
 	"event-backend/internal/database"
+	"event-backend/internal/models"
+	"event-backend/internal/utils"
 	"log"
 	"net/http"
 	"time"
@@ -49,23 +51,37 @@ func PaymentWebhook(w http.ResponseWriter, r *http.Request) {
 	}
 
 	// Update Transaction
-	// Assuming OrderID is likely something we can use to look up.
-	// In checkout.go we set Code = "ANNTIX-..."
-	// We should look up by Code.
-
 	query := `UPDATE transactions SET status=$1, updated_at=$2 WHERE code=$3`
-	res, err := database.DB.Exec(query, newStatus, time.Now(), notif.OrderID)
+	_, err := database.DB.Exec(query, newStatus, time.Now(), notif.OrderID)
 	if err != nil {
 		log.Printf("Failed to update transaction status: %v", err)
 		http.Error(w, "Database error", http.StatusInternalServerError)
 		return
 	}
 
-	rows, _ := res.RowsAffected()
-	if rows == 0 {
-		log.Printf("Transaction not found for order_id: %s", notif.OrderID)
-		http.Error(w, "Transaction not found", http.StatusNotFound)
-		return
+	// 5. If Paid, Send Email
+	if newStatus == "paid" {
+		go func(code string) {
+			trx, err := models.GetTransactionByCode(code)
+			if err != nil {
+				log.Printf("Email error: failed to fetch transaction %s: %v", code, err)
+				return
+			}
+
+			event, err := models.GetEventByID(trx.EventID)
+			if err != nil {
+				log.Printf("Email error: failed to fetch event %d: %v", trx.EventID, err)
+				return
+			}
+
+			body := utils.GetTicketTemplate(trx.Name, event.Name, trx.Code)
+			err = utils.SendEmail(trx.Email, "Your Ticket: "+event.Name, body)
+			if err != nil {
+				log.Printf("Email error: failed to send to %s: %v", trx.Email, err)
+			} else {
+				log.Printf("Email sent successfully to %s for order %s", trx.Email, code)
+			}
+		}(notif.OrderID)
 	}
 
 	w.WriteHeader(http.StatusOK)

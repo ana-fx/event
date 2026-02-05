@@ -30,6 +30,7 @@ type Event struct {
 	ResellerFeeValue       float64   `json:"reseller_fee_value"`
 	OrganizerFeeOnlineType string    `json:"organizer_fee_online_type"`
 	OrganizerFeeOnline     float64   `json:"organizer_fee_online"`
+	MinPrice               float64   `json:"min_price"`
 	CreatedAt              time.Time `json:"created_at"`
 	UpdatedAt              time.Time `json:"updated_at"`
 }
@@ -150,10 +151,13 @@ func GetEventByID(id int) (*Event, error) {
 
 func GetPublishedEvents() ([]Event, error) {
 	rows, err := database.DB.Query(`
-		SELECT id, name, slug, category, status, start_date, end_date, description, location, city, thumbnail_path, created_at 
-		FROM events 
-		WHERE status = 'published' AND deleted_at IS NULL 
-		ORDER BY created_at DESC
+		SELECT e.id, e.name, e.slug, e.category, e.status, e.start_date, e.end_date, e.description, e.location, e.city, e.thumbnail_path, e.created_at,
+		       COALESCE(MIN(t.price), 0) as min_price
+		FROM events e
+		LEFT JOIN tickets t ON e.id = t.event_id AND t.deleted_at IS NULL
+		WHERE e.status = 'published' AND e.deleted_at IS NULL 
+		GROUP BY e.id
+		ORDER BY e.created_at DESC
 	`)
 	if err != nil {
 		return nil, err
@@ -167,6 +171,7 @@ func GetPublishedEvents() ([]Event, error) {
 			&e.ID, &e.Name, &e.Slug, &e.Category, &e.Status,
 			&e.StartDate, &e.EndDate, &e.Description,
 			&e.Location, &e.City, &e.ThumbnailPath, &e.CreatedAt,
+			&e.MinPrice,
 		)
 		if err != nil {
 			return nil, err

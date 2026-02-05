@@ -57,7 +57,7 @@ export function Select({
     return (
         <div className={cn("space-y-2", containerClassName)} ref={containerRef}>
             {label && (
-                <label className="block text-sm font-bold text-gray-700">
+                <label className="block text-sm font-bold text-(--foreground) opacity-70">
                     {label}
                 </label>
             )}
@@ -67,9 +67,9 @@ export function Select({
                     onClick={() => !disabled && setIsOpen(!isOpen)}
                     disabled={disabled}
                     className={cn(
-                        "w-full text-left px-4 py-2.5 rounded-lg border border-gray-200 bg-white text-gray-900 font-medium transition-all flex items-center justify-between outline-none",
-                        "hover:border-blue-400 focus:ring-2 focus:ring-blue-100",
-                        disabled ? "opacity-50 cursor-not-allowed bg-gray-50" : "cursor-pointer",
+                        "w-full text-left px-4 py-2.5 rounded-lg border border-(--card-border) bg-(--card) text-(--foreground) font-medium transition-all flex items-center justify-between outline-none",
+                        "hover:border-blue-400 focus:ring-2 focus:ring-blue-100 dark:focus:ring-blue-900/30",
+                        disabled ? "opacity-50 cursor-not-allowed bg-(--background)" : "cursor-pointer",
                         error ? "border-red-500 focus:ring-red-100" : "",
                         className
                     )}
@@ -83,7 +83,7 @@ export function Select({
                 {/* Dropdown Menu */}
                 <div
                     className={cn(
-                        "absolute z-50 w-full mt-2 bg-white/90 backdrop-blur-xl border border-gray-100 rounded-xl shadow-xl overflow-hidden transition-all duration-200 origin-top",
+                        "absolute z-50 w-full mt-2 bg-(--card)/90 backdrop-blur-xl border border-(--card-border) rounded-xl shadow-xl overflow-hidden transition-all duration-200 origin-top",
                         isOpen ? "opacity-100 scale-100 translate-y-0" : "opacity-0 scale-95 -translate-y-2 pointer-events-none"
                     )}
                 >
@@ -100,8 +100,8 @@ export function Select({
                                     className={cn(
                                         "px-4 py-2.5 text-sm font-medium cursor-pointer flex items-center justify-between transition-colors",
                                         option.value === value
-                                            ? "bg-blue-50 text-blue-600"
-                                            : "text-gray-700 hover:bg-gray-50 hover:text-gray-900"
+                                            ? "bg-blue-600/10 text-blue-600 dark:text-blue-400"
+                                            : "text-(--foreground) hover:bg-(--background) opacity-80 hover:opacity-100"
                                     )}
                                 >
                                     <span>{option.label}</span>

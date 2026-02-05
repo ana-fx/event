@@ -35,24 +35,24 @@ export default function SettingsPage() {
 
     return (
         <div className="max-w-2xl">
-            <h2 className="text-2xl font-bold text-gray-900 mb-2">General Settings</h2>
+            <h2 className="text-2xl font-bold text-(--foreground) mb-2">General Settings</h2>
             <p className="text-gray-500 text-sm mb-6">Configure global application settings.</p>
 
-            <form onSubmit={handleSave} className="bg-white p-6 rounded-xl border border-gray-100 shadow-sm space-y-6">
+            <form onSubmit={handleSave} className="bg-(--card) p-6 rounded-xl border border-(--card-border) shadow-sm space-y-6">
 
                 <div>
-                    <h3 className="font-bold text-gray-900 mb-4 pb-2 border-b border-gray-100">Site Identity</h3>
+                    <h3 className="font-bold text-(--foreground) mb-4 pb-2 border-b border-(--card-border)">Site Identity</h3>
                     <div className="space-y-4">
                         <div>
-                            <label className="block text-sm font-bold text-gray-700 mb-2">Site Name</label>
-                            <input type="text" className="w-full px-4 py-2.5 rounded-lg border border-gray-200 focus:border-blue-500 focus:ring-2 focus:ring-blue-100 outline-none transition-all bg-white"
+                            <label className="block text-sm font-bold text-(--foreground) opacity-70 mb-2">Site Name</label>
+                            <input type="text" className="w-full px-4 py-2.5 rounded-lg border border-(--card-border) focus:border-blue-500 focus:ring-4 focus:ring-blue-500/10 outline-none transition-all bg-(--background) text-(--foreground)"
                                 value={settings["site_name"] || ""}
                                 onChange={e => handleChange("site_name", e.target.value)}
                             />
                         </div>
                         <div>
-                            <label className="block text-sm font-bold text-gray-700 mb-2">Support Email</label>
-                            <input type="email" className="w-full px-4 py-2.5 rounded-lg border border-gray-200 focus:border-blue-500 focus:ring-2 focus:ring-blue-100 outline-none transition-all bg-white"
+                            <label className="block text-sm font-bold text-(--foreground) opacity-70 mb-2">Support Email</label>
+                            <input type="email" className="w-full px-4 py-2.5 rounded-lg border border-(--card-border) focus:border-blue-500 focus:ring-4 focus:ring-blue-500/10 outline-none transition-all bg-(--background) text-(--foreground)"
                                 value={settings["support_email"] || ""}
                                 onChange={e => handleChange("support_email", e.target.value)}
                             />
@@ -61,18 +61,18 @@ export default function SettingsPage() {
                 </div>
 
                 <div>
-                    <h3 className="font-bold text-gray-900 mb-4 pb-2 border-b border-gray-100">Social Media</h3>
+                    <h3 className="font-bold text-(--foreground) mb-4 pb-2 border-b border-(--card-border)">Social Media</h3>
                     <div className="space-y-4">
                         <div>
-                            <label className="block text-sm font-bold text-gray-700 mb-2">Instagram URL</label>
-                            <input type="url" className="w-full px-4 py-2.5 rounded-lg border border-gray-200 focus:border-blue-500 focus:ring-2 focus:ring-blue-100 outline-none transition-all bg-white"
+                            <label className="block text-sm font-bold text-(--foreground) opacity-70 mb-2">Instagram URL</label>
+                            <input type="url" className="w-full px-4 py-2.5 rounded-lg border border-(--card-border) focus:border-blue-500 focus:ring-4 focus:ring-blue-500/10 outline-none transition-all bg-(--background) text-(--foreground)"
                                 value={settings["instagram_url"] || ""}
                                 onChange={e => handleChange("instagram_url", e.target.value)}
                             />
                         </div>
                         <div>
-                            <label className="block text-sm font-bold text-gray-700 mb-2">Facebook URL</label>
-                            <input type="url" className="w-full px-4 py-2.5 rounded-lg border border-gray-200 focus:border-blue-500 focus:ring-2 focus:ring-blue-100 outline-none transition-all bg-white"
+                            <label className="block text-sm font-bold text-(--foreground) opacity-70 mb-2">Facebook URL</label>
+                            <input type="url" className="w-full px-4 py-2.5 rounded-lg border border-(--card-border) focus:border-blue-500 focus:ring-4 focus:ring-blue-500/10 outline-none transition-all bg-(--background) text-(--foreground)"
                                 value={settings["facebook_url"] || ""}
                                 onChange={e => handleChange("facebook_url", e.target.value)}
                             />

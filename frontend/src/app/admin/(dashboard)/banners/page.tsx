@@ -45,7 +45,7 @@ export default function BannersPage() {
         <div className="space-y-6">
             <div className="flex justify-between items-center">
                 <div>
-                    <h2 className="text-2xl font-bold text-gray-900">Banners</h2>
+                    <h2 className="text-2xl font-bold text-(--foreground)">Banners</h2>
                     <p className="text-gray-500 text-sm">Manage homepage carousel banners.</p>
                 </div>
                 <button
@@ -59,7 +59,7 @@ export default function BannersPage() {
 
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
                 {banners.map(banner => (
-                    <div key={banner.id} className="bg-white rounded-xl border border-gray-100 shadow-sm overflow-hidden group">
+                    <div key={banner.id} className="bg-(--card) rounded-xl border border-(--card-border) shadow-sm overflow-hidden group">
                         <div className="relative aspect-video bg-gray-50">
                             {banner.image_path ? (
                                 <img
@@ -77,7 +77,7 @@ export default function BannersPage() {
                             </div>
                         </div>
                         <div className="p-4">
-                            <h3 className="font-bold text-gray-900 truncate">{banner.title}</h3>
+                            <h3 className="font-bold text-(--foreground) truncate">{banner.title}</h3>
                             {banner.link_url && (
                                 <div className="flex items-center text-sm text-blue-600 mt-1 truncate">
                                     <LinkIcon className="w-3 h-3 mr-1" />
@@ -90,7 +90,7 @@ export default function BannersPage() {
             </div>
 
             {banners.length === 0 && !loading && (
-                <div className="text-center py-12 bg-gray-50 rounded-xl border border-dashed border-gray-200">
+                <div className="text-center py-12 bg-(--background) rounded-xl border border-dashed border-(--card-border)">
                     <ImageIcon className="w-12 h-12 mx-auto text-gray-300 mb-2" />
                     <p className="text-gray-500">No banners found. Create your first one!</p>
                 </div>
@@ -138,21 +138,21 @@ function CreateBannerModal({ onClose, onSuccess }: { onClose: () => void, onSucc
     };
 
     return (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-4">
-            <div className="bg-white rounded-2xl w-full max-w-md p-6 shadow-xl animate-in fade-in zoom-in duration-200">
-                <h3 className="text-lg font-bold mb-4">Add New Banner</h3>
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-sm p-4">
+            <div className="bg-(--card) border border-(--card-border) rounded-2xl w-full max-w-md p-6 shadow-xl animate-in fade-in zoom-in duration-200">
+                <h3 className="text-lg font-bold text-(--foreground) mb-4">Add New Banner</h3>
                 <form onSubmit={handleSubmit} className="space-y-4">
                     <div>
-                        <label className="block text-sm font-bold text-gray-700 mb-2">Title</label>
-                        <input type="text" required className="w-full px-4 py-2.5 rounded-lg border border-gray-200 focus:border-blue-500 focus:ring-2 focus:ring-blue-100 outline-none transition-all bg-white" value={title} onChange={e => setTitle(e.target.value)} />
+                        <label className="block text-sm font-bold text-(--foreground) opacity-70 mb-2">Title</label>
+                        <input type="text" required className="w-full px-4 py-2.5 rounded-lg border border-(--card-border) focus:border-blue-500 focus:ring-4 focus:ring-blue-500/10 outline-none transition-all bg-(--background) text-(--foreground)" value={title} onChange={e => setTitle(e.target.value)} />
                     </div>
                     <div>
-                        <label className="block text-sm font-bold text-gray-700 mb-2">Link URL (Optional)</label>
-                        <input type="url" className="w-full px-4 py-2.5 rounded-lg border border-gray-200 focus:border-blue-500 focus:ring-2 focus:ring-blue-100 outline-none transition-all bg-white" value={link} onChange={e => setLink(e.target.value)} placeholder="https://..." />
+                        <label className="block text-sm font-bold text-(--foreground) opacity-70 mb-2">Link URL (Optional)</label>
+                        <input type="url" className="w-full px-4 py-2.5 rounded-lg border border-(--card-border) focus:border-blue-500 focus:ring-4 focus:ring-blue-500/10 outline-none transition-all bg-(--background) text-(--foreground)" value={link} onChange={e => setLink(e.target.value)} placeholder="https://..." />
                     </div>
                     <div>
-                        <label className="block text-sm font-bold text-gray-700 mb-2">Image</label>
-                        <div className="border-2 border-dashed border-gray-300 rounded-xl aspect-video relative flex items-center justify-center bg-gray-50 overflow-hidden cursor-pointer hover:bg-gray-100 transition-colors">
+                        <label className="block text-sm font-bold text-(--foreground) opacity-70 mb-2">Image</label>
+                        <div className="border-2 border-dashed border-(--card-border) rounded-xl aspect-video relative flex items-center justify-center bg-(--background) overflow-hidden cursor-pointer hover:bg-black/5 dark:hover:bg-white/5 transition-colors">
                             {preview ? (
                                 <img src={preview} className="w-full h-full object-cover" />
                             ) : (
@@ -165,7 +165,7 @@ function CreateBannerModal({ onClose, onSuccess }: { onClose: () => void, onSucc
                         </div>
                     </div>
                     <div className="flex gap-3 pt-2">
-                        <button type="button" onClick={onClose} className="flex-1 py-2.5 rounded-lg border font-medium hover:bg-gray-50">Cancel</button>
+                        <button type="button" onClick={onClose} className="flex-1 py-2.5 rounded-lg border border-(--card-border) font-bold text-(--foreground) hover:bg-(--background) transition-all">Cancel</button>
                         <button type="submit" disabled={loading} className="flex-1 py-2.5 bg-blue-600 text-white rounded-lg font-bold hover:bg-blue-700 disabled:opacity-70 flex justify-center items-center gap-2">
                             {loading && <Loader2 className="w-4 h-4 animate-spin" />} Create
                         </button>

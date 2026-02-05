@@ -67,12 +67,12 @@ export default function ResellerList() {
         <div className="space-y-6">
             <div className="flex justify-between items-center">
                 <div>
-                    <h2 className="text-2xl font-bold text-gray-900">Resellers</h2>
+                    <h2 className="text-2xl font-bold text-(--foreground)">Resellers</h2>
                     <p className="text-gray-500 text-sm">Manage reseller accounts and deposits.</p>
                 </div>
             </div>
 
-            <div className="bg-white p-4 rounded-xl border border-gray-100 shadow-sm max-w-md">
+            <div className="bg-(--card) p-4 rounded-xl border border-(--card-border) shadow-sm max-w-md">
                 <div className="relative">
                     <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400" />
                     <input
@@ -80,28 +80,28 @@ export default function ResellerList() {
                         placeholder="Search resellers..."
                         value={search}
                         onChange={(e) => setSearch(e.target.value)}
-                        className="w-full pl-10 pr-4 py-2 rounded-lg border border-gray-200 focus:border-blue-500 outline-none"
+                        className="w-full pl-10 pr-4 py-2 rounded-lg border border-(--card-border) bg-(--background) text-(--foreground) focus:border-blue-500 outline-none transition-all placeholder:opacity-50"
                     />
                 </div>
             </div>
 
-            <div className="bg-white rounded-xl border border-gray-100 shadow-sm overflow-hidden">
+            <div className="bg-(--card) rounded-xl border border-(--card-border) shadow-sm overflow-hidden">
                 <table className="w-full text-left">
-                    <thead className="bg-gray-50 text-xs text-gray-500 uppercase">
+                    <thead className="bg-(--background) text-xs text-gray-500 uppercase font-bold tracking-wider">
                         <tr>
                             <th className="px-6 py-4">Reseller</th>
                             <th className="px-6 py-4">Balance</th>
                             <th className="px-6 py-4 text-right">Actions</th>
                         </tr>
                     </thead>
-                    <tbody className="divide-y divide-gray-100">
+                    <tbody className="divide-y divide-(--card-border)">
                         {filtered.map(user => (
-                            <tr key={user.id} className="hover:bg-gray-50">
+                            <tr key={user.id} className="hover:bg-blue-600/5 transition-colors group">
                                 <td className="px-6 py-4">
-                                    <p className="font-bold text-gray-900">{user.name}</p>
+                                    <p className="font-bold text-(--foreground) group-hover:text-blue-600 dark:group-hover:text-blue-400 transition-colors">{user.name}</p>
                                     <p className="text-xs text-gray-500">{user.email}</p>
                                 </td>
-                                <td className="px-6 py-4 font-mono font-medium text-green-700">
+                                <td className="px-6 py-4 font-mono font-bold text-green-600 dark:text-green-400">
                                     {user.balance !== undefined
                                         ? new Intl.NumberFormat('id-ID', { style: 'currency', currency: 'IDR' }).format(user.balance)
                                         : '...'}
@@ -110,13 +110,13 @@ export default function ResellerList() {
                                     <div className="flex justify-end gap-2">
                                         <button
                                             onClick={() => setHistoryModalUser(user)}
-                                            className="p-2 text-gray-500 hover:bg-gray-100 rounded-lg text-xs flex items-center gap-1"
+                                            className="p-2 text-gray-500 hover:text-blue-600 hover:bg-blue-600/10 rounded-lg text-xs font-bold flex items-center gap-1 transition-all"
                                         >
                                             <History className="w-4 h-4" /> History
                                         </button>
                                         <button
                                             onClick={() => setDepositModalUser(user)}
-                                            className="p-2 bg-green-50 text-green-700 hover:bg-green-100 rounded-lg text-xs font-bold flex items-center gap-1"
+                                            className="p-2 bg-green-500/10 text-green-600 dark:text-green-400 hover:bg-green-500/20 rounded-lg text-xs font-bold flex items-center gap-1 transition-all"
                                         >
                                             <DollarSign className="w-4 h-4" /> Add Deposit
                                         </button>
@@ -177,27 +177,27 @@ function DepositModal({ user, onClose, onSuccess }: { user: User, onClose: () =>
     };
 
     return (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-4">
-            <div className="bg-white rounded-2xl w-full max-w-md p-6 shadow-xl animate-in fade-in zoom-in duration-200">
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-sm p-4">
+            <div className="bg-(--card) border border-(--card-border) rounded-2xl w-full max-w-md p-6 shadow-2xl animate-in fade-in zoom-in duration-200">
                 <div className="flex justify-between items-center mb-4">
-                    <h3 className="text-lg font-bold">Add Deposit</h3>
-                    <button onClick={onClose}><X className="w-5 h-5 text-gray-400" /></button>
+                    <h3 className="text-lg font-bold text-(--foreground)">Add Deposit</h3>
+                    <button onClick={onClose}><X className="w-5 h-5 text-gray-400 hover:text-(--foreground) transition-colors" /></button>
                 </div>
-                <div className="mb-6 p-3 bg-blue-50 rounded-lg text-sm text-blue-800">
-                    Adding funds to <strong>{user.name}</strong>
+                <div className="mb-6 p-3 bg-blue-500/10 rounded-lg text-sm text-blue-600 dark:text-blue-400 font-medium">
+                    Adding funds to <strong className="font-bold">{user.name}</strong>
                 </div>
                 <form onSubmit={handleSubmit} className="space-y-4">
                     <div>
-                        <label className="block text-sm font-bold text-gray-700 mb-2">Amount (IDR)</label>
-                        <input type="number" required min="1" className="w-full px-4 py-2.5 rounded-lg border border-gray-200 focus:border-blue-500 focus:ring-2 focus:ring-blue-100 outline-none transition-all bg-white" value={amount} onChange={e => setAmount(e.target.value)} placeholder="0" />
+                        <label className="block text-sm font-bold text-(--foreground) opacity-70 mb-2">Amount (IDR)</label>
+                        <input type="number" required min="1" className="w-full px-4 py-2.5 rounded-lg border border-(--card-border) bg-(--background) text-(--foreground) focus:border-blue-500 focus:ring-2 focus:ring-blue-100 dark:focus:ring-blue-900/30 outline-none transition-all" value={amount} onChange={e => setAmount(e.target.value)} placeholder="0" />
                     </div>
                     <div>
-                        <label className="block text-sm font-bold text-gray-700 mb-2">Note (Optional)</label>
-                        <input type="text" className="w-full px-4 py-2.5 rounded-lg border border-gray-200 focus:border-blue-500 focus:ring-2 focus:ring-blue-100 outline-none transition-all bg-white" value={note} onChange={e => setNote(e.target.value)} placeholder="e.g. Bank Transfer Ref..." />
+                        <label className="block text-sm font-bold text-(--foreground) opacity-70 mb-2">Note (Optional)</label>
+                        <input type="text" className="w-full px-4 py-2.5 rounded-lg border border-(--card-border) bg-(--background) text-(--foreground) focus:border-blue-500 focus:ring-2 focus:ring-blue-100 dark:focus:ring-blue-900/30 outline-none transition-all" value={note} onChange={e => setNote(e.target.value)} placeholder="e.g. Bank Transfer Ref..." />
                     </div>
                     <div className="flex gap-3 pt-2">
-                        <button type="button" onClick={onClose} className="flex-1 py-2.5 rounded-lg border font-medium hover:bg-gray-50">Cancel</button>
-                        <button type="submit" disabled={loading} className="flex-1 py-2.5 bg-green-600 text-white rounded-lg font-bold hover:bg-green-700 disabled:opacity-70 flex justify-center items-center gap-2">
+                        <button type="button" onClick={onClose} className="flex-1 py-2.5 rounded-lg border border-(--card-border) font-bold text-(--foreground) hover:bg-(--background) transition-all">Cancel</button>
+                        <button type="submit" disabled={loading} className="flex-1 py-2.5 bg-green-600 text-white rounded-lg font-bold hover:bg-green-700 disabled:opacity-70 flex justify-center items-center gap-2 shadow-lg shadow-green-600/20">
                             {loading && <Loader2 className="w-4 h-4 animate-spin" />} Confirm
                         </button>
                     </div>
@@ -219,28 +219,28 @@ function HistoryModal({ user, onClose }: { user: User, onClose: () => void }) {
     }, [user.id]);
 
     return (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-4">
-            <div className="bg-white rounded-2xl w-full max-w-lg p-6 shadow-xl h-[500px] flex flex-col">
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-sm p-4">
+            <div className="bg-(--card) border border-(--card-border) rounded-2xl w-full max-w-lg p-6 shadow-2xl h-[500px] flex flex-col animate-in fade-in slide-in-from-bottom-4 duration-300">
                 <div className="flex justify-between items-center mb-4">
-                    <h3 className="text-lg font-bold">Deposit History: {user.name}</h3>
-                    <button onClick={onClose}><X className="w-5 h-5 text-gray-400" /></button>
+                    <h3 className="text-lg font-bold text-(--foreground)">Deposit History: {user.name}</h3>
+                    <button onClick={onClose}><X className="w-5 h-5 text-gray-400 hover:text-(--foreground) transition-colors" /></button>
                 </div>
 
-                <div className="flex-1 overflow-y-auto border rounded-xl">
+                <div className="flex-1 overflow-y-auto border border-(--card-border) rounded-xl bg-(--background)">
                     <table className="w-full text-sm text-left">
-                        <thead className="bg-gray-50 text-gray-500 sticky top-0">
+                        <thead className="bg-(--card) text-gray-500 sticky top-0 border-b border-(--card-border)">
                             <tr><th className="p-3">Date</th><th className="p-3">Note</th><th className="p-3 text-right">Amount</th></tr>
                         </thead>
-                        <tbody className="divide-y divide-gray-100">
+                        <tbody className="divide-y divide-(--card-border)">
                             {loading ? (
                                 <tr><td colSpan={3} className="p-8 text-center"><Loader2 className="w-6 h-6 animate-spin mx-auto text-gray-400" /></td></tr>
                             ) : deposits.length === 0 ? (
                                 <tr><td colSpan={3} className="p-8 text-center text-gray-400">No deposits found.</td></tr>
                             ) : deposits.map(d => (
-                                <tr key={d.id}>
-                                    <td className="p-3 text-gray-500">{new Date(d.created_at).toLocaleDateString()}</td>
-                                    <td className="p-3">{d.note || '-'}</td>
-                                    <td className="p-3 text-right font-medium text-green-700">+{new Intl.NumberFormat('id-ID').format(d.amount)}</td>
+                                <tr key={d.id} className="hover:bg-blue-600/5 transition-colors">
+                                    <td className="p-3 text-gray-500 font-medium">{new Date(d.created_at).toLocaleDateString()}</td>
+                                    <td className="p-3 text-(--foreground)">{d.note || '-'}</td>
+                                    <td className="p-3 text-right font-bold text-green-600 dark:text-green-400">+{new Intl.NumberFormat('id-ID').format(d.amount)}</td>
                                 </tr>
                             ))}
                         </tbody>

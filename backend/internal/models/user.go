@@ -7,6 +7,8 @@ import (
 	"time"
 )
 
+var SecretKey = []byte("your_secret_key_change_me") // TODO: Move to .env
+
 type User struct {
 	ID       int    `json:"id"`
 	Name     string `json:"name"`
@@ -16,12 +18,32 @@ type User struct {
 	IsActive bool   `json:"is_active"`
 }
 
+type contextKey string
+
+const UserIDKey contextKey = "userID"
+
 func GetUserByEmail(email string) (*User, error) {
 	stmt := `SELECT id, name, email, password, role, is_active FROM users WHERE email = $1`
 	row := database.DB.QueryRow(stmt, email)
 
 	var user User
 	err := row.Scan(&user.ID, &user.Name, &user.Email, &user.Password, &user.Role, &user.IsActive)
+	if err != nil {
+		if err == sql.ErrNoRows {
+			return nil, errors.New("user not found")
+		}
+		return nil, err
+	}
+
+	return &user, nil
+}
+
+func GetUserByID(id int) (*User, error) {
+	stmt := `SELECT id, name, email, role, is_active FROM users WHERE id = $1`
+	row := database.DB.QueryRow(stmt, id)
+
+	var user User
+	err := row.Scan(&user.ID, &user.Name, &user.Email, &user.Role, &user.IsActive)
 	if err != nil {
 		if err == sql.ErrNoRows {
 			return nil, errors.New("user not found")

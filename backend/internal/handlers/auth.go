@@ -72,3 +72,19 @@ func Login(w http.ResponseWriter, r *http.Request) {
 		User:  *user,
 	})
 }
+func GetMe(w http.ResponseWriter, r *http.Request) {
+	userID, ok := r.Context().Value(models.UserIDKey).(int)
+	if !ok {
+		http.Error(w, "Unauthorized", http.StatusUnauthorized)
+		return
+	}
+
+	user, err := models.GetUserByID(userID)
+	if err != nil {
+		http.Error(w, "User not found", http.StatusNotFound)
+		return
+	}
+
+	w.Header().Set("Content-Type", "application/json")
+	json.NewEncoder(w).Encode(user)
+}

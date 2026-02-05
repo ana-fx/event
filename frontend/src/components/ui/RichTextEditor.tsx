@@ -20,22 +20,19 @@ export default function RichTextEditor({ value, onChange, label, placeholder }: 
     }), []) as any;
 
     return (
-        <div className="flex flex-col gap-2">
-            {label && <label className="block text-sm font-bold text-gray-700">{label}</label>}
-            <div className="bg-white rounded-lg overflow-hidden border border-gray-200 [&_.ql-toolbar]:border-0 [&_.ql-toolbar]:border-b [&_.ql-toolbar]:border-gray-100 [&_.ql-container]:border-0 [&_.ql-editor]:min-h-[150px] [&_.ql-editor]:text-base">
+        <div className="space-y-2">
+            {label && <label className="text-sm font-bold text-(--foreground)">{label}</label>}
+            <div className="bg-(--card) text-(--foreground) border border-(--card-border) rounded-xl overflow-hidden focus-within:ring-4 focus-within:ring-blue-500/10 focus-within:border-blue-500 transition-all
+                [&_.ql-editor]:min-h-[150px] [&_.ql-editor]:text-base
+                [&_.ql-snow_.ql-stroke]:stroke-current [&_.ql-snow_.ql-fill]:fill-current [&_.ql-snow_.ql-picker]:text-current
+                [&_.ql-snow.ql-toolbar_button:hover]:text-blue-500 [&_.ql-snow.ql-toolbar_button:hover_.ql-stroke]:stroke-blue-500
+                dark:[&_.ql-toolbar]:bg-gray-800/50">
                 <ReactQuill
                     theme="snow"
                     value={value || ''}
                     onChange={onChange}
                     placeholder={placeholder}
-                    modules={{
-                        toolbar: [
-                            [{ 'header': [1, 2, 3, false] }],
-                            ['bold', 'italic', 'underline', 'strike'],
-                            [{ 'list': 'ordered' }, { 'list': 'bullet' }],
-                            ['link', 'clean']
-                        ],
-                    }}
+                    className="h-64"
                 />
             </div>
         </div>

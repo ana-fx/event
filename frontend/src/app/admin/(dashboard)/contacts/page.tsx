@@ -42,22 +42,22 @@ export default function ContactsPage() {
     return (
         <div className="space-y-6">
             <div>
-                <h2 className="text-2xl font-bold text-gray-900">Contact Messages</h2>
+                <h2 className="text-2xl font-bold text-(--foreground)">Contact Messages</h2>
                 <p className="text-gray-500 text-sm">View inquiries from the contact form.</p>
             </div>
 
-            <div className="bg-white rounded-xl border border-gray-100 shadow-sm overflow-hidden">
-                <div className="divide-y divide-gray-100">
+            <div className="bg-(--card) rounded-xl border border-(--card-border) shadow-sm overflow-hidden">
+                <div className="divide-y divide-(--card-border)">
                     {contacts.map(c => (
-                        <div key={c.id} className="p-6 hover:bg-gray-50 transition-colors">
+                        <div key={c.id} className="p-6 hover:bg-blue-600/5 transition-colors">
                             <div className="flex justify-between items-start mb-2">
                                 <div>
-                                    <h3 className="font-bold text-gray-900">{c.name}</h3>
+                                    <h3 className="font-bold text-(--foreground)">{c.name}</h3>
                                     <p className="text-sm text-gray-500">{c.email}</p>
                                 </div>
                                 <span className="text-xs text-gray-400">{new Date(c.created_at).toLocaleDateString()}</span>
                             </div>
-                            <p className="text-gray-700 mt-3 whitespace-pre-wrap leading-relaxed">{c.message}</p>
+                            <p className="text-(--foreground) opacity-80 mt-3 whitespace-pre-wrap leading-relaxed">{c.message}</p>
                             <div className="flex justify-end mt-4">
                                 <button onClick={() => handleDelete(c.id)} className="text-red-500 hover:text-red-700 text-sm font-medium flex items-center gap-1">
                                     <Trash className="w-4 h-4" /> Delete

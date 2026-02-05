@@ -83,10 +83,7 @@ export default function Sidebar() {
                 />
             )}
 
-            <aside className={cn(
-                "fixed left-0 top-0 h-screen w-72 bg-[#0f172a] text-white flex flex-col shadow-2xl z-50 transition-transform duration-300 ease-in-out",
-                isOpen ? "translate-x-0" : "-translate-x-full md:translate-x-0"
-            )}>
+            <aside className={`fixed inset-y-0 left-0 z-50 w-72 bg-(--card) text-(--foreground) border-r border-(--card-border) transition-transform duration-300 ease-in-out md:translate-x-0 ${isOpen ? 'translate-x-0' : '-translate-x-full'}`}>
                 {/* Logo Section */}
                 <div className="p-8 pb-4 flex justify-between items-center">
                     <div className="flex items-center gap-3">
@@ -94,8 +91,8 @@ export default function Sidebar() {
                             <Ticket className="w-6 h-6 text-white" />
                         </div>
                         <div>
-                            <h1 className="font-bold text-xl tracking-tight">Event<span className="text-blue-500">Admin</span></h1>
-                            <p className="text-[10px] text-gray-400 uppercase tracking-widest font-semibold">Dashboard v1.0</p>
+                            <h1 className="font-bold text-xl tracking-tight text-(--foreground)">Event<span className="text-blue-500">Admin</span></h1>
+                            <p className="text-[10px] text-gray-500 uppercase tracking-widest font-semibold">Dashboard v1.0</p>
                         </div>
                     </div>
                     {/* Close button for mobile */}
@@ -108,7 +105,7 @@ export default function Sidebar() {
                     </button>
                 </div>
 
-                <div className="mx-8 h-px bg-linear-to-r from-transparent via-gray-700 to-transparent mb-6" />
+                <div className="mx-8 h-px bg-(--card-border) mb-6" />
 
                 {/* Navigation */}
                 <nav className="flex-1 px-4 space-y-2 overflow-y-auto no-scrollbar">
@@ -125,7 +122,7 @@ export default function Sidebar() {
                                         onClick={() => toggleMenu(item.name)}
                                         className={cn(
                                             "w-full flex items-center gap-3 px-4 py-3.5 rounded-2xl transition-all duration-300 group relative overflow-hidden text-left",
-                                            isActive || isOpenMenu ? "text-white" : "text-gray-400 hover:text-white hover:bg-gray-800/50"
+                                            isActive || isOpenMenu ? "text-blue-600 dark:text-blue-400 bg-blue-50 dark:bg-blue-900/20" : "text-gray-500 hover:text-blue-600 hover:bg-gray-100 dark:hover:bg-gray-800/50"
                                         )}
                                     >
                                         <item.icon className={cn("w-5 h-5 transition-transform duration-300", isActive ? "text-blue-500" : "text-gray-500 group-hover:text-white")} />
@@ -146,8 +143,8 @@ export default function Sidebar() {
                                                         onClick={() => close()} // Close on mobile click
                                                         className={cn(
                                                             "flex items-center gap-3 px-4 py-2.5 rounded-xl transition-all duration-300 text-sm",
-                                                            "text-gray-400 hover:text-white hover:bg-gray-800/30",
-                                                            isChildActive ? "text-blue-400 font-semibold" : "" // Apply active styles for children
+                                                            "text-gray-500 hover:text-blue-600 hover:bg-gray-100 dark:hover:bg-gray-800/30",
+                                                            isChildActive ? "text-blue-600 dark:text-blue-400 font-semibold bg-white dark:bg-gray-800 shadow-sm" : ""
                                                         )}
                                                     >
                                                         {child.icon ? <child.icon className="w-4 h-4" /> : <div className="w-1.5 h-1.5 rounded-full bg-gray-600" />}
@@ -169,8 +166,8 @@ export default function Sidebar() {
                                 className={cn(
                                     "flex items-center gap-3 px-4 py-3.5 rounded-2xl transition-all duration-300 group relative overflow-hidden",
                                     isActive
-                                        ? "bg-blue-600/10 text-blue-400 font-semibold shadow-[0_0_20px_rgba(37,99,235,0.1)]"
-                                        : "text-gray-400 hover:text-white hover:bg-gray-800/50"
+                                        ? "bg-blue-600/10 text-blue-600 dark:text-blue-400 font-semibold shadow-[0_0_20px_rgba(37,99,235,0.05)]"
+                                        : "text-gray-500 hover:text-blue-600 hover:bg-gray-100 dark:hover:bg-gray-800/50"
                                 )}
                             >
                                 {isActive && <div className="absolute left-0 top-1/2 -translate-y-1/2 w-1 h-8 bg-blue-500 rounded-r-full" />}
@@ -184,15 +181,15 @@ export default function Sidebar() {
 
                 {/* Logout Section */}
                 <div className="p-4 mt-auto">
-                    <div className="bg-gray-800/50 rounded-2xl p-4 border border-gray-700/50 backdrop-blur-sm">
+                    <div className="bg-(--background) rounded-2xl p-4 border border-(--card-border) backdrop-blur-sm">
                         <button
                             onClick={handleLogout}
-                            className="flex items-center gap-3 w-full text-gray-400 hover:text-red-400 transition-colors group"
+                            className="flex items-center gap-3 w-full text-gray-400 hover:text-red-500 transition-all group px-2 py-1.5 rounded-xl hover:bg-red-500/5"
                         >
-                            <div className="w-8 h-8 rounded-lg bg-gray-700 flex items-center justify-center group-hover:bg-red-500/10 transition-colors">
+                            <div className="w-8 h-8 rounded-lg bg-(--card) flex items-center justify-center group-hover:bg-red-500/10 transition-colors border border-(--card-border)">
                                 <LogOut className="w-4 h-4" />
                             </div>
-                            <span className="font-medium text-sm">Sign Out</span>
+                            <span className="font-bold text-sm">Sign Out</span>
                         </button>
                     </div>
                 </div>

@@ -15,13 +15,33 @@ interface Event {
     location: string;
     thumbnail_path: string | null;
     status: 'draft' | 'published';
+    min_price: number;
+    created_at: string;
 }
 
-export default function EventList() {
-    const [events, setEvents] = useState<Event[]>([]);
-    const [loading, setLoading] = useState(true);
+interface SimpleUser {
+    id: number;
+    name: string;
+    role: string;
+}
+
+export default function EventList({ initialEvents, serverNow }: { initialEvents?: Event[], serverNow?: number }) {
+    const [events, setEvents] = useState<Event[]>(initialEvents || []);
+    const [loading, setLoading] = useState(!initialEvents);
+    const [user, setUser] = useState<SimpleUser | null>(null);
 
     useEffect(() => {
+        const fetchUser = async () => {
+            try {
+                const res = await api.get("/me");
+                setUser(res.data);
+            } catch (error) {
+                // Not logged in or error
+            }
+        };
+        fetchUser();
+
+        if (initialEvents) return;
         const fetchEvents = async () => {
             try {
                 const res = await api.get("/events");
@@ -53,10 +73,29 @@ export default function EventList() {
         );
     }
 
+    const isNew = (createdAt: string) => {
+        const createdDate = new Date(createdAt);
+        const now = serverNow ? new Date(serverNow) : new Date();
+        const diffTime = Math.abs(now.getTime() - createdDate.getTime());
+        const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+        return diffDays <= 7;
+    };
+
+    const getEventLink = (event: Event) => {
+        if (user?.role === 'reseller') {
+            return `/reseller/transactions/create?event_id=${event.id}`;
+        }
+        return `/events/${event.slug}`;
+    };
+
     return (
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
             {events.map((event) => (
-                <Link key={event.id} href={`/events/${event.slug}`} className="group bg-white rounded-2xl shadow-sm hover:shadow-xl transition-all duration-300 border border-gray-100 overflow-hidden flex flex-col h-full">
+                <Link
+                    key={event.id}
+                    href={getEventLink(event)}
+                    className="group bg-white rounded-2xl shadow-sm hover:shadow-xl transition-all duration-300 border border-gray-100 overflow-hidden flex flex-col h-full"
+                >
                     <div className="relative h-48 w-full overflow-hidden bg-gray-100">
                         {event.thumbnail_path ? (
                             <Image
@@ -70,8 +109,15 @@ export default function EventList() {
                                 <Ticket className="w-12 h-12" />
                             </div>
                         )}
-                        <div className="absolute top-2 right-2 bg-white/90 backdrop-blur-sm px-2 py-1 rounded-lg text-xs font-bold text-blue-600 shadow-sm">
-                            Upcoming
+                        <div className="absolute top-2 right-2 flex gap-2">
+                            {isNew(event.created_at) && (
+                                <div className="bg-orange-500 text-white px-2 py-1 rounded-lg text-[10px] font-bold uppercase shadow-sm">
+                                    New
+                                </div>
+                            )}
+                            <div className="bg-white/90 backdrop-blur-sm px-2 py-1 rounded-lg text-xs font-bold text-blue-600 shadow-sm">
+                                Upcoming
+                            </div>
                         </div>
                     </div>
 
@@ -80,15 +126,25 @@ export default function EventList() {
                             {event.name}
                         </h3>
 
-                        <div className="space-y-2 mt-auto">
+                        <div className="space-y-2 mb-4">
                             <div className="flex items-center gap-2 text-sm text-gray-500">
                                 <Calendar className="w-4 h-4 text-blue-500" />
-                                <span>{new Date(event.start_date).toLocaleDateString(undefined, { day: 'numeric', month: 'short', year: 'numeric' })}</span>
+                                <span>{new Date(event.start_date).toLocaleDateString('id-ID', { day: 'numeric', month: 'long', year: 'numeric' })}</span>
                             </div>
                             <div className="flex items-center gap-2 text-sm text-gray-500">
                                 <MapPin className="w-4 h-4 text-red-500" />
                                 <span className="line-clamp-1">{event.location || "TBA"}</span>
                             </div>
+                        </div>
+
+                        <div className="pt-4 border-t border-gray-50 mt-auto flex items-center justify-between">
+                            <span className="text-xs text-gray-500 font-medium whitespace-nowrap">Starts from</span>
+                            <span className="font-extrabold text-gray-900">
+                                {event.min_price > 0
+                                    ? `Rp ${event.min_price.toLocaleString('id-ID')}`
+                                    : "Free/TBA"
+                                }
+                            </span>
                         </div>
                     </div>
                 </Link>
@@ -96,3 +152,4 @@ export default function EventList() {
         </div>
     );
 }
+
