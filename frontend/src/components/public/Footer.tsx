@@ -36,7 +36,7 @@ export default function Footer() {
                         <div>
                             <h3 className="font-bold text-white mb-6 uppercase text-[11px] tracking-widest">Company</h3>
                             <ul className="space-y-3 text-sm text-gray-400">
-                                <li><a href="/about" className="hover:text-blue-500 transition-colors">About Us</a></li>
+                                <li><a href="/about-us" className="hover:text-blue-500 transition-colors">About Us</a></li>
                                 <li><a href="/contact" className="hover:text-blue-500 transition-colors">Contact</a></li>
                                 <li><a href="/admin/login" className="hover:text-blue-500 transition-colors">Staff Login</a></li>
                             </ul>

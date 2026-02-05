@@ -4,6 +4,7 @@ import { useState, useEffect } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import { ChevronLeft, ChevronRight } from "lucide-react";
+import { getImageUrl } from "@/lib/utils";
 
 interface Banner {
     id: number;
@@ -61,7 +62,7 @@ export default function Hero() {
                     <div className="relative h-full w-full">
                         <Link href={slide.link_url || "/events"} className="block w-full h-full relative">
                             <Image
-                                src={`http://localhost:8080${slide.image_path}`}
+                                src={getImageUrl(slide.image_path)}
                                 alt={slide.title}
                                 fill
                                 className="object-cover"

@@ -1,65 +1,78 @@
 package main
 
 import (
-	"database/sql"
-	"fmt"
 	"log"
 	"os"
-	"time"
+
+	"event-backend/internal/database"
+	"event-backend/internal/models"
 
 	"github.com/joho/godotenv"
-	_ "github.com/lib/pq"
 	"golang.org/x/crypto/bcrypt"
 )
 
 func main() {
 	// 1. Load .env
 	if err := godotenv.Load(); err != nil {
-		log.Println("No .env file found, trying default or system env")
+		log.Println("No .env file found, using defaults")
 	}
 
+	// 2. Connect to Database
 	connStr := os.Getenv("DATABASE_URL")
 	if connStr == "" {
-		connStr = "postgres://postgres:root@localhost:5432/event_app_db?sslmode=disable"
+		connStr = "postgres://postgres:root@localhost:5432/event_db?sslmode=disable"
+	}
+	database.Connect(connStr)
+
+	// 3. Reset Database (Truncate all tables)
+	log.Println("Resetting database...")
+	tables := []string{
+		"withdrawals",
+		"reseller_deposits",
+		"event_reseller",
+		"settings",
+		"banners",
+		"event_scanner",
+		"contacts",
+		"transactions",
+		"tickets",
+		"events",
+		"users",
+		"goose_db_version",
 	}
 
-	// 2. Connect DB
-	db, err := sql.Open("postgres", connStr)
-	if err != nil {
-		log.Fatal("Failed to connect:", err)
-	}
-	defer db.Close()
-
-	if err := db.Ping(); err != nil {
-		log.Fatal("Failed to ping DB:", err)
+	for _, table := range tables {
+		_, err := database.DB.Exec("DROP TABLE IF EXISTS " + table + " CASCADE")
+		if err != nil {
+			log.Printf("Warning: failed to drop %s: %v", table, err)
+		}
 	}
 
-	// 3. Define Admin User
-	email := "admin@ingate.com"
-	password := "password"
-	name := "Super Admin"
+	// 4. Run Migrations to recreate schema
+	database.RunMigrations()
 
-	// 4. Hash Password
-	hashedBytes, err := bcrypt.GenerateFromPassword([]byte(password), bcrypt.DefaultCost)
+	// 5. Create Admin User
+	log.Println("Creating admin user...")
+	hashedPassword, err := bcrypt.GenerateFromPassword([]byte("admin@admin.com"), bcrypt.DefaultCost)
 	if err != nil {
 		log.Fatal("Failed to hash password:", err)
 	}
-	hashedPassword := string(hashedBytes)
 
-	// 5. Insert User
-	query := `
-		INSERT INTO users (name, email, password, role, is_active, created_at, updated_at)
-		VALUES ($1, $2, $3, 'admin', true, $4, $5)
-		ON CONFLICT (email) DO UPDATE 
-		SET role='admin', password=$3, is_active=true, updated_at=$5
-		RETURNING id
-	`
-
-	var id int
-	err = db.QueryRow(query, name, email, hashedPassword, time.Now(), time.Now()).Scan(&id)
-	if err != nil {
-		log.Fatal("Failed to insert admin:", err)
+	admin := &models.User{
+		Name:     "Admin",
+		Email:    "admin@admin.com",
+		Password: string(hashedPassword),
+		Role:     "admin",
+		IsActive: true,
 	}
 
-	fmt.Printf("Admin user created/updated successfully!\nID: %d\nEmail: %s\nPassword: %s\n", id, email, password)
+	err = models.CreateUser(admin)
+	if err != nil {
+		log.Fatal("Failed to create admin user:", err)
+	}
+
+	log.Println("Database reset successful!")
+	log.Println("Admin User Created:")
+	log.Println("Email: admin@admin.com")
+	log.Println("Password: admin@admin.com")
 }

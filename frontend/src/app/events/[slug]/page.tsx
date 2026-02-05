@@ -5,6 +5,7 @@ import Navbar from "@/components/public/Navbar";
 import Footer from "@/components/public/Footer";
 import TicketSelector from "@/components/public/TicketSelector";
 import { Metadata } from "next";
+import { getImageUrl } from "@/lib/utils";
 
 // Define Types (match backend response)
 interface Event {
@@ -65,7 +66,7 @@ export async function generateMetadata({ params }: { params: Promise<{ slug: str
         title: `${data.event.seo_title || data.event.name} | Ingate`,
         description: data.event.seo_description || data.event.description.substring(0, 160),
         openGraph: {
-            images: data.event.thumbnail_path ? [`${process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8080'}${data.event.thumbnail_path}`] : [],
+            images: data.event.thumbnail_path ? [getImageUrl(data.event.thumbnail_path)] : [],
         }
     };
 }
@@ -105,7 +106,7 @@ export default async function EventDetailPage({ params }: { params: Promise<{ sl
             <div className="relative h-[400px] md:h-[500px] w-full bg-gray-900 mt-20">
                 {event.banner_path ? (
                     <Image
-                        src={`${process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8080'}${event.banner_path}`}
+                        src={getImageUrl(event.banner_path)}
                         alt={event.name}
                         fill
                         className="object-cover opacity-80"
@@ -114,7 +115,7 @@ export default async function EventDetailPage({ params }: { params: Promise<{ sl
                 ) : ( // Fallback to thumbnail if no banner
                     event.thumbnail_path && (
                         <Image
-                            src={`${process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8080'}${event.thumbnail_path}`}
+                            src={getImageUrl(event.thumbnail_path)}
                             alt={event.name}
                             fill
                             className="object-cover opacity-80 blur-sm" // Blur if using thumb as banner
@@ -130,7 +131,7 @@ export default async function EventDetailPage({ params }: { params: Promise<{ sl
                         <div className="hidden md:block w-48 h-64 relative rounded-2xl overflow-hidden shadow-2xl border-4 border-white shrink-0 -mb-20 z-10 bg-gray-200">
                             {event.thumbnail_path && (
                                 <Image
-                                    src={`${process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8080'}${event.thumbnail_path}`}
+                                    src={getImageUrl(event.thumbnail_path)}
                                     alt={event.name}
                                     fill
                                     className="object-cover"
@@ -172,7 +173,7 @@ export default async function EventDetailPage({ params }: { params: Promise<{ sl
                         <div className="md:hidden w-full aspect-4/3 relative rounded-2xl overflow-hidden shadow-xl mb-8">
                             {event.thumbnail_path && (
                                 <Image
-                                    src={`${process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8080'}${event.thumbnail_path}`}
+                                    src={getImageUrl(event.thumbnail_path)}
                                     alt={event.name}
                                     fill
                                     className="object-cover"
@@ -197,7 +198,7 @@ export default async function EventDetailPage({ params }: { params: Promise<{ sl
                             <div className="w-16 h-16 rounded-full bg-gray-100 flex items-center justify-center text-gray-400 overflow-hidden relative">
                                 {event.organizer_logo_path ? (
                                     <Image
-                                        src={`${process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8080'}${event.organizer_logo_path}`}
+                                        src={getImageUrl(event.organizer_logo_path)}
                                         alt={event.organizer_name || "Organizer"}
                                         fill
                                         className="object-cover"

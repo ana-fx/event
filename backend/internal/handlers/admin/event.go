@@ -15,6 +15,19 @@ func ListEvents(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
+	idStr := r.URL.Query().Get("id")
+	if idStr != "" {
+		id, err := strconv.Atoi(idStr)
+		if err == nil {
+			event, err := models.GetEventByID(id)
+			if err == nil {
+				w.Header().Set("Content-Type", "application/json")
+				json.NewEncoder(w).Encode(event)
+				return
+			}
+		}
+	}
+
 	events, err := models.GetAllEvents()
 	if err != nil {
 		http.Error(w, "Failed to fetch events: "+err.Error(), http.StatusInternalServerError)
@@ -187,51 +200,33 @@ func UpdateEvent(w http.ResponseWriter, r *http.Request) {
 		req.Description = r.FormValue("description")
 
 		terms := r.FormValue("terms")
-		if terms != "" {
-			req.Terms = &terms
-		}
+		req.Terms = &terms
 
 		loc := r.FormValue("location")
-		if loc != "" {
-			req.Location = &loc
-		}
+		req.Location = &loc
 
 		province := r.FormValue("province")
-		if province != "" {
-			req.Province = &province
-		}
+		req.Province = &province
 
 		city := r.FormValue("city")
-		if city != "" {
-			req.City = &city
-		}
+		req.City = &city
 
 		zip := r.FormValue("zip")
-		if zip != "" {
-			req.Zip = &zip
-		}
+		req.Zip = &zip
 
 		gmaps := r.FormValue("google_map_embed")
-		if gmaps != "" {
-			req.GoogleMapEmbed = &gmaps
-		}
+		req.GoogleMapEmbed = &gmaps
 
 		// SEO
 		seoTitle := r.FormValue("seo_title")
-		if seoTitle != "" {
-			req.SeoTitle = &seoTitle
-		}
+		req.SeoTitle = &seoTitle
 
 		seoDesc := r.FormValue("seo_description")
-		if seoDesc != "" {
-			req.SeoDescription = &seoDesc
-		}
+		req.SeoDescription = &seoDesc
 
 		// Organizer
-		orgName := r.FormValue("organizer_name")
-		if orgName != "" {
-			req.OrganizerName = &orgName
-		}
+		organizerName := r.FormValue("organizer_name")
+		req.OrganizerName = &organizerName
 
 		req.Status = r.FormValue("status")
 
@@ -311,6 +306,11 @@ func UpdateEvent(w http.ResponseWriter, r *http.Request) {
 	if req.Description != "" {
 		current.Description = req.Description
 	}
+	if req.Status != "" {
+		current.Status = req.Status
+	}
+
+	// Fields that user might want to clear/empty
 	if req.Terms != nil {
 		current.Terms = req.Terms
 	}
@@ -337,9 +337,6 @@ func UpdateEvent(w http.ResponseWriter, r *http.Request) {
 	}
 	if req.OrganizerName != nil {
 		current.OrganizerName = req.OrganizerName
-	}
-	if req.Status != "" {
-		current.Status = req.Status
 	}
 	if !req.StartDate.IsZero() {
 		current.StartDate = req.StartDate

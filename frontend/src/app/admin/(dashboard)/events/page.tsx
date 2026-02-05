@@ -5,6 +5,7 @@ import Link from "next/link";
 import axiosInstance from "@/lib/axios";
 import { Search, Plus, Calendar, MapPin, MoreHorizontal, Edit2, Trash2, Clock, CheckCircle, XCircle, Users } from "lucide-react";
 import { toast } from "react-hot-toast";
+import { getImageUrl } from "@/lib/utils";
 
 interface Event {
     id: number;
@@ -123,7 +124,7 @@ export default function EventList() {
                                             <div className="flex items-center gap-4">
                                                 <div className="w-12 h-12 rounded-lg bg-(--background) overflow-hidden shrink-0 border border-(--card-border)">
                                                     {event.thumbnail_path ? (
-                                                        <img src={event.thumbnail_path} alt="" className="w-full h-full object-cover" />
+                                                        <img src={getImageUrl(event.thumbnail_path)} alt="" className="w-full h-full object-cover" />
                                                     ) : (
                                                         <div className="w-full h-full flex items-center justify-center text-gray-400"><Calendar className="w-5 h-5" /></div>
                                                     )}

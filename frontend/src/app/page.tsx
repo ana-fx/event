@@ -6,7 +6,7 @@ import EventList from "@/components/public/EventList";
 async function getEvents() {
   try {
     const res = await fetch("http://localhost:8080/api/events", {
-      next: { revalidate: 60 },
+      cache: "no-store",
     });
     if (!res.ok) return [];
     const data = await res.json();

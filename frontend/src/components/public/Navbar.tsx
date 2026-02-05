@@ -23,13 +23,18 @@ export default function Navbar() {
 
                     {/* Desktop Editorial Navigation */}
                     <div className="hidden md:flex items-center gap-10">
-                        {['Home', 'Events', 'About Us', 'Contact'].map((item) => (
+                        {[
+                            { label: 'Home', path: '/' },
+                            { label: 'Events', path: '/events' },
+                            { label: 'About Us', path: '/about-us' },
+                            { label: 'Contact', path: '/contact' }
+                        ].map((item) => (
                             <Link
-                                key={item}
-                                href={item === 'Home' ? '/' : `/${item.toLowerCase().replace(' ', '')}`}
+                                key={item.label}
+                                href={item.path}
                                 className="text-[11px] font-black uppercase tracking-[0.3em] text-gray-400 hover:text-gray-900 transition-all duration-500 relative group"
                             >
-                                {item}
+                                {item.label}
                                 <span className="absolute -bottom-1 left-0 w-0 h-0.5 bg-blue-600 transition-all duration-500 group-hover:w-full"></span>
                             </Link>
                         ))}
@@ -54,14 +59,19 @@ export default function Navbar() {
             {/* Mobile Menu Overlay */}
             {mobileMenuOpen && (
                 <div className="md:hidden bg-white border-b border-gray-100 p-8 space-y-6 animate-in slide-in-from-top duration-300">
-                    {['Home', 'Events', 'About Us', 'Contact'].map((item) => (
+                    {[
+                        { label: 'Home', path: '/' },
+                        { label: 'Events', path: '/events' },
+                        { label: 'About Us', path: '/about-us' },
+                        { label: 'Contact', path: '/contact' }
+                    ].map((item) => (
                         <Link
-                            key={item}
-                            href={item === 'Home' ? '/' : `/${item.toLowerCase().replace(' ', '')}`}
+                            key={item.label}
+                            href={item.path}
                             onClick={() => setMobileMenuOpen(false)}
                             className="block text-2xl font-black text-gray-900 tracking-tighter hover:text-blue-600 transition-colors"
                         >
-                            {item}<span className="text-blue-600">.</span>
+                            {item.label}<span className="text-blue-600">.</span>
                         </Link>
                     ))}
                     <div className="pt-6 border-t border-gray-100">

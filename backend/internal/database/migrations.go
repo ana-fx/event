@@ -18,7 +18,7 @@ func RunMigrations() {
 	}
 
 	log.Println("Running database migrations...")
-	if err := goose.Up(DB, "migrations"); err != nil {
+	if err := goose.Up(DB, "."); err != nil {
 		log.Fatal("Failed to run migrations:", err)
 	}
 	log.Println("Migrations executed successfully!")

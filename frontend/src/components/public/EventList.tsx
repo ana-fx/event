@@ -4,6 +4,7 @@ import { useEffect, useState } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import { Calendar, MapPin, Ticket } from "lucide-react";
+import { getImageUrl } from "@/lib/utils";
 import api from "@/lib/axios";
 import Cookies from "js-cookie";
 
@@ -103,7 +104,7 @@ export default function EventList({ initialEvents, serverNow }: { initialEvents?
                     <div className="relative h-48 w-full overflow-hidden bg-gray-100">
                         {event.thumbnail_path ? (
                             <Image
-                                src={`http://localhost:8080${event.thumbnail_path}`}
+                                src={getImageUrl(event.thumbnail_path)}
                                 alt={event.name}
                                 fill
                                 className="object-cover group-hover:scale-105 transition-transform duration-500"

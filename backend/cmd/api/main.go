@@ -198,6 +198,9 @@ func main() {
 	}))
 	http.HandleFunc("/api/admin/finance/balance", middleware.AuthMiddleware(admin.GetResellerBalance))
 
+	// Static Files
+	http.Handle("/uploads/", http.StripPrefix("/uploads/", http.FileServer(http.Dir("storage/uploads"))))
+
 	// 3. Start Server
 	port := ":8080"
 	fmt.Printf("Server starting on port %s...\n", port)

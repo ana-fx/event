@@ -4,6 +4,7 @@ import { useEffect, useState } from "react";
 import axiosInstance from "@/lib/axios";
 import { toast } from "react-hot-toast";
 import { Plus, Trash, Loader2, Link as LinkIcon, Eye, Image as ImageIcon } from "lucide-react";
+import { getImageUrl } from "@/lib/utils";
 import Image from "next/image";
 
 interface Banner {
@@ -63,7 +64,7 @@ export default function BannersPage() {
                         <div className="relative aspect-video bg-gray-50">
                             {banner.image_path ? (
                                 <img
-                                    src={`${process.env.NEXT_PUBLIC_API_URL?.replace('/api', '')}${banner.image_path}`}
+                                    src={getImageUrl(banner.image_path)}
                                     alt={banner.title}
                                     className="w-full h-full object-cover"
                                 />

@@ -7,6 +7,7 @@ import toast from "react-hot-toast";
 
 interface Ticket {
     id: number;
+    event_id: number;
     name: string;
     description: { String: string; Valid: boolean };
     price: number;
@@ -49,8 +50,9 @@ export default function TicketSelector({ tickets }: { tickets: Ticket[] }) {
             .map(([id, qty]) => ({ id: Number(id), qty }));
 
         // Encode and redirect
-        // window.location.href = `/checkout?data=${encodeURIComponent(JSON.stringify(selectedTickets))}`;
-        toast.success("Proceeding to checkout...");
+        const data = encodeURIComponent(JSON.stringify(selectedTickets));
+        window.location.href = `/checkout?data=${data}&eventId=${tickets[0]?.event_id}`;
+        // toast.success("Proceeding to checkout...");
         // Implement Redirect logic later when Checkout page exists
     };
 

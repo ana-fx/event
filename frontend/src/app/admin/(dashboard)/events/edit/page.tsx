@@ -10,6 +10,7 @@ import Tabs from "@/components/ui/Tabs";
 import { Select } from "@/components/ui/Select";
 import { DatePicker } from "@/components/ui/DatePicker";
 import RichTextEditor from "@/components/ui/RichTextEditor";
+import { getImageUrl } from "@/lib/utils";
 
 // --- Types ---
 interface User {
@@ -50,9 +51,9 @@ function EventDetailsTab({ id, initialData, refresh }: { id: string, initialData
     });
 
     const [previews, setPreviews] = useState({
-        banner: initialData?.banner_path || "",
-        thumbnail: initialData?.thumbnail_path || "",
-        organizerLogo: initialData?.organizer_logo_path || "",
+        banner: getImageUrl(initialData?.banner_path),
+        thumbnail: getImageUrl(initialData?.thumbnail_path),
+        organizerLogo: getImageUrl(initialData?.organizer_logo_path),
     });
 
     const [files, setFiles] = useState<{ banner?: File, thumbnail?: File, organizerLogo?: File }>({});
@@ -77,9 +78,9 @@ function EventDetailsTab({ id, initialData, refresh }: { id: string, initialData
                 seo_description: initialData.seo_description || ""
             });
             setPreviews({
-                banner: initialData.banner_path || "",
-                thumbnail: initialData.thumbnail_path || "",
-                organizerLogo: initialData.organizer_logo_path || "",
+                banner: getImageUrl(initialData.banner_path),
+                thumbnail: getImageUrl(initialData.thumbnail_path),
+                organizerLogo: getImageUrl(initialData.organizer_logo_path),
             });
         }
     }, [initialData]);
@@ -167,11 +168,11 @@ function EventDetailsTab({ id, initialData, refresh }: { id: string, initialData
                             onChange={(e) => setFormData({ ...formData, google_map_embed: e.target.value })}
                             placeholder='<iframe src="..."></iframe>'
                         ></textarea>
-                            {formData.google_map_embed && (
-                                <div className="mt-4 rounded-xl overflow-hidden border border-(--card-border) aspect-video bg-gray-100">
-                                    <div dangerouslySetInnerHTML={{ __html: formData.google_map_embed }} className="w-full h-full [&>iframe]:w-full [&>iframe]:h-full" />
-                                </div>
-                            )}
+                        {formData.google_map_embed && (
+                            <div className="mt-4 rounded-xl overflow-hidden border border-(--card-border) aspect-video bg-gray-100">
+                                <div dangerouslySetInnerHTML={{ __html: formData.google_map_embed }} className="w-full h-full [&>iframe]:w-full [&>iframe]:h-full" />
+                            </div>
+                        )}
                     </div>
 
                     <div className="md:col-span-2">
