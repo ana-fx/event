@@ -28,6 +28,7 @@ func main() {
 		connStr = "postgres://postgres:root@localhost:5432/event_db?sslmode=disable"
 	}
 	database.Connect(connStr)
+	database.RunMigrations()
 
 	// 2. Routes
 	// Public Routes
