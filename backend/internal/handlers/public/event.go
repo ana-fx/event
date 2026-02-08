@@ -3,6 +3,7 @@ package public
 import (
 	"encoding/json"
 	"event-backend/internal/models"
+	"fmt"
 	"net/http"
 )
 
@@ -29,12 +30,22 @@ func GetEvent(w http.ResponseWriter, r *http.Request) {
 	}
 
 	slug := r.URL.Query().Get("slug")
-	if slug == "" {
-		http.Error(w, "Slug required", http.StatusBadRequest)
+	idStr := r.URL.Query().Get("id")
+
+	var event *models.Event
+	var err error
+
+	if idStr != "" {
+		var id int
+		fmt.Sscanf(idStr, "%d", &id)
+		event, err = models.GetEventByID(id)
+	} else if slug != "" {
+		event, err = models.GetEventBySlug(slug)
+	} else {
+		http.Error(w, "Slug or ID required", http.StatusBadRequest)
 		return
 	}
 
-	event, err := models.GetEventBySlug(slug)
 	if err != nil {
 		http.Error(w, "Event not found", http.StatusNotFound)
 		return

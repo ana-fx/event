@@ -76,7 +76,7 @@ func GetTicketsByEventID(eventID int) ([]Ticket, error) {
 		return nil, err
 	}
 	defer rows.Close()
-	var tickets []Ticket
+	tickets := []Ticket{}
 	for rows.Next() {
 		var t Ticket
 		if err := rows.Scan(

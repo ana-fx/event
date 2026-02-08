@@ -21,7 +21,8 @@ export default function Hero() {
     useEffect(() => {
         const fetchBanners = async () => {
             try {
-                const res = await fetch("http://localhost:8080/api/banners");
+                const apiUrl = process.env.NEXT_PUBLIC_API_URL || "http://localhost:8080/api";
+                const res = await fetch(`${apiUrl}/banners`);
                 const data = await res.json();
                 setBanners(data || []);
             } catch (error) {

@@ -1,11 +1,12 @@
 import { notFound } from "next/navigation";
 import Image from "next/image";
-import { Calendar, MapPin, Clock, Share2, Info } from "lucide-react";
+import { Calendar, MapPin, Clock, Share2, Info, ChevronLeft, Globe } from "lucide-react";
 import Navbar from "@/components/public/Navbar";
 import Footer from "@/components/public/Footer";
 import TicketSelector from "@/components/public/TicketSelector";
 import { Metadata } from "next";
 import { getImageUrl } from "@/lib/utils";
+import Link from "next/link";
 
 // Define Types (match backend response)
 interface Event {
@@ -44,8 +45,9 @@ interface EventDetailResponse {
 
 async function getEvent(slug: string): Promise<EventDetailResponse | null> {
     try {
-        const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8080'}/api/events/detail?slug=${slug}`, {
-            next: { revalidate: 0 } // Always fresh for ticket availability
+        const apiUrl = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8080/api';
+        const res = await fetch(`${apiUrl}/events/detail?slug=${slug}`, {
+            next: { revalidate: 0 }
         });
 
         if (!res.ok) return null;
@@ -64,7 +66,7 @@ export async function generateMetadata({ params }: { params: Promise<{ slug: str
 
     return {
         title: `${data.event.seo_title || data.event.name} | Ingate`,
-        description: data.event.seo_description || data.event.description.substring(0, 160),
+        description: data.event.seo_description || data.event.description.replace(/<[^>]*>/g, '').substring(0, 160),
         openGraph: {
             images: data.event.thumbnail_path ? [getImageUrl(data.event.thumbnail_path)] : [],
         }
@@ -81,7 +83,6 @@ export default async function EventDetailPage({ params }: { params: Promise<{ sl
 
     const { event, tickets } = data;
 
-    // Helper for Date Formatting
     const formatDate = (dateStr: string) => {
         return new Date(dateStr).toLocaleDateString('id-ID', {
             weekday: 'long',
@@ -99,63 +100,88 @@ export default async function EventDetailPage({ params }: { params: Promise<{ sl
     };
 
     return (
-        <div className="min-h-screen bg-gray-50 flex flex-col">
+        <div className="min-h-screen bg-white flex flex-col font-['Outfit']">
             <Navbar />
 
-            {/* Hero Image / Banner */}
-            <div className="relative h-[400px] md:h-[500px] w-full bg-gray-900 mt-20">
+            {/* Back Button */}
+            <div className="fixed top-24 left-6 md:left-10 z-40">
+                <Link
+                    href="/events"
+                    className="flex items-center gap-2 px-4 py-2 bg-white/80 backdrop-blur-md border border-gray-100 rounded-full text-xs font-black uppercase tracking-widest text-gray-900 hover:bg-gray-900 hover:text-white transition-all shadow-sm"
+                >
+                    <ChevronLeft className="w-4 h-4" />
+                    Back
+                </Link>
+            </div>
+
+            {/* Premium Hero Section */}
+            <div className="relative h-[60vh] md:h-[80vh] w-full bg-gray-900 overflow-hidden flex items-end">
                 {event.banner_path ? (
                     <Image
                         src={getImageUrl(event.banner_path)}
                         alt={event.name}
                         fill
-                        className="object-cover opacity-80"
+                        className="object-cover opacity-60 scale-105"
                         priority
                     />
-                ) : ( // Fallback to thumbnail if no banner
+                ) : (
                     event.thumbnail_path && (
                         <Image
                             src={getImageUrl(event.thumbnail_path)}
                             alt={event.name}
                             fill
-                            className="object-cover opacity-80 blur-sm" // Blur if using thumb as banner
+                            className="object-cover opacity-40 blur-xl scale-110"
                         />
                     )
                 )}
-                <div className="absolute inset-0 bg-linear-to-t from-gray-900 via-transparent to-transparent"></div>
 
-                {/* Content Overlay */}
-                <div className="absolute bottom-0 left-0 right-0 p-6 md:p-12">
-                    <div className="max-w-7xl mx-auto flex flex-col md:flex-row gap-8 items-end">
-                        {/* Thumbnail Floating */}
-                        <div className="hidden md:block w-48 h-64 relative rounded-2xl overflow-hidden shadow-2xl border-4 border-white shrink-0 -mb-20 z-10 bg-gray-200">
-                            {event.thumbnail_path && (
-                                <Image
-                                    src={getImageUrl(event.thumbnail_path)}
-                                    alt={event.name}
-                                    fill
-                                    className="object-cover"
-                                />
-                            )}
+                {/* Dynamic Gradient Overlay */}
+                <div className="absolute inset-0 bg-linear-to-t from-white via-white/20 to-transparent"></div>
+                <div className="absolute inset-x-0 bottom-0 h-64 bg-linear-to-t from-white to-transparent"></div>
+
+                <div className="relative w-full max-w-7xl mx-auto px-6 lg:px-10 pb-12 animate-fade-in">
+                    <div className="flex flex-col gap-6">
+                        <div className="flex items-center gap-3">
+                            <span className="px-4 py-1.5 bg-blue-600 text-white text-[10px] font-black uppercase tracking-[0.2em] rounded-full shadow-lg shadow-blue-600/20">
+                                Upcoming Event
+                            </span>
+                            <span className="px-4 py-1.5 bg-white/10 backdrop-blur-md border border-white/20 text-white text-[10px] font-black uppercase tracking-[0.2em] rounded-full">
+                                {event.city}
+                            </span>
                         </div>
 
-                        {/* Title & Info */}
-                        <div className="flex-1 text-white mb-6">
-                            <h1 className="text-3xl md:text-5xl font-black uppercase tracking-tight leading-tight mb-4">
-                                {event.name}
-                            </h1>
-                            <div className="flex flex-wrap gap-4 md:gap-8 text-sm md:text-base font-medium text-gray-200">
-                                <div className="flex items-center gap-2">
-                                    <Calendar className="w-5 h-5 text-blue-400" />
-                                    <span>{formatDate(event.start_date)}</span>
+                        <h1 className="text-5xl md:text-8xl font-black text-gray-900 leading-tight tracking-tighter uppercase max-w-5xl">
+                            {event.name}
+                        </h1>
+
+                        <div className="flex flex-wrap gap-10 items-center border-t border-gray-100 pt-8 mt-4">
+                            <div className="flex items-center gap-4">
+                                <div className="w-12 h-12 rounded-2xl bg-blue-50 flex items-center justify-center">
+                                    <Calendar className="w-5 h-5 text-blue-600" />
                                 </div>
-                                <div className="flex items-center gap-2">
-                                    <Clock className="w-5 h-5 text-blue-400" />
-                                    <span>{formatTime(event.start_date)} WIB</span>
+                                <div className="flex flex-col">
+                                    <span className="text-[10px] font-black uppercase tracking-widest text-gray-400">Date</span>
+                                    <span className="font-bold text-gray-900">{formatDate(event.start_date)}</span>
                                 </div>
-                                <div className="flex items-center gap-2">
-                                    <MapPin className="w-5 h-5 text-red-500" />
-                                    <span>{event.location}, {event.city}</span>
+                            </div>
+
+                            <div className="flex items-center gap-4">
+                                <div className="w-12 h-12 rounded-2xl bg-purple-50 flex items-center justify-center">
+                                    <Clock className="w-5 h-5 text-purple-600" />
+                                </div>
+                                <div className="flex flex-col">
+                                    <span className="text-[10px] font-black uppercase tracking-widest text-gray-400">Time</span>
+                                    <span className="font-bold text-gray-900">{formatTime(event.start_date)} WIB</span>
+                                </div>
+                            </div>
+
+                            <div className="flex items-center gap-4">
+                                <div className="w-12 h-12 rounded-2xl bg-red-50 flex items-center justify-center">
+                                    <MapPin className="w-5 h-5 text-red-600" />
+                                </div>
+                                <div className="flex flex-col">
+                                    <span className="text-[10px] font-black uppercase tracking-widest text-gray-400">Location</span>
+                                    <span className="font-bold text-gray-900 line-clamp-1">{event.location}</span>
                                 </div>
                             </div>
                         </div>
@@ -163,63 +189,52 @@ export default async function EventDetailPage({ params }: { params: Promise<{ sl
                 </div>
             </div>
 
-            <main className="max-w-7xl mx-auto px-6 lg:px-10 py-12 lg:py-24 w-full flex-1">
-                <div className="grid grid-cols-1 lg:grid-cols-3 gap-12">
+            <main className="max-w-7xl mx-auto px-6 lg:px-10 py-20 w-full flex-1">
+                <div className="flex flex-col lg:flex-row gap-20">
 
-                    {/* Left Column: Description & Details */}
-                    <div className="lg:col-span-2 space-y-12">
-
-                        {/* Mobile Thumbnail (visible only on small screens) */}
-                        <div className="md:hidden w-full aspect-4/3 relative rounded-2xl overflow-hidden shadow-xl mb-8">
-                            {event.thumbnail_path && (
-                                <Image
-                                    src={getImageUrl(event.thumbnail_path)}
-                                    alt={event.name}
-                                    fill
-                                    className="object-cover"
-                                />
-                            )}
-                        </div>
-
-                        {/* Description */}
-                        <div>
-                            <h2 className="text-2xl font-bold text-gray-900 mb-6 flex items-center gap-3">
-                                <Info className="w-6 h-6 text-blue-600" />
-                                About This Event
-                            </h2>
-                            <div
-                                className="prose prose-lg prose-blue max-w-none text-gray-600 leading-relaxed"
+                    {/* Editorial Content Column */}
+                    <div className="flex-1 space-y-20">
+                        {/* Event Intro Panel */}
+                        <div className="relative group">
+                            <div className="prose prose-2xl prose-blue max-w-none text-gray-600 font-medium leading-[1.6] first-letter:text-7xl first-letter:font-black first-letter:text-blue-600 first-letter:mr-4 first-letter:float-left"
                                 dangerouslySetInnerHTML={{ __html: event.description }}
                             />
                         </div>
 
-                        {/* Organizer Info (Optional) */}
-                        <div className="bg-white p-6 rounded-2xl border border-gray-100 flex items-center gap-4">
-                            <div className="w-16 h-16 rounded-full bg-gray-100 flex items-center justify-center text-gray-400 overflow-hidden relative">
+                        {/* Organizer Section */}
+                        <div className="p-10 rounded-[40px] bg-gray-50 border border-gray-100 flex flex-col md:flex-row gap-8 items-center">
+                            <div className="w-32 h-32 rounded-[32px] bg-white p-2 shadow-2xl relative overflow-hidden flex items-center justify-center">
                                 {event.organizer_logo_path ? (
                                     <Image
                                         src={getImageUrl(event.organizer_logo_path)}
-                                        alt={event.organizer_name || "Organizer"}
+                                        alt={event.organizer_name}
                                         fill
-                                        className="object-cover"
+                                        className="object-cover p-2"
                                     />
                                 ) : (
-                                    <span className="font-bold text-xs">ORG</span>
+                                    <Globe className="w-12 h-12 text-gray-100" />
                                 )}
                             </div>
-                            <div>
-                                <p className="text-xs font-bold text-gray-400 uppercase tracking-widest">Organized By</p>
-                                <h3 className="text-lg font-bold text-gray-900">{event.organizer_name || "Ingate Official"}</h3>
+                            <div className="flex-1 text-center md:text-left">
+                                <span className="text-[10px] font-black uppercase tracking-[0.3em] text-blue-600 mb-2 block">Our Trusted Partner</span>
+                                <h3 className="text-3xl font-black text-gray-900 tracking-tight uppercase mb-4">{event.organizer_name || "Official Partner"}</h3>
+                                <p className="text-gray-500 max-w-md">Experience events crafted with excellence and brought to you by industry legends.</p>
                             </div>
+                            <Link href="/contact" className="px-8 py-4 bg-white text-[11px] font-black uppercase tracking-widest border border-gray-200 rounded-2xl hover:bg-gray-900 hover:text-white transition-all">
+                                Contact Organizer
+                            </Link>
                         </div>
                     </div>
 
-                    {/* Right Column: Ticket Selector */}
-                    <div className="lg:col-span-1">
-                        <TicketSelector tickets={tickets} />
+                    {/* Floating Ticket Selector Column */}
+                    <div className="lg:w-[420px] shrink-0">
+                        <div className="sticky top-32">
+                            <div className="relative group">
+                                {/* Subtle Glow Effect */}
+                                <div className="absolute -inset-1 bg-linear-to-r from-blue-600 to-purple-600 rounded-[40px] blur opacity-10 group-hover:opacity-20 transition duration-1000"></div>
 
-                        <div className="mt-8 text-center text-xs text-gray-400">
-                            <p>Need help? <a href="/contact" className="text-blue-600 hover:underline">Contact Support</a></p>
+                                <TicketSelector tickets={tickets} />
+                            </div>
                         </div>
                     </div>
 
