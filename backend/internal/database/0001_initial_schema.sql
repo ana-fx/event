@@ -45,6 +45,7 @@ CREATE TABLE IF NOT EXISTS events (
     organizer_fee_online DECIMAL(12, 2) DEFAULT 0 NOT NULL,
     organizer_fee_reseller_type VARCHAR(50) DEFAULT 'fixed' NOT NULL,
     organizer_fee_reseller DECIMAL(12, 2) DEFAULT 0 NOT NULL,
+    youtube_link TEXT NULL,
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     deleted_at TIMESTAMP NULL
@@ -84,6 +85,7 @@ CREATE TABLE IF NOT EXISTS transactions (
     redeemed_by INTEGER REFERENCES users(id) ON DELETE SET NULL,
     reseller_id INTEGER REFERENCES users(id) ON DELETE SET NULL,
     snap_token VARCHAR(255) NULL,
+    redirect_url VARCHAR(255) NULL,
     payment_type VARCHAR(255) NULL,
     midtrans_transaction_id VARCHAR(255) NULL,
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
