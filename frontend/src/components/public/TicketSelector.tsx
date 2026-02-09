@@ -19,7 +19,7 @@ interface Ticket {
     is_active: boolean;
 }
 
-export default function TicketSelector({ tickets }: { tickets: Ticket[] }) {
+export default function TicketSelector({ tickets, eventSlug }: { tickets: Ticket[], eventSlug: string }) {
     const [selection, setSelection] = useState<{ [key: number]: number }>({});
 
     const updateQuantity = (ticketId: number, delta: number, max: number) => {
@@ -44,10 +44,10 @@ export default function TicketSelector({ tickets }: { tickets: Ticket[] }) {
 
         const selectedTickets = Object.entries(selection)
             .filter(([_, qty]) => qty > 0)
-            .map(([id, qty]) => ({ id: Number(id), qty }));
+            .map(([id, qty]) => `${id}-${qty}`)
+            .join(',');
 
-        const data = encodeURIComponent(JSON.stringify(selectedTickets));
-        window.location.href = `/checkout?data=${data}&eventId=${tickets[0]?.event_id}`;
+        window.location.href = `/checkout/${eventSlug}?t=${selectedTickets}`;
     };
 
     const activeTickets = (tickets || []).filter(t => t?.is_active);

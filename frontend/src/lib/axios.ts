@@ -3,9 +3,7 @@ import Cookies from 'js-cookie';
 
 const api = axios.create({
   baseURL: process.env.NEXT_PUBLIC_API_URL,
-  headers: {
-    'Content-Type': 'application/json',
-  },
+  // Don't set default Content-Type - let the request set it (FormData needs to set boundary)
 });
 
 // Add a request interceptor to inject the token

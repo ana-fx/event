@@ -1,12 +1,16 @@
-@import url('https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&display=swap');
-
 @import "tailwindcss";
 
 :root {
-  --background: #f8fafc;
-  --foreground: #0f172a;
+  --background: #ffffff;
+  --foreground: #020617;
   --card: #ffffff;
   --card-border: #f1f5f9;
+  --primary: #2563eb;
+  --secondary: #64748b;
+  
+  /* Bridging Next.js Font Variables to Tailwind-friendly classes */
+  --font-body: var(--font-body);
+  --font-heading: var(--font-heading);
 }
 
 .dark {
@@ -19,8 +23,18 @@
 body {
   color: var(--foreground);
   background: var(--background);
-  font-family: 'Outfit', sans-serif;
-  transition: background-color 0.3s ease, color 0.3s ease;
+  font-family: var(--font-body), system-ui, sans-serif;
+  transition:
+    background-color 0.3s ease,
+    color 0.3s ease;
+}
+
+h1,
+h2,
+h3,
+h4,
+.font-syne {
+  font-family: var(--font-heading), sans-serif;
 }
 
 /* Glassmorphism Utilities */

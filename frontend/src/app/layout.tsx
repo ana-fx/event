@@ -1,9 +1,17 @@
 import type { Metadata } from "next";
-import { Outfit } from "next/font/google";
+import { Plus_Jakarta_Sans, Syne } from "next/font/google";
 import "./globals.css";
 import ToastProvider from "@/components/providers/ToastProvider";
 
-const outfit = Outfit({ subsets: ["latin"] });
+const plusJakartaSans = Plus_Jakarta_Sans({ 
+  subsets: ["latin"],
+  variable: '--font-body',
+});
+
+const syne = Syne({
+  subsets: ["latin"],
+  variable: '--font-heading',
+});
 
 export const metadata: Metadata = {
   title: "Ingate - Event Ticketing Platform",
@@ -16,8 +24,8 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en">
-      <body className={outfit.className}>
+    <html lang="en" className={`${plusJakartaSans.variable} ${syne.variable}`}>
+      <body className="antialiased font-body">
         <ToastProvider />
         {children}
       </body>

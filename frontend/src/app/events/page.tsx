@@ -26,8 +26,8 @@ export default async function EventsPage() {
                 {/* Header */}
                 <div className="bg-white border-b border-gray-100 py-12 px-6">
                     <div className="max-w-7xl mx-auto">
-                        <h1 className="text-3xl md:text-4xl font-black text-gray-900 mb-4">Explore Events</h1>
-                        <p className="text-gray-500 max-w-2xl">Discover the best concerts, workshops, and gatherings happening around you.</p>
+                        <h1 className="text-4xl md:text-5xl lg:text-6xl font-black text-gray-950 mb-6 tracking-tighter uppercase font-heading">Explore Events</h1>
+                        <p className="text-gray-500 max-w-2xl font-medium font-body">Discover the best concerts, workshops, and gatherings happening around you.</p>
 
                         {/* Search Bar Placeholder (Functional search requires client component wrapping) */}
                         <div className="mt-8 relative max-w-lg hidden">

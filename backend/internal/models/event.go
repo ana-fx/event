@@ -31,13 +31,14 @@ type Event struct {
 	OrganizerFeeOnlineType string    `json:"organizer_fee_online_type"`
 	OrganizerFeeOnline     float64   `json:"organizer_fee_online"`
 	MinPrice               float64   `json:"min_price"`
+	YoutubeLink            *string   `json:"youtube_link"`
 	CreatedAt              time.Time `json:"created_at"`
 	UpdatedAt              time.Time `json:"updated_at"`
 }
 
 func GetAllEvents() ([]Event, error) {
 	rows, err := database.DB.Query(`
-		SELECT id, name, slug, category, status, start_date, end_date, description, location, city, organizer_name, created_at 
+		SELECT id, name, slug, category, status, banner_path, thumbnail_path, start_date, end_date, description, location, city, organizer_name, youtube_link, created_at 
 		FROM events 
 		WHERE deleted_at IS NULL 
 		ORDER BY created_at DESC
@@ -53,8 +54,11 @@ func GetAllEvents() ([]Event, error) {
 		// Scanning subset for list view
 		err := rows.Scan(
 			&e.ID, &e.Name, &e.Slug, &e.Category, &e.Status,
+			&e.BannerPath, &e.ThumbnailPath,
 			&e.StartDate, &e.EndDate, &e.Description,
-			&e.Location, &e.City, &e.OrganizerName, &e.CreatedAt,
+			&e.Location, &e.City, &e.OrganizerName,
+			&e.YoutubeLink,
+			&e.CreatedAt,
 		)
 		if err != nil {
 			return nil, err
@@ -71,6 +75,7 @@ func CreateEvent(e *Event) error {
 			location, province, city, zip, google_map_embed,
 			seo_title, seo_description,
 			organizer_name, banner_path, thumbnail_path, organizer_logo_path,
+			youtube_link,
 			reseller_fee_type, reseller_fee_value, 
 			organizer_fee_online_type, organizer_fee_online,
 			organizer_fee_reseller_type, organizer_fee_reseller,
@@ -80,8 +85,9 @@ func CreateEvent(e *Event) error {
 			$9, $10, $11, $12, $13,
 			$14, $15,
 			$16, $17, $18, $19,
+			$20,
 			'fixed', 0, 'fixed', 0, 'fixed', 0, 
-			$20, $21
+			$21, $22
 		)
 		RETURNING id`
 
@@ -90,6 +96,7 @@ func CreateEvent(e *Event) error {
 		e.Location, e.Province, e.City, e.Zip, e.GoogleMapEmbed,
 		e.SeoTitle, e.SeoDescription,
 		e.OrganizerName, e.BannerPath, e.ThumbnailPath, e.OrganizerLogoPath,
+		e.YoutubeLink,
 		time.Now(), time.Now(),
 	).Scan(&e.ID)
 
@@ -103,14 +110,16 @@ func UpdateEvent(e *Event) error {
 		    location=$9, province=$10, city=$11, zip=$12, google_map_embed=$13,
 			seo_title=$14, seo_description=$15,
 			organizer_name=$16, banner_path=$17, thumbnail_path=$18, organizer_logo_path=$19,
-			updated_at=$20
-		WHERE id=$21`
+			youtube_link=$20,
+			updated_at=$21
+		WHERE id=$22`
 
 	_, err := database.DB.Exec(query,
 		e.Name, e.Slug, e.Category, e.Status, e.StartDate, e.EndDate, e.Description, e.Terms,
 		e.Location, e.Province, e.City, e.Zip, e.GoogleMapEmbed,
 		e.SeoTitle, e.SeoDescription,
 		e.OrganizerName, e.BannerPath, e.ThumbnailPath, e.OrganizerLogoPath,
+		e.YoutubeLink,
 		time.Now(), e.ID,
 	)
 	return err
@@ -130,6 +139,7 @@ func GetEventByID(id int) (*Event, error) {
 			location, province, city, zip, google_map_embed,
 			seo_title, seo_description,
 			organizer_name, banner_path, thumbnail_path, organizer_logo_path,
+			youtube_link,
 			created_at 
 		FROM events 
 		WHERE id=$1 AND deleted_at IS NULL`
@@ -141,6 +151,7 @@ func GetEventByID(id int) (*Event, error) {
 		&e.Location, &e.Province, &e.City, &e.Zip, &e.GoogleMapEmbed,
 		&e.SeoTitle, &e.SeoDescription,
 		&e.OrganizerName, &e.BannerPath, &e.ThumbnailPath, &e.OrganizerLogoPath,
+		&e.YoutubeLink,
 		&e.CreatedAt,
 	)
 	if err != nil {
@@ -151,7 +162,7 @@ func GetEventByID(id int) (*Event, error) {
 
 func GetPublishedEvents() ([]Event, error) {
 	rows, err := database.DB.Query(`
-		SELECT e.id, e.name, e.slug, e.category, e.status, e.start_date, e.end_date, e.description, e.location, e.city, e.thumbnail_path, e.created_at,
+		SELECT e.id, e.name, e.slug, e.category, e.status, e.banner_path, e.thumbnail_path, e.start_date, e.end_date, e.description, e.location, e.city, e.youtube_link, e.created_at,
 		       COALESCE(MIN(t.price), 0) as min_price
 		FROM events e
 		LEFT JOIN tickets t ON e.id = t.event_id AND t.deleted_at IS NULL
@@ -169,8 +180,11 @@ func GetPublishedEvents() ([]Event, error) {
 		var e Event
 		err := rows.Scan(
 			&e.ID, &e.Name, &e.Slug, &e.Category, &e.Status,
+			&e.BannerPath, &e.ThumbnailPath,
 			&e.StartDate, &e.EndDate, &e.Description,
-			&e.Location, &e.City, &e.ThumbnailPath, &e.CreatedAt,
+			&e.Location, &e.City,
+			&e.YoutubeLink,
+			&e.CreatedAt,
 			&e.MinPrice,
 		)
 		if err != nil {
@@ -188,6 +202,7 @@ func GetEventBySlug(slug string) (*Event, error) {
 			location, province, city, zip, google_map_embed,
 			seo_title, seo_description,
 			organizer_name, banner_path, thumbnail_path, organizer_logo_path,
+			youtube_link,
 			created_at 
 		FROM events 
 		WHERE slug=$1 AND deleted_at IS NULL`
@@ -198,6 +213,7 @@ func GetEventBySlug(slug string) (*Event, error) {
 		&e.Location, &e.Province, &e.City, &e.Zip, &e.GoogleMapEmbed,
 		&e.SeoTitle, &e.SeoDescription,
 		&e.OrganizerName, &e.BannerPath, &e.ThumbnailPath, &e.OrganizerLogoPath,
+		&e.YoutubeLink,
 		&e.CreatedAt,
 	)
 	if err != nil {

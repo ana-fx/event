@@ -6,6 +6,7 @@ import (
 	"event-backend/internal/utils"
 	"net/http"
 	"strconv"
+	"strings"
 	"time"
 )
 
@@ -108,6 +109,11 @@ func CreateEvent(w http.ResponseWriter, r *http.Request) {
 		req.OrganizerName = &orgName
 	}
 
+	ytLink := r.FormValue("youtube_link")
+	if ytLink != "" {
+		req.YoutubeLink = &ytLink
+	}
+
 	req.Status = r.FormValue("status")
 
 	// Dates
@@ -191,8 +197,13 @@ func UpdateEvent(w http.ResponseWriter, r *http.Request) {
 	}
 
 	var req models.Event
-	// Parse Multipart for updates (including files)
-	if err := r.ParseMultipartForm(10 << 20); err == nil {
+	// Detect content type to choose between Multipart and JSON
+	contentType := r.Header.Get("Content-Type")
+	if strings.Contains(contentType, "multipart/form-data") {
+		if err := r.ParseMultipartForm(10 << 20); err != nil {
+			http.Error(w, "Failed to parse form", http.StatusBadRequest)
+			return
+		}
 		// Form Update
 		req.Name = r.FormValue("name")
 		req.Slug = r.FormValue("slug")
@@ -200,33 +211,56 @@ func UpdateEvent(w http.ResponseWriter, r *http.Request) {
 		req.Description = r.FormValue("description")
 
 		terms := r.FormValue("terms")
-		req.Terms = &terms
+		if terms != "" {
+			req.Terms = &terms
+		}
 
 		loc := r.FormValue("location")
-		req.Location = &loc
+		if loc != "" {
+			req.Location = &loc
+		}
 
 		province := r.FormValue("province")
-		req.Province = &province
+		if province != "" {
+			req.Province = &province
+		}
 
 		city := r.FormValue("city")
-		req.City = &city
+		if city != "" {
+			req.City = &city
+		}
 
 		zip := r.FormValue("zip")
-		req.Zip = &zip
+		if zip != "" {
+			req.Zip = &zip
+		}
 
 		gmaps := r.FormValue("google_map_embed")
-		req.GoogleMapEmbed = &gmaps
+		if gmaps != "" {
+			req.GoogleMapEmbed = &gmaps
+		}
 
 		// SEO
 		seoTitle := r.FormValue("seo_title")
-		req.SeoTitle = &seoTitle
+		if seoTitle != "" {
+			req.SeoTitle = &seoTitle
+		}
 
 		seoDesc := r.FormValue("seo_description")
-		req.SeoDescription = &seoDesc
+		if seoDesc != "" {
+			req.SeoDescription = &seoDesc
+		}
 
 		// Organizer
 		organizerName := r.FormValue("organizer_name")
-		req.OrganizerName = &organizerName
+		if organizerName != "" {
+			req.OrganizerName = &organizerName
+		}
+
+		ytLink := r.FormValue("youtube_link")
+		if ytLink != "" {
+			req.YoutubeLink = &ytLink
+		}
 
 		req.Status = r.FormValue("status")
 
@@ -269,7 +303,7 @@ func UpdateEvent(w http.ResponseWriter, r *http.Request) {
 			}
 		}
 	} else {
-		// JSON Update fallback (existing logic)
+		// JSON Update fallback
 		if err := json.NewDecoder(r.Body).Decode(&req); err != nil {
 			http.Error(w, "Invalid body", http.StatusBadRequest)
 			return
@@ -352,6 +386,9 @@ func UpdateEvent(w http.ResponseWriter, r *http.Request) {
 	}
 	if req.OrganizerLogoPath != nil {
 		current.OrganizerLogoPath = req.OrganizerLogoPath
+	}
+	if req.YoutubeLink != nil {
+		current.YoutubeLink = req.YoutubeLink
 	}
 
 	if err := models.UpdateEvent(current); err != nil {

@@ -19,6 +19,12 @@ export default function RichTextEditor({ value, onChange, label, placeholder }: 
         // eslint-disable-next-line @typescript-eslint/no-explicit-any
     }), []) as any;
 
+    const handleChange = (content: string) => {
+        if (content !== value) {
+            onChange(content);
+        }
+    };
+
     return (
         <div className="space-y-2">
             {label && <label className="text-sm font-bold text-(--foreground)">{label}</label>}
@@ -30,7 +36,7 @@ export default function RichTextEditor({ value, onChange, label, placeholder }: 
                 <ReactQuill
                     theme="snow"
                     value={value || ''}
-                    onChange={onChange}
+                    onChange={handleChange}
                     placeholder={placeholder}
                     className="h-64"
                 />

@@ -46,8 +46,8 @@ export default function ContactPage() {
             <div className="relative bg-gray-900 py-24 px-6 text-center text-white mt-[80px]">
                 <div className="absolute inset-0 bg-linear-to-b from-gray-800 to-gray-900 opacity-90"></div>
                 <div className="relative max-w-2xl mx-auto">
-                    <h1 className="text-4xl md:text-5xl font-black mb-4">Get in Touch</h1>
-                    <p className="text-xl text-gray-300">Have questions or need support? We're here to help.</p>
+                    <h1 className="text-5xl md:text-7xl lg:text-8xl font-black mb-6 tracking-tighter uppercase font-heading">Get in Touch</h1>
+                    <p className="text-xl text-gray-300 font-medium font-body">Have questions or need support? We&apos;re here to help.</p>
                 </div>
             </div>
 
@@ -55,7 +55,7 @@ export default function ContactPage() {
                 {/* Contact Info */}
                 <div className="bg-white p-8 rounded-2xl shadow-xl border border-gray-100 flex flex-col justify-between h-full">
                     <div>
-                        <h2 className="text-2xl font-bold text-gray-900 mb-6">Contact Information</h2>
+                        <h2 className="text-2xl font-black text-gray-950 mb-8 uppercase tracking-tight font-heading">Contact Info</h2>
                         <div className="space-y-6">
                             <div className="flex items-start gap-4">
                                 <div className="w-12 h-12 bg-blue-50 rounded-lg flex items-center justify-center text-blue-600 shrink-0">
@@ -113,7 +113,7 @@ export default function ContactPage() {
                         </div>
                     ) : (
                         <>
-                            <h2 className="text-2xl font-bold text-gray-900 mb-6">Send us a Message</h2>
+                            <h2 className="text-2xl font-black text-gray-950 mb-8 uppercase tracking-tight font-heading">Send us a Message</h2>
                             <form onSubmit={handleSubmit} className="space-y-6">
                                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                                     <div>

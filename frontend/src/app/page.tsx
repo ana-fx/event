@@ -2,6 +2,7 @@ import Navbar from "@/components/public/Navbar";
 import Footer from "@/components/public/Footer";
 import Hero from "@/components/public/Hero";
 import EventList from "@/components/public/EventList";
+import CategorySection from "@/components/public/CategorySection";
 
 async function getEvents() {
   try {
@@ -25,6 +26,7 @@ interface Event {
   start_date: string;
   location: string;
   city: string;
+  youtube_link?: string;
 }
 
 export default async function Home() {
@@ -62,26 +64,36 @@ export default async function Home() {
     <div className="min-h-screen flex flex-col bg-white">
       <Navbar />
 
-      <main className="flex-1 pt-20">
+      <main className="flex-1">
         <Hero />
+        
+        <CategorySection />
 
-        <section className="max-w-7xl mx-auto px-6 lg:px-10 py-20">
-          <div className="flex flex-col md:flex-row justify-between items-start md:items-end mb-12 gap-4">
+        <section className="max-w-7xl mx-auto px-6 lg:px-10 py-24">
+          <div className="flex flex-col md:flex-row justify-between items-start md:items-end mb-16 gap-8">
             <div>
-              <h2 className="text-4xl font-black text-gray-900 tracking-tighter uppercase mb-2">
-                Upcoming <span className="text-blue-600">Events</span>
+              <span className="text-blue-600 text-[10px] font-black uppercase tracking-[0.4em] mb-4 block">
+                Discover More
+              </span>
+              <h2 className="text-5xl md:text-7xl font-black text-gray-950 tracking-tighter uppercase leading-none">
+                Upcoming <br /> <span className="text-gray-300">Events</span>
               </h2>
-              <p className="text-gray-400 font-medium max-w-lg">
-                Discover the latest concerts, workshops, and exclusive parties
-                curated just for you.
-              </p>
             </div>
-            <a
-              href="/events"
-              className="text-[11px] font-black uppercase tracking-[0.3em] text-blue-600 hover:text-gray-900 transition-all border-b-2 border-blue-600 pb-1"
-            >
-              View All Events &rarr;
-            </a>
+            <div className="flex flex-col items-start md:items-end gap-6 max-w-sm">
+              <p className="text-gray-400 font-medium text-left md:text-right leading-relaxed">
+                Discover the latest concerts, workshops, and exclusive parties
+                curated just for you. Get your tickets now before they sold out.
+              </p>
+              <a
+                href="/events"
+                className="group flex items-center gap-4 text-[11px] font-black uppercase tracking-[0.3em] text-gray-900 transition-all"
+              >
+                Explore All
+                <div className="w-12 h-12 rounded-full border border-gray-200 flex items-center justify-center group-hover:bg-gray-900 group-hover:text-white group-hover:border-gray-900 transition-all">
+                  <span className="text-xl">&rarr;</span>
+                </div>
+              </a>
+            </div>
           </div>
 
           <EventList initialEvents={events} serverNow={Date.now()} />

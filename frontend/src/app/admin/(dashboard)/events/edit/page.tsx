@@ -47,7 +47,8 @@ function EventDetailsTab({ id, initialData, refresh }: { id: string, initialData
         location: "", province: "", city: "", zip: "",
         google_map_embed: "",
         description: "", terms: "", status: "draft",
-        organizer_name: "", seo_title: "", seo_description: ""
+        organizer_name: "", seo_title: "", seo_description: "",
+        youtube_link: ""
     });
 
     const [previews, setPreviews] = useState({
@@ -75,7 +76,8 @@ function EventDetailsTab({ id, initialData, refresh }: { id: string, initialData
                 status: initialData.status || "draft",
                 organizer_name: initialData.organizer_name || "",
                 seo_title: initialData.seo_title || "",
-                seo_description: initialData.seo_description || ""
+                seo_description: initialData.seo_description || "",
+                youtube_link: initialData.youtube_link || ""
             });
             setPreviews({
                 banner: getImageUrl(initialData.banner_path),
@@ -114,9 +116,7 @@ function EventDetailsTab({ id, initialData, refresh }: { id: string, initialData
                 data.append("organizer_fee_online_value", "0");
             }
 
-            await axiosInstance.put(`/admin/events?id=${id}`, data, {
-                headers: { "Content-Type": "multipart/form-data" },
-            });
+            await axiosInstance.put(`/admin/events?id=${id}`, data);
             toast.success("Event updated successfully!");
             refresh();
         } catch (error) {
@@ -172,6 +172,20 @@ function EventDetailsTab({ id, initialData, refresh }: { id: string, initialData
                             <div className="mt-4 rounded-xl overflow-hidden border border-(--card-border) aspect-video bg-gray-100">
                                 <div dangerouslySetInnerHTML={{ __html: formData.google_map_embed }} className="w-full h-full [&>iframe]:w-full [&>iframe]:h-full" />
                             </div>
+                        )}
+                    </div>
+
+                    <div className="md:col-span-2">
+                        <label className="block text-sm font-bold text-(--foreground) opacity-70 mb-2">YouTube Trailer (URL)</label>
+                        <input 
+                            type="text" 
+                            className="w-full px-4 py-2.5 rounded-lg border border-(--card-border) bg-(--background) text-(--foreground) focus:border-blue-500 focus:ring-2 focus:ring-blue-100 dark:focus:ring-blue-900/30 outline-none transition-all placeholder:opacity-50" 
+                            value={formData.youtube_link || ''} 
+                            onChange={(e) => setFormData({ ...formData, youtube_link: e.target.value })} 
+                            placeholder="https://www.youtube.com/watch?v=..."
+                        />
+                        {formData.youtube_link && (
+                             <p className="mt-2 text-[10px] text-gray-500 font-medium">Video will be embedded on the event detail page.</p>
                         )}
                     </div>
 

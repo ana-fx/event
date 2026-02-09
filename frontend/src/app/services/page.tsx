@@ -45,8 +45,8 @@ export default function ServicesPage() {
                 <div className="bg-gray-900 py-24 px-6 text-center text-white relative overflow-hidden mt-[80px]">
                     <div className="absolute inset-0 bg-linear-to-r from-blue-900 to-gray-900 opacity-90"></div>
                     <div className="relative max-w-3xl mx-auto">
-                        <h1 className="text-4xl md:text-6xl font-black mb-6 tracking-tight">Our Services</h1>
-                        <p className="text-xl text-gray-300">
+                        <h1 className="text-5xl md:text-7xl lg:text-8xl font-black mb-6 tracking-tighter uppercase font-heading">Our Services</h1>
+                        <p className="text-xl text-gray-300 font-medium font-body leading-relaxed">
                             Comprehensive solutions for event organizers, from small gigs to large-scale festivals.
                         </p>
                     </div>
@@ -60,18 +60,18 @@ export default function ServicesPage() {
                                 <div className="mb-6 p-4 bg-gray-50 rounded-xl w-fit group-hover:scale-110 transition-transform duration-300">
                                     {service.icon}
                                 </div>
-                                <h3 className="text-xl font-bold text-gray-900 mb-3">{service.title}</h3>
-                                <p className="text-gray-500 leading-relaxed">{service.description}</p>
+                                <h3 className="text-xl font-black text-gray-950 mb-4 uppercase tracking-tight font-heading leading-tight">{service.title}</h3>
+                                <p className="text-gray-500 leading-relaxed font-body font-medium text-sm">{service.description}</p>
                             </div>
                         ))}
                     </div>
                 </div>
 
                 {/* CTA */}
-                <div className="bg-blue-600 py-16 px-6 text-center text-white">
-                    <h2 className="text-3xl font-bold mb-4">Ready to Organize Your Event?</h2>
-                    <p className="max-w-xl mx-auto mb-8 opacity-90">Join thousands of successful organizers who trust Ingate for their ticketing needs.</p>
-                    <a href="/contact" className="inline-block px-8 py-3 bg-white text-blue-600 font-bold rounded-full hover:bg-gray-100 transition-colors shadow-lg">
+                <div className="bg-gray-950 py-24 px-6 text-center text-white">
+                    <h2 className="text-3xl md:text-4xl lg:text-5xl font-black mb-6 uppercase tracking-tight font-heading">Ready to Organize Your Event?</h2>
+                    <p className="max-w-xl mx-auto mb-10 opacity-70 font-medium font-body">Join thousands of successful organizers who trust Ingate for their ticketing needs.</p>
+                    <a href="/contact" className="inline-block px-10 py-5 bg-white text-gray-950 text-xs font-black uppercase tracking-[0.2em] rounded-full hover:bg-blue-600 hover:text-white transition-all shadow-2xl shadow-blue-600/10 font-heading">
                         Get Started Today
                     </a>
                 </div>

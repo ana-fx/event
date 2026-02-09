@@ -15,14 +15,14 @@ interface CartItem {
     price?: number;
 }
 
-export default function CheckoutPage() {
+export default function CheckoutPage({ params }: { params: Promise<{ slug: string }> }) {
     const searchParams = useSearchParams();
     const router = useRouter();
-    const dataParam = searchParams.get("data");
-    const eventIdParam = searchParams.get("eventId");
+    const tParam = searchParams.get("t");
 
     const [items, setItems] = useState<CartItem[]>([]);
     const [tickets, setTickets] = useState<any[]>([]);
+    const [event, setEvent] = useState<any>(null);
     const [loading, setLoading] = useState(true);
     const [processing, setProcessing] = useState(false);
 
@@ -40,15 +40,19 @@ export default function CheckoutPage() {
 
     useEffect(() => {
         const initCheckout = async () => {
-            if (dataParam && eventIdParam) {
+            const slug = (await params).slug;
+            if (tParam && slug) {
                 try {
-                    // 1. Parse Cart Data
-                    const parsed = JSON.parse(decodeURIComponent(dataParam));
+                    // 1. Parse Ticket Data (id1-qty1,id2-qty2)
+                    const parsed = tParam.split(',').map(pair => {
+                        const [id, qty] = pair.split('-');
+                        return { id: Number(id), qty: Number(qty) };
+                    });
                     setItems(parsed);
 
-                    // 2. Fetch Event & Ticket Details
+                    // 2. Fetch Event & Ticket Details by Slug
                     const apiUrl = process.env.NEXT_PUBLIC_API_URL || "http://localhost:8080/api";
-                    const res = await fetch(`${apiUrl}/events/detail?id=${eventIdParam}`);
+                    const res = await fetch(`${apiUrl}/events/detail?slug=${slug}`);
                     if (!res.ok) {
                         const text = await res.text();
                         console.error("Backend error:", text);
@@ -56,6 +60,9 @@ export default function CheckoutPage() {
                     }
                     const data = await res.json();
 
+                    if (data && data.event) {
+                        setEvent(data.event);
+                    }
                     if (data && data.tickets) {
                         setTickets(data.tickets);
                     }
@@ -69,7 +76,7 @@ export default function CheckoutPage() {
         };
 
         initCheckout();
-    }, [dataParam, eventIdParam, router]);
+    }, [tParam, params, router]);
 
     const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
         const { name, value, type } = e.target;
@@ -112,9 +119,10 @@ export default function CheckoutPage() {
 
         try {
             const firstItem = items[0];
+            const slug = (await params).slug;
 
             const payload = {
-                event_id: Number(eventIdParam),
+                event_id: event?.id,
                 ticket_id: firstItem.id,
                 quantity: firstItem.qty,
                 name: form.name,
@@ -144,14 +152,14 @@ export default function CheckoutPage() {
     if (loading) return <div className="min-h-screen flex items-center justify-center bg-white"><Loader2 className="w-8 h-8 animate-spin text-blue-600" /></div>;
 
     if (items.length === 0) return (
-        <div className="min-h-screen flex flex-col items-center justify-center gap-4 bg-white font-['Outfit']">
-            <h1 className="text-2xl font-black text-gray-900 uppercase tracking-tighter">Cart Empty</h1>
-            <button onClick={() => router.back()} className="px-8 py-3 bg-gray-900 text-white rounded-full font-bold uppercase text-xs tracking-widest hover:bg-blue-600 transition-all">Go Back</button>
+        <div className="min-h-screen flex flex-col items-center justify-center gap-4 bg-white">
+            <h1 className="text-2xl font-black text-gray-900 uppercase tracking-tighter font-heading">Cart Empty</h1>
+            <button onClick={() => router.back()} className="px-8 py-3 bg-gray-950 text-white rounded-full font-black uppercase text-[10px] tracking-widest hover:bg-blue-600 transition-all font-heading">Go Back</button>
         </div>
     );
 
     return (
-        <div className="min-h-screen bg-[#FDFDFD] font-['Outfit']">
+        <div className="min-h-screen bg-[#FDFDFD]">
             <Navbar />
 
             <main className="max-w-7xl mx-auto px-6 lg:px-10 py-32">
@@ -163,27 +171,27 @@ export default function CheckoutPage() {
                             <div className="grid grid-cols-1 md:grid-cols-2 gap-x-12 gap-y-12">
                                 {/* IDENTITY NUMBER */}
                                 <div className="space-y-4">
-                                    <label className="block text-[10px] font-black uppercase tracking-[0.2em] text-[#1A1A1A]">
+                                    <label className="block text-[10px] font-black uppercase tracking-[0.2em] text-[#1A1A1A] font-heading">
                                         Identity Number (NIK/Passport/ID)
                                     </label>
                                     <input
                                         type="text" name="nik" required
                                         value={form.nik} onChange={handleChange}
-                                        className="w-full px-8 py-6 rounded-[24px] bg-white border border-gray-100 shadow-sm focus:ring-2 focus:ring-blue-600/30 focus:border-blue-600 outline-none transition-all text-[15px] font-semibold text-gray-900 placeholder:text-gray-200"
+                                        className="w-full px-8 py-6 rounded-[24px] bg-white border border-gray-100 shadow-sm focus:ring-2 focus:ring-blue-600/30 focus:border-blue-600 outline-none transition-all text-[15px] font-semibold text-gray-900 placeholder:text-gray-200 font-body"
                                         placeholder="12123122435436547634"
                                     />
                                 </div>
 
                                 {/* GENDER */}
                                 <div className="space-y-4">
-                                    <label className="block text-[10px] font-black uppercase tracking-[0.2em] text-[#1A1A1A]">
+                                    <label className="block text-[10px] font-black uppercase tracking-[0.2em] text-[#1A1A1A] font-heading">
                                         Gender
                                     </label>
                                     <div className="relative">
                                         <select
                                             name="gender" required
                                             value={form.gender} onChange={handleChange}
-                                            className="w-full px-8 py-6 rounded-[24px] bg-white border border-gray-100 shadow-sm focus:ring-2 focus:ring-blue-600/30 focus:border-blue-600 outline-none transition-all text-[15px] font-semibold text-gray-900 appearance-none cursor-pointer"
+                                            className="w-full px-8 py-6 rounded-[24px] bg-white border border-gray-100 shadow-sm focus:ring-2 focus:ring-blue-600/30 focus:border-blue-600 outline-none transition-all text-[15px] font-semibold text-gray-900 appearance-none cursor-pointer font-body"
                                         >
                                             <option value="Male">Male</option>
                                             <option value="Female">Female</option>
@@ -196,52 +204,52 @@ export default function CheckoutPage() {
 
                                 {/* FULL NAME */}
                                 <div className="space-y-4">
-                                    <label className="block text-[10px] font-black uppercase tracking-[0.2em] text-[#1A1A1A]">
+                                    <label className="block text-[10px] font-black uppercase tracking-[0.2em] text-[#1A1A1A] font-heading">
                                         Full Name
                                     </label>
                                     <input
                                         type="text" name="name" required
                                         value={form.name} onChange={handleChange}
-                                        className="w-full px-8 py-6 rounded-[24px] bg-white border border-gray-100 shadow-sm focus:ring-2 focus:ring-blue-600/30 focus:border-blue-600 outline-none transition-all text-[15px] font-semibold text-gray-900 placeholder:text-gray-200"
+                                        className="w-full px-8 py-6 rounded-[24px] bg-white border border-gray-100 shadow-sm focus:ring-2 focus:ring-blue-600/30 focus:border-blue-600 outline-none transition-all text-[15px] font-semibold text-gray-900 placeholder:text-gray-200 font-body"
                                         placeholder="Ana"
                                     />
                                 </div>
 
                                 {/* YOUR EMAIL */}
                                 <div className="space-y-4">
-                                    <label className="block text-[10px] font-black uppercase tracking-[0.2em] text-[#1A1A1A]">
+                                    <label className="block text-[10px] font-black uppercase tracking-[0.2em] text-[#1A1A1A] font-heading">
                                         Your Email
                                     </label>
                                     <input
                                         type="email" name="email" required
                                         value={form.email} onChange={handleChange}
-                                        className="w-full px-8 py-6 rounded-[24px] bg-white border border-blue-600 shadow-sm focus:ring-2 focus:ring-blue-600/30 outline-none transition-all text-[15px] font-semibold text-gray-900 placeholder:text-gray-200"
+                                        className="w-full px-8 py-6 rounded-[24px] bg-white border border-blue-600 shadow-sm focus:ring-2 focus:ring-blue-600/30 outline-none transition-all text-[15px] font-semibold text-gray-900 placeholder:text-gray-200 font-body"
                                         placeholder="asd"
                                     />
                                 </div>
 
                                 {/* PHONE NUMBER */}
                                 <div className="space-y-4">
-                                    <label className="block text-[10px] font-black uppercase tracking-[0.2em] text-[#1A1A1A]">
+                                    <label className="block text-[10px] font-black uppercase tracking-[0.2em] text-[#1A1A1A] font-heading">
                                         Phone Number
                                     </label>
                                     <input
                                         type="tel" name="phone" required
                                         value={form.phone} onChange={handleChange}
-                                        className="w-full px-8 py-6 rounded-[24px] bg-white border border-gray-100 shadow-sm focus:ring-2 focus:ring-blue-600/30 focus:border-blue-600 outline-none transition-all text-[15px] font-semibold text-gray-900 placeholder:text-gray-200"
+                                        className="w-full px-8 py-6 rounded-[24px] bg-white border border-gray-100 shadow-sm focus:ring-2 focus:ring-blue-600/30 focus:border-blue-600 outline-none transition-all text-[15px] font-semibold text-gray-900 placeholder:text-gray-200 font-body"
                                         placeholder="+62..."
                                     />
                                 </div>
 
                                 {/* CITY OF RESIDENCE */}
                                 <div className="space-y-4">
-                                    <label className="block text-[10px] font-black uppercase tracking-[0.2em] text-[#1A1A1A]">
+                                    <label className="block text-[10px] font-black uppercase tracking-[0.2em] text-[#1A1A1A] font-heading">
                                         City of Residence
                                     </label>
                                     <input
                                         type="text" name="city" required
                                         value={form.city} onChange={handleChange}
-                                        className="w-full px-8 py-6 rounded-[24px] bg-white border border-gray-100 shadow-sm focus:ring-2 focus:ring-blue-600/30 focus:border-blue-600 outline-none transition-all text-[15px] font-semibold text-gray-900 placeholder:text-gray-200"
+                                        className="w-full px-8 py-6 rounded-[24px] bg-white border border-gray-100 shadow-sm focus:ring-2 focus:ring-blue-600/30 focus:border-blue-600 outline-none transition-all text-[15px] font-semibold text-gray-900 placeholder:text-gray-200 font-body"
                                         placeholder="Jakarta"
                                     />
                                 </div>
@@ -258,7 +266,7 @@ export default function CheckoutPage() {
                                         />
                                         <CheckCircle className="absolute w-4 h-4 text-white left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 opacity-0 peer-checked:opacity-100 transition-opacity pointer-events-none" />
                                     </div>
-                                    <span className="text-[14px] font-semibold text-gray-500 group-hover:text-gray-900 transition-colors">
+                                    <span className="text-[14px] font-semibold text-gray-500 group-hover:text-gray-900 transition-colors font-body">
                                         I agree to the <span className="text-blue-600 font-black">Terms</span> and <span className="text-blue-600 font-black">Privacy</span>.
                                     </span>
                                 </label>
@@ -271,7 +279,7 @@ export default function CheckoutPage() {
                                         />
                                         <CheckCircle className="absolute w-4 h-4 text-white left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 opacity-0 peer-checked:opacity-100 transition-opacity pointer-events-none" />
                                     </div>
-                                    <span className="text-[14px] font-semibold text-gray-500 group-hover:text-gray-900 transition-colors">
+                                    <span className="text-[14px] font-semibold text-gray-500 group-hover:text-gray-900 transition-colors font-body">
                                         I confirm that the data provided is accurate and correct.
                                     </span>
                                 </label>
@@ -282,7 +290,7 @@ export default function CheckoutPage() {
                     {/* Summary Section */}
                     <div className="lg:col-span-4">
                         <div className="bg-white p-10 rounded-[48px] border border-gray-50 shadow-2xl shadow-gray-100/50 sticky top-36">
-                            <h2 className="text-[10px] font-black uppercase tracking-[0.3em] text-[#D1D1D1] mb-10">
+                            <h2 className="text-[10px] font-black uppercase tracking-[0.3em] text-[#D1D1D1] mb-10 font-heading">
                                 Order Details
                             </h2>
 
@@ -292,10 +300,10 @@ export default function CheckoutPage() {
                                     return (
                                         <div key={item.id} className="flex justify-between items-start">
                                             <div>
-                                                <p className="font-extrabold text-[#1A1A1A] text-[15px]">{ticket?.name || `Ticket #${item.id}`}</p>
-                                                <p className="text-[13px] font-semibold text-gray-400 mt-1">{item.qty} x {formatIDR(ticket?.price || 0)}</p>
+                                                <p className="font-extrabold text-[#1A1A1A] text-[15px] font-heading tracking-tight">{ticket?.name || `Ticket #${item.id}`}</p>
+                                                <p className="text-[13px] font-semibold text-gray-400 mt-1 font-body">{item.qty} x {formatIDR(ticket?.price || 0)}</p>
                                             </div>
-                                            <p className="font-black text-[#1A1A1A] text-[15px]">{formatIDR((ticket?.price || 0) * item.qty)}</p>
+                                            <p className="font-black text-[#1A1A1A] text-[15px] font-heading">{formatIDR((ticket?.price || 0) * item.qty)}</p>
                                         </div>
                                     );
                                 })}
@@ -303,22 +311,22 @@ export default function CheckoutPage() {
 
                             <div className="pt-10 border-t border-gray-50 flex flex-col gap-8">
                                 <div>
-                                    <p className="text-[10px] font-black uppercase tracking-[0.25em] text-[#D1D1D1] mb-4 text-center">Total Payable Amount</p>
+                                    <p className="text-[10px] font-black uppercase tracking-[0.25em] text-[#D1D1D1] mb-4 text-center font-heading">Total Payable Amount</p>
                                     <div className="text-center">
-                                        <p className="text-[44px] font-black text-blue-600 leading-none tracking-[-0.04em]">
+                                        <p className="text-[44px] font-black text-blue-600 leading-none tracking-[-0.04em] font-heading">
                                             {formatIDR(total)}
                                         </p>
                                     </div>
                                     <div className="mt-6 flex items-center justify-center gap-3 bg-gray-50/50 py-3 rounded-2xl">
-                                        <span className="text-[9px] font-black bg-[#EBEBEB] text-[#A3A3A3] px-2 py-1 rounded-md uppercase tracking-wider">Inc. Fees</span>
-                                        <p className="text-[11px] font-bold text-gray-400">{formatIDR(handlingFee)} Handling Fee</p>
+                                        <span className="text-[9px] font-black bg-[#EBEBEB] text-[#A3A3A3] px-2 py-1 rounded-md uppercase tracking-wider font-heading">Inc. Fees</span>
+                                        <p className="text-[11px] font-bold text-gray-400 font-body">{formatIDR(handlingFee)} Handling Fee</p>
                                     </div>
                                 </div>
 
                                 <button
                                     onClick={handlePayment}
                                     disabled={processing}
-                                    className="w-full py-6 bg-blue-600 text-white font-black rounded-[28px] shadow-2xl shadow-blue-600/20 hover:scale-[1.02] transition-all flex items-center justify-center gap-4 text-[15px] group"
+                                    className="w-full py-6 bg-gray-950 text-white font-black rounded-[28px] shadow-2xl shadow-gray-950/20 hover:scale-[1.02] transition-all flex items-center justify-center gap-4 text-[15px] group font-heading tracking-widest uppercase"
                                 >
                                     {processing ? (
                                         <Loader2 className="w-6 h-6 animate-spin" />

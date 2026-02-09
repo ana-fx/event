@@ -7,12 +7,14 @@ import TicketSelector from "@/components/public/TicketSelector";
 import { Metadata } from "next";
 import { getImageUrl } from "@/lib/utils";
 import Link from "next/link";
+import MobileBookingBar from "@/components/public/MobileBookingBar";
 
 // Define Types (match backend response)
 interface Event {
     id: number;
     name: string;
     description: string;
+    youtube_link?: string;
     start_date: string;
     end_date: string;
     location: string;
@@ -23,6 +25,9 @@ interface Event {
     seo_description: string;
     organizer_name: string;
     organizer_logo_path: string | null;
+    google_map_embed: string | null;
+    terms: string | null;
+    province: string;
 }
 
 interface Ticket {
@@ -82,6 +87,7 @@ export default async function EventDetailPage({ params }: { params: Promise<{ sl
     }
 
     const { event, tickets } = data;
+    const minPrice = (tickets || []).length > 0 ? Math.min(...tickets.map(t => t.price)) : 0;
 
     const formatDate = (dateStr: string) => {
         return new Date(dateStr).toLocaleDateString('id-ID', {
@@ -100,7 +106,7 @@ export default async function EventDetailPage({ params }: { params: Promise<{ sl
     };
 
     return (
-        <div className="min-h-screen bg-white flex flex-col font-['Outfit']">
+        <div className="min-h-screen bg-white flex flex-col">
             <Navbar />
 
             {/* Back Button */}
@@ -114,92 +120,105 @@ export default async function EventDetailPage({ params }: { params: Promise<{ sl
                 </Link>
             </div>
 
-            {/* Premium Hero Section */}
-            <div className="relative h-[60vh] md:h-[80vh] w-full bg-gray-900 overflow-hidden flex items-end">
-                {event.banner_path ? (
-                    <Image
-                        src={getImageUrl(event.banner_path)}
-                        alt={event.name}
-                        fill
-                        className="object-cover opacity-60 scale-105"
-                        priority
-                    />
-                ) : (
-                    event.thumbnail_path && (
-                        <Image
-                            src={getImageUrl(event.thumbnail_path)}
-                            alt={event.name}
-                            fill
-                            className="object-cover opacity-40 blur-xl scale-110"
-                        />
-                    )
-                )}
+            {/* Neo-Editorial Header Section */}
+            <div className="pt-[80px] bg-stone-50 border-b border-stone-200/60 overflow-visible relative z-10">
+                <div className="max-w-7xl mx-auto px-6 lg:px-10 pt-16 pb-24 md:pt-24 md:pb-32">
+                    <div className="flex flex-col lg:flex-row gap-16 lg:items-center">
+                        
+                        <div className="flex-1 space-y-12 text-center lg:text-left">
+                            <div className="space-y-4">
+                                <span className="text-blue-600 text-[10px] font-black uppercase tracking-[0.5em] block">Exclusive Event</span>
+                                <h1 className="text-4xl sm:text-6xl md:text-7xl lg:text-8xl font-black text-gray-950 leading-[0.95] tracking-tighter uppercase font-heading">
+                                    {event.name}
+                                </h1>
+                            </div>
 
-                {/* Dynamic Gradient Overlay */}
-                <div className="absolute inset-0 bg-linear-to-t from-white via-white/20 to-transparent"></div>
-                <div className="absolute inset-x-0 bottom-0 h-64 bg-linear-to-t from-white to-transparent"></div>
-
-                <div className="relative w-full max-w-7xl mx-auto px-6 lg:px-10 pb-12 animate-fade-in">
-                    <div className="flex flex-col gap-6">
-                        <div className="flex items-center gap-3">
-                            <span className="px-4 py-1.5 bg-blue-600 text-white text-[10px] font-black uppercase tracking-[0.2em] rounded-full shadow-lg shadow-blue-600/20">
-                                Upcoming Event
-                            </span>
-                            <span className="px-4 py-1.5 bg-white/10 backdrop-blur-md border border-white/20 text-white text-[10px] font-black uppercase tracking-[0.2em] rounded-full">
-                                {event.city}
-                            </span>
-                        </div>
-
-                        <h1 className="text-5xl md:text-8xl font-black text-gray-900 leading-tight tracking-tighter uppercase max-w-5xl">
-                            {event.name}
-                        </h1>
-
-                        <div className="flex flex-wrap gap-10 items-center border-t border-gray-100 pt-8 mt-4">
-                            <div className="flex items-center gap-4">
-                                <div className="w-12 h-12 rounded-2xl bg-blue-50 flex items-center justify-center">
-                                    <Calendar className="w-5 h-5 text-blue-600" />
+                            {/* Ticket Strip Meta-info */}
+                            <div className="flex flex-wrap justify-center lg:justify-start items-center gap-px bg-stone-200/50 p-px rounded-2xl overflow-hidden border border-stone-200 max-w-fit mx-auto lg:mx-0 shadow-sm backdrop-blur-sm">
+                                <div className="px-6 py-4 bg-white flex flex-col gap-1 items-start min-w-[140px]">
+                                    <span className="text-[9px] font-black uppercase tracking-widest text-stone-400">Date</span>
+                                    <span className="font-bold text-sm text-gray-900">{formatDate(event.start_date)}</span>
                                 </div>
-                                <div className="flex flex-col">
-                                    <span className="text-[10px] font-black uppercase tracking-widest text-gray-400">Date</span>
-                                    <span className="font-bold text-gray-900">{formatDate(event.start_date)}</span>
+                                <div className="px-6 py-4 bg-white flex flex-col gap-1 items-start min-w-[140px]">
+                                    <span className="text-[9px] font-black uppercase tracking-widest text-stone-400">Time</span>
+                                    <span className="font-bold text-sm text-gray-900">{formatTime(event.start_date)} WIB</span>
+                                </div>
+                                <div className="px-6 py-4 bg-white flex flex-col gap-1 items-start min-w-[140px]">
+                                    <span className="text-[9px] font-black uppercase tracking-widest text-stone-400">City</span>
+                                    <span className="font-bold text-sm text-gray-900">{event.city || "Jakarta"}</span>
                                 </div>
                             </div>
 
-                            <div className="flex items-center gap-4">
-                                <div className="w-12 h-12 rounded-2xl bg-purple-50 flex items-center justify-center">
-                                    <Clock className="w-5 h-5 text-purple-600" />
-                                </div>
-                                <div className="flex flex-col">
-                                    <span className="text-[10px] font-black uppercase tracking-widest text-gray-400">Time</span>
-                                    <span className="font-bold text-gray-900">{formatTime(event.start_date)} WIB</span>
-                                </div>
-                            </div>
-
-                            <div className="flex items-center gap-4">
-                                <div className="w-12 h-12 rounded-2xl bg-red-50 flex items-center justify-center">
-                                    <MapPin className="w-5 h-5 text-red-600" />
-                                </div>
-                                <div className="flex flex-col">
-                                    <span className="text-[10px] font-black uppercase tracking-widest text-gray-400">Location</span>
-                                    <span className="font-bold text-gray-900 line-clamp-1">{event.location}</span>
-                                </div>
+                            <div className="flex items-center justify-center lg:justify-start gap-3 opacity-60">
+                                <MapPin className="w-4 h-4 text-stone-400" />
+                                <span className="text-xs font-bold uppercase tracking-widest text-stone-500">{event.location}</span>
                             </div>
                         </div>
+
+                        {/* Floating Poster Section - Aligned with text */}
+                        {event.thumbnail_path && (
+                            <div className="relative group/poster mx-auto lg:mx-0">
+                                <div className="absolute -inset-4 bg-stone-900/5 blur-3xl rounded-full opacity-60"></div>
+                                <div className="w-64 sm:w-80 lg:w-[450px] xl:w-[500px] aspect-square relative rounded-[48px] overflow-hidden shadow-[0_48px_96px_-24px_rgba(0,0,0,0.35)] border-[12px] border-white z-10 transition-all duration-700 group-hover/poster:scale-[1.02] group-hover/poster:shadow-[0_64px_128px_-32px_rgba(0,0,0,0.45)]">
+                                    <Image
+                                        src={getImageUrl(event.thumbnail_path)}
+                                        alt={event.name}
+                                        fill
+                                        className="object-cover"
+                                        priority
+                                    />
+                                    {/* Glass reflection effect */}
+                                    <div className="absolute inset-0 bg-linear-to-tr from-white/10 via-transparent to-transparent pointer-events-none" />
+                                </div>
+                            </div>
+                        )}
                     </div>
                 </div>
             </div>
 
-            <main className="max-w-7xl mx-auto px-6 lg:px-10 py-20 w-full flex-1">
-                <div className="flex flex-col lg:flex-row gap-20">
+            <main className="max-w-7xl mx-auto px-6 lg:px-10 pt-24 pb-20 md:pt-40 md:pb-32 w-full flex-1 relative z-0">
+
+                <div className="flex flex-col lg:flex-row gap-12 lg:gap-16 xl:gap-24">
 
                     {/* Editorial Content Column */}
-                    <div className="flex-1 space-y-20">
+                    <div className="flex-1 min-w-0 space-y-20">
                         {/* Event Intro Panel */}
-                        <div className="relative group">
-                            <div className="prose prose-2xl prose-blue max-w-none text-gray-600 font-medium leading-[1.6] first-letter:text-7xl first-letter:font-black first-letter:text-blue-600 first-letter:mr-4 first-letter:float-left"
+                        <div className="space-y-12">
+                            <div className="space-y-8">
+                                <span className="text-blue-600 text-[10px] font-black uppercase tracking-[0.4em] block">About Event</span>
+                                <h2 className="text-4xl md:text-5xl font-black text-gray-950 tracking-tighter uppercase leading-none font-heading">
+                                    Story of <br /> <span className="text-gray-300">the Night</span>
+                                </h2>
+                            </div>
+                            <div className="prose prose-xl prose-blue max-w-none text-gray-600 font-medium leading-[1.8] font-body first-letter:text-7xl first-letter:font-black first-letter:text-blue-600 first-letter:mr-4 first-letter:float-left [&_img]:max-w-full [&_img]:h-auto [&_iframe]:max-w-full [&_iframe]:h-auto"
                                 dangerouslySetInnerHTML={{ __html: event.description }}
                             />
                         </div>
+
+                        {/* YouTube Experience Section */}
+                        {event.youtube_link && (
+                            <div className="space-y-12 animate-fade-in-up">
+                                <div className="space-y-4">
+                                    <span className="text-blue-600 text-[10px] font-black uppercase tracking-[0.4em] block">Visual Experience</span>
+                                    <h2 className="text-4xl md:text-5xl font-black text-gray-950 tracking-tighter uppercase leading-none font-heading">
+                                        Event <br /> <span className="text-gray-300">Teaser</span>
+                                    </h2>
+                                </div>
+                                <div className="relative aspect-video rounded-[32px] md:rounded-[48px] overflow-hidden shadow-2xl border-4 md:border-8 border-white bg-stone-100 transform-gpu transition-all duration-700 hover:scale-[1.01]">
+                                    <iframe
+                                        src={`https://www.youtube.com/embed/${(() => {
+                                            const regExp = /^.*(youtu.be\/|v\/|u\/\w\/|embed\/|watch\?v=|\&v=)([^#\&\?]*).*/;
+                                            const match = event.youtube_link.match(regExp);
+                                            return (match && match[2].length === 11) ? match[2] : null;
+                                        })()}?autoplay=0&rel=0`}
+                                        title="Event Trailer"
+                                        allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                                        allowFullScreen
+                                        className="absolute inset-0 w-full h-full"
+                                    />
+                                </div>
+                            </div>
+                        )}
 
                         {/* Organizer Section */}
                         <div className="p-10 rounded-[40px] bg-gray-50 border border-gray-100 flex flex-col md:flex-row gap-8 items-center">
@@ -224,16 +243,57 @@ export default async function EventDetailPage({ params }: { params: Promise<{ sl
                                 Contact Organizer
                             </Link>
                         </div>
+
+                        {/* Map & Venue Section */}
+                        {event.google_map_embed && (
+                            <div className="space-y-8 animate-fade-in-up">
+                                <div className="flex items-center gap-4 mb-4">
+                                    <div className="w-12 h-12 rounded-2xl bg-red-50 flex items-center justify-center">
+                                        <MapPin className="w-5 h-5 text-red-600" />
+                                    </div>
+                                    <div>
+                                        <h2 className="text-2xl font-black text-gray-950 uppercase tracking-tighter font-heading">Venue & Location</h2>
+                                        <p className="text-gray-400 text-[10px] font-black uppercase tracking-[0.2em]">{event.city}</p>
+                                    </div>
+                                </div>
+                                <div 
+                                    className="w-full h-[450px] rounded-[40px] overflow-hidden shadow-2xl border-8 border-gray-50 grayscale hover:grayscale-0 transition-all duration-700"
+                                    dangerouslySetInnerHTML={{ __html: event.google_map_embed }}
+                                />
+                            </div>
+                        )}
+
+                        {/* T&C Section */}
+                        {event.terms && (
+                            <div className="p-8 md:p-12 rounded-[32px] md:rounded-[40px] bg-linear-to-br from-gray-900 to-black text-white relative overflow-hidden shadow-2xl animate-fade-in-up">
+                                <div className="absolute top-0 right-0 p-8 md:p-12 opacity-10">
+                                    <Info className="w-24 h-24 md:w-32 md:h-32" />
+                                </div>
+                                <div className="relative z-10">
+                                    <div className="flex items-center gap-4 mb-8">
+                                        <div className="w-10 h-10 rounded-xl bg-white/10 flex items-center justify-center backdrop-blur-md">
+                                            <Info className="w-5 h-5 text-white" />
+                                        </div>
+                                        <h2 className="text-xl md:text-2xl font-black uppercase tracking-widest italic font-heading">Terms & Conditions</h2>
+                                    </div>
+                                    <div 
+                                        className="prose prose-invert prose-sm max-w-none text-gray-400 leading-relaxed font-body mt-4
+                                                   [&_ul]:list-disc [&_ul]:pl-5 [&_ol]:list-decimal [&_ol]:pl-5 [&_li]:mb-2 [&_p]:mb-4"
+                                        dangerouslySetInnerHTML={{ __html: event.terms }}
+                                    />
+                                </div>
+                            </div>
+                        )}
                     </div>
 
                     {/* Floating Ticket Selector Column */}
-                    <div className="lg:w-[420px] shrink-0">
+                    <div id="booking-section" className="lg:w-[360px] xl:w-[420px] shrink-0">
                         <div className="sticky top-32">
                             <div className="relative group">
                                 {/* Subtle Glow Effect */}
                                 <div className="absolute -inset-1 bg-linear-to-r from-blue-600 to-purple-600 rounded-[40px] blur opacity-10 group-hover:opacity-20 transition duration-1000"></div>
 
-                                <TicketSelector tickets={tickets} />
+                                <TicketSelector tickets={tickets} eventSlug={slug} />
                             </div>
                         </div>
                     </div>
@@ -242,6 +302,9 @@ export default async function EventDetailPage({ params }: { params: Promise<{ sl
             </main>
 
             <Footer />
+
+            {/* Mobile Sticky Booking Bar */}
+            <MobileBookingBar minPrice={minPrice} />
         </div>
     );
 }

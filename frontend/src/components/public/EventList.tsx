@@ -13,9 +13,11 @@ interface Event {
     slug: string;
     name: string;
     description: string;
+    youtube_link?: string;
     start_date: string;
     location: string;
     thumbnail_path: string | null;
+    banner_path: string | null;
     status: 'draft' | 'published';
     min_price: number;
     created_at: string;
@@ -102,12 +104,12 @@ export default function EventList({ initialEvents, serverNow }: { initialEvents?
                     className="group bg-white rounded-2xl shadow-sm hover:shadow-xl transition-all duration-300 border border-gray-100 overflow-hidden flex flex-col h-full"
                 >
                     <div className="relative h-48 w-full overflow-hidden bg-gray-100">
-                        {event.thumbnail_path ? (
+                        {event.banner_path || event.thumbnail_path ? (
                             <Image
-                                src={getImageUrl(event.thumbnail_path)}
+                                src={getImageUrl(event.banner_path || event.thumbnail_path || '')}
                                 alt={event.name}
                                 fill
-                                className="object-cover group-hover:scale-105 transition-transform duration-500"
+                                className="object-cover group-hover:scale-110 transition-transform duration-700"
                             />
                         ) : (
                             <div className="flex items-center justify-center h-full text-gray-300">
@@ -127,24 +129,24 @@ export default function EventList({ initialEvents, serverNow }: { initialEvents?
                     </div>
 
                     <div className="p-5 flex-1 flex flex-col">
-                        <h3 className="font-bold text-lg text-gray-900 group-hover:text-blue-600 transition-colors line-clamp-2 mb-2">
+                        <h3 className="font-black text-xl text-gray-900 group-hover:text-blue-600 transition-colors line-clamp-2 mb-3 tracking-tight font-heading uppercase leading-tight">
                             {event.name}
                         </h3>
 
                         <div className="space-y-2 mb-4">
-                            <div className="flex items-center gap-2 text-sm text-gray-500">
+                            <div className="flex items-center gap-2 text-xs font-bold text-gray-400 uppercase tracking-widest font-body">
                                 <Calendar className="w-4 h-4 text-blue-500" />
                                 <span>{new Date(event.start_date).toLocaleDateString('id-ID', { day: 'numeric', month: 'long', year: 'numeric' })}</span>
                             </div>
-                            <div className="flex items-center gap-2 text-sm text-gray-500">
+                            <div className="flex items-center gap-2 text-xs font-bold text-gray-400 uppercase tracking-widest font-body">
                                 <MapPin className="w-4 h-4 text-red-500" />
                                 <span className="line-clamp-1">{event.location || "TBA"}</span>
                             </div>
                         </div>
 
                         <div className="pt-4 border-t border-gray-50 mt-auto flex items-center justify-between">
-                            <span className="text-xs text-gray-500 font-medium whitespace-nowrap">Starts from</span>
-                            <span className="font-extrabold text-gray-900">
+                            <span className="text-[10px] text-gray-400 font-black uppercase tracking-widest whitespace-nowrap font-heading">Starts from</span>
+                            <span className="font-black text-gray-950 text-lg font-heading tracking-tighter">
                                 {event.min_price > 0
                                     ? `Rp ${event.min_price.toLocaleString('id-ID')}`
                                     : "Free/TBA"
