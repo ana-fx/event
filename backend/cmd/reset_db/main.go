@@ -26,17 +26,17 @@ func main() {
 	database.Connect(connStr)
 	database.RunMigrations()
 
-	// 3. Reset Database (Truncate all tables)
-	log.Println("Resetting database (dropping all existing data)...")
+	// 3. Reset Database (Delete all data)
+	log.Println("Resetting database (deleting all existing data)...")
 	tables := []string{
 		"withdrawals", "reseller_deposits", "event_reseller", "settings",
 		"banners", "event_scanner", "contacts", "transactions", "tickets", "events", "users",
 	}
 
 	for _, table := range tables {
-		_, err := database.DB.Exec("TRUNCATE TABLE " + table + " RESTART IDENTITY CASCADE")
+		_, err := database.DB.Exec("DELETE FROM " + table)
 		if err != nil {
-			log.Printf("Warning: failed to truncate %s: %v", table, err)
+			log.Printf("Warning: failed to delete from %s: %v", table, err)
 		}
 	}
 
