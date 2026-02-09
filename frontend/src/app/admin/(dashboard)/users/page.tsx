@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useState, Suspense } from "react";
 import Link from "next/link";
 import { useSearchParams } from "next/navigation";
 import axiosInstance from "../../../../lib/axios"; // Relative import fix
@@ -16,7 +16,7 @@ interface User {
     is_active: boolean;
 }
 
-export default function UserList() {
+function UserListContent() {
     const searchParams = useSearchParams(); // Add this
     const roleParam = searchParams.get("role") || "all"; // Get query param
 
@@ -171,5 +171,13 @@ export default function UserList() {
                 </table>
             </div>
         </div>
+    );
+}
+
+export default function UserList() {
+    return (
+        <Suspense fallback={<div className="p-8 text-center text-gray-400 italic">Initializing user list...</div>}>
+            <UserListContent />
+        </Suspense>
     );
 }

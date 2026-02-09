@@ -1,7 +1,7 @@
 "use client";
 
 import { useSearchParams, useRouter } from "next/navigation";
-import { useEffect, useState } from "react";
+import { useEffect, useState, Suspense } from "react";
 import Navbar from "@/components/public/Navbar";
 import Footer from "@/components/public/Footer";
 import { CheckCircle, ChevronRight, Loader2 } from "lucide-react";
@@ -15,7 +15,7 @@ interface CartItem {
     price?: number;
 }
 
-export default function CheckoutPage({ params }: { params: Promise<{ slug: string }> }) {
+function CheckoutContent({ params }: { params: { slug: string } }) {
     const searchParams = useSearchParams();
     const router = useRouter();
     const tParam = searchParams.get("t");
@@ -40,7 +40,7 @@ export default function CheckoutPage({ params }: { params: Promise<{ slug: strin
 
     useEffect(() => {
         const initCheckout = async () => {
-            const slug = (await params).slug;
+            const slug = params.slug;
             if (tParam && slug) {
                 try {
                     // 1. Parse Ticket Data (id1-qty1,id2-qty2)
@@ -417,4 +417,26 @@ export default function CheckoutPage({ params }: { params: Promise<{ slug: strin
             <Footer />
         </div>
     );
+}
+
+export default function CheckoutPage({ params }: { params: Promise<{ slug: string }> }) {
+    const resolvedParams = typeof (params as any).then === 'function' ? (params as any) : Promise.resolve(params);
+    
+    return (
+        <Suspense fallback={<div className="min-h-screen flex items-center justify-center bg-white"><Loader2 className="w-8 h-8 animate-spin text-blue-600" /></div>}>
+            <CheckoutPageInner paramsPromise={resolvedParams} />
+        </Suspense>
+    );
+}
+
+function CheckoutPageInner({ paramsPromise }: { paramsPromise: Promise<{ slug: string }> }) {
+    const [params, setParams] = useState<{ slug: string } | null>(null);
+
+    useEffect(() => {
+        paramsPromise.then(setParams);
+    }, [paramsPromise]);
+
+    if (!params) return <div className="min-h-screen flex items-center justify-center bg-white"><Loader2 className="w-8 h-8 animate-spin text-blue-600" /></div>;
+
+    return <CheckoutContent params={params} />;
 }
