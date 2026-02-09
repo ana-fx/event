@@ -18,15 +18,36 @@ func GetTransactionStatus(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	// Fetch transaction by code
-	var t models.Transaction
-	query := `SELECT id, code, event_id, name, email, quantity, total_price, status, created_at FROM transactions WHERE code=$1`
-	err := database.DB.QueryRow(query, code).Scan(&t.ID, &t.Code, &t.EventID, &t.Name, &t.Email, &t.Quantity, &t.TotalPrice, &t.Status, &t.CreatedAt)
+	// Fetch transaction by code with extra details
+	type TransactionDetail struct {
+		models.Transaction
+		EventName  string `json:"event_name"`
+		TicketName string `json:"ticket_name"`
+	}
+
+	var td TransactionDetail
+	query := `
+		SELECT 
+			t.id, t.code, t.event_id, t.ticket_id, t.name, t.email, t.phone, t.city, t.nik, t.gender, t.quantity, t.total_price, t.status, t.created_at,
+			t.snap_token, t.redirect_url,
+			e.name as event_name,
+			tk.name as ticket_name
+		FROM transactions t
+		JOIN events e ON t.event_id = e.id
+		JOIN tickets tk ON t.ticket_id = tk.id
+		WHERE t.code = $1
+	`
+	err := database.DB.QueryRow(query, code).Scan(
+		&td.ID, &td.Code, &td.EventID, &td.TicketID, &td.Name, &td.Email, &td.Phone, &td.City, &td.NIK, &td.Gender, &td.Quantity, &td.TotalPrice, &td.Status, &td.CreatedAt,
+		&td.SnapToken, &td.RedirectURL,
+		&td.EventName,
+		&td.TicketName,
+	)
 	if err != nil {
-		http.Error(w, "Transaction not found", http.StatusNotFound)
+		http.Error(w, "Transaction not found: "+err.Error(), http.StatusNotFound)
 		return
 	}
 
 	w.Header().Set("Content-Type", "application/json")
-	json.NewEncoder(w).Encode(t)
+	json.NewEncoder(w).Encode(td)
 }

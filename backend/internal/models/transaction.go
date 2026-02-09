@@ -24,6 +24,7 @@ type Transaction struct {
 	RedeemedBy            sql.NullInt64  `json:"redeemed_by"`
 	ResellerID            sql.NullInt64  `json:"reseller_id"`
 	SnapToken             sql.NullString `json:"snap_token"`
+	RedirectURL           sql.NullString `json:"redirect_url"`
 	PaymentType           sql.NullString `json:"payment_type"`
 	MidtransTransactionID sql.NullString `json:"midtrans_transaction_id"`
 	CreatedAt             time.Time      `json:"created_at"`
@@ -89,7 +90,7 @@ func SumPaidRevenue() (float64, error) {
 }
 
 func UpdateTransactionSnapToken(id int, token string, redirectURL string) error {
-	_, err := database.DB.Exec(`UPDATE transactions SET snap_token=$1, updated_at=$2 WHERE id=$3`, token, time.Now(), id)
+	_, err := database.DB.Exec(`UPDATE transactions SET snap_token=$1, redirect_url=$2, updated_at=$3 WHERE id=$4`, token, redirectURL, time.Now(), id)
 	return err
 }
 
