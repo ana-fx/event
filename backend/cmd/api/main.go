@@ -8,6 +8,7 @@ import (
 	"event-backend/internal/handlers/reseller"
 	"event-backend/internal/handlers/scanner"
 	"event-backend/internal/middleware"
+	"event-backend/internal/utils"
 	"fmt"
 	"log"
 	"net/http"
@@ -30,7 +31,10 @@ func main() {
 	database.Connect(connStr)
 	database.RunMigrations()
 
-	// 2. Routes
+	// 2. Initialize Queue
+	utils.InitMailQueue(100, 3)
+
+	// 3. Routes
 	// Public Routes
 	http.HandleFunc("/api/events", public.ListEvents)
 	http.HandleFunc("/api/events/detail", public.GetEvent) // Query: ?slug=...

@@ -32,6 +32,18 @@ export default function CreateEvent() {
         organizer_name: "",
         seo_title: "",
         seo_description: "",
+        organizer_tax: "0",
+        organizer_tax_type: "fixed",
+        admin_fee: "0",
+        admin_fee_type: "fixed",
+        ppn: "0",
+        ppn_type: "fixed",
+        reseller_fee_type: "fixed",
+        reseller_fee_value: "0",
+        organizer_fee_online_type: "fixed",
+        organizer_fee_online: "0",
+        organizer_fee_reseller_type: "fixed",
+        organizer_fee_reseller: "0",
     });
 
     // Files
@@ -76,11 +88,6 @@ export default function CreateEvent() {
             if (thumbnail) data.append("thumbnail", thumbnail);
             if (organizerLogo) data.append("organizer_logo", organizerLogo);
 
-            // Default fees for now (Phase 2 will add fee config)
-            data.append("reseller_fee_type", "fixed");
-            data.append("reseller_fee_value", "0");
-            data.append("organizer_fee_online_type", "fixed");
-            data.append("organizer_fee_online_value", "0");
 
             await axiosInstance.post("/admin/events", data, {
                 headers: { "Content-Type": "multipart/form-data" },
@@ -328,7 +335,143 @@ export default function CreateEvent() {
                     </div>
                 </div>
 
-                {/* 4. SEO */}
+                {/* 4. Fees & Taxes */}
+                <div className="bg-(--card) p-6 rounded-2xl border border-(--card-border) shadow-sm space-y-6">
+                    <h3 className="text-lg font-bold text-(--foreground) border-b border-(--card-border) pb-4">Fees & Taxes</h3>
+                    <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+                        <div className="space-y-4">
+                            <div>
+                                <label className="block text-sm font-bold text-(--foreground) opacity-70 mb-2">Organizer Tax</label>
+                                <div className="flex gap-2">
+                                    <input
+                                        type="number"
+                                        className="flex-1 px-4 py-2.5 rounded-lg border border-(--card-border) bg-(--background) text-(--foreground) focus:border-blue-500 focus:ring-4 focus:ring-blue-500/10 outline-none transition-all"
+                                        value={formData.organizer_tax}
+                                        onChange={(e) => setFormData({ ...formData, organizer_tax: e.target.value })}
+                                    />
+                                    <select 
+                                        className="w-24 px-2 py-2.5 rounded-lg border border-(--card-border) bg-(--background) text-(--foreground) focus:border-blue-500 outline-none transition-all text-sm font-bold"
+                                        value={formData.organizer_tax_type}
+                                        onChange={(e) => setFormData({ ...formData, organizer_tax_type: e.target.value })}
+                                    >
+                                        <option value="fixed">IDR</option>
+                                        <option value="percent">%</option>
+                                    </select>
+                                </div>
+                            </div>
+                        </div>
+                        <div className="space-y-4">
+                            <div>
+                                <label className="block text-sm font-bold text-(--foreground) opacity-70 mb-2">Buyer Service Fee</label>
+                                <div className="flex gap-2">
+                                    <input
+                                        type="number"
+                                        className="flex-1 px-4 py-2.5 rounded-lg border border-(--card-border) bg-(--background) text-(--foreground) focus:border-blue-500 focus:ring-4 focus:ring-blue-500/10 outline-none transition-all"
+                                        value={formData.admin_fee}
+                                        onChange={(e) => setFormData({ ...formData, admin_fee: e.target.value })}
+                                    />
+                                    <select 
+                                        className="w-24 px-2 py-2.5 rounded-lg border border-(--card-border) bg-(--background) text-(--foreground) focus:border-blue-500 outline-none transition-all text-sm font-bold"
+                                        value={formData.admin_fee_type}
+                                        onChange={(e) => setFormData({ ...formData, admin_fee_type: e.target.value })}
+                                    >
+                                        <option value="fixed">IDR</option>
+                                        <option value="percent">%</option>
+                                    </select>
+                                </div>
+                            </div>
+                        </div>
+                        <div className="space-y-4">
+                            <div>
+                                <label className="block text-sm font-bold text-(--foreground) opacity-70 mb-2">PPN</label>
+                                <div className="flex gap-2">
+                                    <input
+                                        type="number"
+                                        className="flex-1 px-4 py-2.5 rounded-lg border border-(--card-border) bg-(--background) text-(--foreground) focus:border-blue-500 focus:ring-4 focus:ring-blue-500/10 outline-none transition-all"
+                                        value={formData.ppn}
+                                        onChange={(e) => setFormData({ ...formData, ppn: e.target.value })}
+                                    />
+                                    <select 
+                                        className="w-24 px-2 py-2.5 rounded-lg border border-(--card-border) bg-(--background) text-(--foreground) focus:border-blue-500 outline-none transition-all text-sm font-bold"
+                                        value={formData.ppn_type}
+                                        onChange={(e) => setFormData({ ...formData, ppn_type: e.target.value })}
+                                    >
+                                        <option value="fixed">IDR</option>
+                                        <option value="percent">%</option>
+                                    </select>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div className="space-y-4">
+                            <div>
+                                <label className="block text-sm font-bold text-(--foreground) opacity-70 mb-2">Reseller Commission</label>
+                                <div className="flex gap-2">
+                                    <input
+                                        type="number"
+                                        className="flex-1 px-4 py-2.5 rounded-lg border border-(--card-border) bg-(--background) text-(--foreground) focus:border-blue-500 focus:ring-4 focus:ring-blue-500/10 outline-none transition-all"
+                                        value={formData.reseller_fee_value}
+                                        onChange={(e) => setFormData({ ...formData, reseller_fee_value: e.target.value })}
+                                    />
+                                    <select 
+                                        className="w-24 px-2 py-2.5 rounded-lg border border-(--card-border) bg-(--background) text-(--foreground) focus:border-blue-500 outline-none transition-all text-sm font-bold"
+                                        value={formData.reseller_fee_type}
+                                        onChange={(e) => setFormData({ ...formData, reseller_fee_type: e.target.value })}
+                                    >
+                                        <option value="fixed">IDR</option>
+                                        <option value="percent">%</option>
+                                    </select>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div className="space-y-4">
+                            <div>
+                                <label className="block text-sm font-bold text-(--foreground) opacity-70 mb-2">Platform Fee (Online)</label>
+                                <div className="flex gap-2">
+                                    <input
+                                        type="number"
+                                        className="flex-1 px-4 py-2.5 rounded-lg border border-(--card-border) bg-(--background) text-(--foreground) focus:border-blue-500 focus:ring-4 focus:ring-blue-500/10 outline-none transition-all"
+                                        value={formData.organizer_fee_online}
+                                        onChange={(e) => setFormData({ ...formData, organizer_fee_online: e.target.value })}
+                                    />
+                                    <select 
+                                        className="w-24 px-2 py-2.5 rounded-lg border border-(--card-border) bg-(--background) text-(--foreground) focus:border-blue-500 outline-none transition-all text-sm font-bold"
+                                        value={formData.organizer_fee_online_type}
+                                        onChange={(e) => setFormData({ ...formData, organizer_fee_online_type: e.target.value })}
+                                    >
+                                        <option value="fixed">IDR</option>
+                                        <option value="percent">%</option>
+                                    </select>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div className="space-y-4">
+                            <div>
+                                <label className="block text-sm font-bold text-(--foreground) opacity-70 mb-2">Platform Fee (Reseller)</label>
+                                <div className="flex gap-2">
+                                    <input
+                                        type="number"
+                                        className="flex-1 px-4 py-2.5 rounded-lg border border-(--card-border) bg-(--background) text-(--foreground) focus:border-blue-500 focus:ring-4 focus:ring-blue-500/10 outline-none transition-all"
+                                        value={formData.organizer_fee_reseller}
+                                        onChange={(e) => setFormData({ ...formData, organizer_fee_reseller: e.target.value })}
+                                    />
+                                    <select 
+                                        className="w-24 px-2 py-2.5 rounded-lg border border-(--card-border) bg-(--background) text-(--foreground) focus:border-blue-500 outline-none transition-all text-sm font-bold"
+                                        value={formData.organizer_fee_reseller_type}
+                                        onChange={(e) => setFormData({ ...formData, organizer_fee_reseller_type: e.target.value })}
+                                    >
+                                        <option value="fixed">IDR</option>
+                                        <option value="percent">%</option>
+                                    </select>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                {/* 5. SEO */}
                 <div className="bg-(--card) p-6 rounded-2xl border border-(--card-border) shadow-sm space-y-6">
                     <h3 className="text-lg font-bold text-(--foreground) border-b border-(--card-border) pb-4">SEO Settings</h3>
                     <div className="grid grid-cols-1 gap-6">

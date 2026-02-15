@@ -116,6 +116,41 @@ func CreateEvent(w http.ResponseWriter, r *http.Request) {
 
 	req.Status = r.FormValue("status")
 
+	// Finance Fields
+	req.OrganizerTax, _ = strconv.ParseFloat(r.FormValue("organizer_tax"), 64)
+	req.OrganizerTaxType = r.FormValue("organizer_tax_type")
+	if req.OrganizerTaxType == "" {
+		req.OrganizerTaxType = "fixed"
+	}
+	req.AdminFee, _ = strconv.ParseFloat(r.FormValue("admin_fee"), 64)
+	req.AdminFeeType = r.FormValue("admin_fee_type")
+	if req.AdminFeeType == "" {
+		req.AdminFeeType = "fixed"
+	}
+	req.PPN, _ = strconv.ParseFloat(r.FormValue("ppn"), 64)
+	req.PPNType = r.FormValue("ppn_type")
+	if req.PPNType == "" {
+		req.PPNType = "fixed"
+	}
+
+	req.ResellerFeeValue, _ = strconv.ParseFloat(r.FormValue("reseller_fee_value"), 64)
+	req.ResellerFeeType = r.FormValue("reseller_fee_type")
+	if req.ResellerFeeType == "" {
+		req.ResellerFeeType = "fixed"
+	}
+
+	req.OrganizerFeeOnline, _ = strconv.ParseFloat(r.FormValue("organizer_fee_online"), 64)
+	req.OrganizerFeeOnlineType = r.FormValue("organizer_fee_online_type")
+	if req.OrganizerFeeOnlineType == "" {
+		req.OrganizerFeeOnlineType = "fixed"
+	}
+
+	req.OrganizerFeeReseller, _ = strconv.ParseFloat(r.FormValue("organizer_fee_reseller"), 64)
+	req.OrganizerFeeResellerType = r.FormValue("organizer_fee_reseller_type")
+	if req.OrganizerFeeResellerType == "" {
+		req.OrganizerFeeResellerType = "fixed"
+	}
+
 	// Dates
 	layout := "2006-01-02T15:04" // HTML datetime-local format
 	// Also support ISO format from DatePicker
@@ -264,6 +299,49 @@ func UpdateEvent(w http.ResponseWriter, r *http.Request) {
 
 		req.Status = r.FormValue("status")
 
+		// Finance Fields
+		if r.Form["organizer_tax"] != nil {
+			req.OrganizerTax, _ = strconv.ParseFloat(r.FormValue("organizer_tax"), 64)
+		} else {
+			req.OrganizerTax = -1 // Sentinel value or handle differently
+		}
+		req.OrganizerTaxType = r.FormValue("organizer_tax_type")
+
+		if r.Form["admin_fee"] != nil {
+			req.AdminFee, _ = strconv.ParseFloat(r.FormValue("admin_fee"), 64)
+		} else {
+			req.AdminFee = -1
+		}
+		req.AdminFeeType = r.FormValue("admin_fee_type")
+
+		if r.Form["ppn"] != nil {
+			req.PPN, _ = strconv.ParseFloat(r.FormValue("ppn"), 64)
+		} else {
+			req.PPN = -1
+		}
+		req.PPNType = r.FormValue("ppn_type")
+
+		if r.Form["reseller_fee_value"] != nil {
+			req.ResellerFeeValue, _ = strconv.ParseFloat(r.FormValue("reseller_fee_value"), 64)
+		} else {
+			req.ResellerFeeValue = -1
+		}
+		req.ResellerFeeType = r.FormValue("reseller_fee_type")
+
+		if r.Form["organizer_fee_online"] != nil {
+			req.OrganizerFeeOnline, _ = strconv.ParseFloat(r.FormValue("organizer_fee_online"), 64)
+		} else {
+			req.OrganizerFeeOnline = -1
+		}
+		req.OrganizerFeeOnlineType = r.FormValue("organizer_fee_online_type")
+
+		if r.Form["organizer_fee_reseller"] != nil {
+			req.OrganizerFeeReseller, _ = strconv.ParseFloat(r.FormValue("organizer_fee_reseller"), 64)
+		} else {
+			req.OrganizerFeeReseller = -1
+		}
+		req.OrganizerFeeResellerType = r.FormValue("organizer_fee_reseller_type")
+
 		layout := "2006-01-02T15:04"
 		if s := r.FormValue("start_date"); s != "" {
 			if t, err := time.Parse(time.RFC3339, s); err == nil {
@@ -342,6 +420,44 @@ func UpdateEvent(w http.ResponseWriter, r *http.Request) {
 	}
 	if req.Status != "" {
 		current.Status = req.Status
+	}
+
+	// Finance Fields
+	if req.OrganizerTax != -1 {
+		current.OrganizerTax = req.OrganizerTax
+	}
+	if req.OrganizerTaxType != "" {
+		current.OrganizerTaxType = req.OrganizerTaxType
+	}
+	if req.AdminFee != -1 {
+		current.AdminFee = req.AdminFee
+	}
+	if req.AdminFeeType != "" {
+		current.AdminFeeType = req.AdminFeeType
+	}
+	if req.PPN != -1 {
+		current.PPN = req.PPN
+	}
+	if req.PPNType != "" {
+		current.PPNType = req.PPNType
+	}
+	if req.ResellerFeeValue != -1 {
+		current.ResellerFeeValue = req.ResellerFeeValue
+	}
+	if req.ResellerFeeType != "" {
+		current.ResellerFeeType = req.ResellerFeeType
+	}
+	if req.OrganizerFeeOnline != -1 {
+		current.OrganizerFeeOnline = req.OrganizerFeeOnline
+	}
+	if req.OrganizerFeeOnlineType != "" {
+		current.OrganizerFeeOnlineType = req.OrganizerFeeOnlineType
+	}
+	if req.OrganizerFeeReseller != -1 {
+		current.OrganizerFeeReseller = req.OrganizerFeeReseller
+	}
+	if req.OrganizerFeeResellerType != "" {
+		current.OrganizerFeeResellerType = req.OrganizerFeeResellerType
 	}
 
 	// Fields that user might want to clear/empty

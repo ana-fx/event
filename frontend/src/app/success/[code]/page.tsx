@@ -8,6 +8,7 @@ import Footer from "@/components/public/Footer";
 import { Loader2, CheckCircle, ArrowRight, Download, Calendar, Receipt, User, ShieldCheck } from "lucide-react";
 import { toast } from "react-hot-toast";
 import api from "@/lib/axios";
+import { QRCodeSVG } from "qrcode.react";
 
 export default function SuccessPage({ params }: { params: Promise<{ code: string }> }) {
     const router = useRouter();
@@ -77,39 +78,10 @@ export default function SuccessPage({ params }: { params: Promise<{ code: string
                     {/* Left Column: Confirmation Chapters */}
                     <div className="lg:col-span-7 space-y-12 sm:space-y-16">
                         
-                        {/* Chapter 01: Next Steps / Tickets */}
+                        {/* Chapter 01: Proof of Payment (Details) */}
                         <section className="space-y-8 sm:space-y-10">
                             <div className="flex items-center gap-4 sm:gap-6">
                                 <span className="w-8 h-8 sm:w-10 sm:h-10 rounded-full bg-blue-600 text-white flex items-center justify-center font-black text-xs sm:text-sm font-heading">01</span>
-                                <h3 className="text-lg sm:text-xl font-black text-[#1A1A1A] uppercase tracking-tighter font-heading">Next Steps</h3>
-                            </div>
-
-                            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                                <div className="p-8 rounded-[32px] bg-white border border-gray-100 shadow-sm space-y-4 group hover:border-blue-500/30 transition-colors">
-                                    <div className="w-10 h-10 rounded-xl bg-blue-50 flex items-center justify-center">
-                                        <Download className="w-5 h-5 text-blue-600" />
-                                    </div>
-                                    <div>
-                                        <h4 className="text-sm font-black uppercase tracking-tight text-gray-900 font-heading">E-Ticket Ready</h4>
-                                        <p className="text-[11px] text-gray-400 font-bold uppercase tracking-widest mt-1 font-body">Sent to your email</p>
-                                    </div>
-                                </div>
-                                <div className="p-8 rounded-[32px] bg-white border border-gray-100 shadow-sm space-y-4 group hover:border-blue-500/30 transition-colors">
-                                    <div className="w-10 h-10 rounded-xl bg-blue-50 flex items-center justify-center">
-                                        <Calendar className="w-5 h-5 text-blue-600" />
-                                    </div>
-                                    <div>
-                                        <h4 className="text-sm font-black uppercase tracking-tight text-gray-900 font-heading">Add to Calendar</h4>
-                                        <p className="text-[11px] text-gray-400 font-bold uppercase tracking-widest mt-1 font-body">Mark the schedule</p>
-                                    </div>
-                                </div>
-                            </div>
-                        </section>
-
-                        {/* Chapter 02: Proof of Payment (Details) */}
-                        <section className="space-y-8 sm:space-y-10">
-                            <div className="flex items-center gap-4 sm:gap-6">
-                                <span className="w-8 h-8 sm:w-10 sm:h-10 rounded-full bg-blue-600 text-white flex items-center justify-center font-black text-xs sm:text-sm font-heading">02</span>
                                 <h3 className="text-lg sm:text-xl font-black text-[#1A1A1A] uppercase tracking-tighter font-heading">Proof of Payment</h3>
                             </div>
 
@@ -119,7 +91,7 @@ export default function SuccessPage({ params }: { params: Promise<{ code: string
                                     <div className="w-14 h-14 rounded-2xl bg-gray-50 flex items-center justify-center flex-shrink-0 ring-1 ring-gray-100">
                                         <Receipt className="w-7 h-7 text-gray-400" />
                                     </div>
-                                    <div className="space-y-1">
+                                    <div className="space-y-1 flex-grow">
                                         <p className="text-[10px] font-black uppercase tracking-[0.2em] text-gray-400 font-heading">Event Details</p>
                                         <h4 className="text-2xl font-black text-gray-950 font-heading uppercase tracking-tight leading-tight">{transaction.event_name}</h4>
                                         <div className="flex items-center gap-3">
@@ -127,6 +99,14 @@ export default function SuccessPage({ params }: { params: Promise<{ code: string
                                             <span className="text-gray-300 font-body">&bull;</span>
                                             <span className="text-[11px] font-bold text-gray-500 font-body">{transaction.quantity} Ticket(s)</span>
                                         </div>
+                                    </div>
+                                    <div className="hidden sm:block p-3 bg-white border border-gray-100 rounded-2xl shadow-sm">
+                                        <QRCodeSVG value={transaction.code} size={80} />
+                                    </div>
+                                </div>
+                                <div className="sm:hidden flex justify-center pb-6 border-b border-gray-50">
+                                    <div className="p-4 bg-white border border-gray-100 rounded-3xl shadow-sm">
+                                        <QRCodeSVG value={transaction.code} size={150} />
                                     </div>
                                 </div>
 
@@ -147,6 +127,34 @@ export default function SuccessPage({ params }: { params: Promise<{ code: string
                                     <div className="space-y-1 flex items-center gap-2 pt-2">
                                         <ShieldCheck className="w-4 h-4 text-blue-600" />
                                         <span className="text-[10px] font-black uppercase tracking-widest text-blue-600 font-heading">Payment Verified</span>
+                                    </div>
+                                </div>
+
+                                {/* Integrated Next Steps */}
+                                <div className="pt-10 border-t border-gray-50">
+                                    <div className="flex items-center gap-4 mb-6">
+                                        <span className="w-6 h-6 rounded-full bg-blue-50 text-blue-600 flex items-center justify-center font-black text-[10px] font-heading">02</span>
+                                        <h4 className="text-[10px] font-black uppercase tracking-[0.2em] text-gray-400 font-heading">Next Steps</h4>
+                                    </div>
+                                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                                        <div className="flex items-center gap-4 p-4 rounded-2xl bg-blue-50/30 border border-blue-100/50 group hover:border-blue-500/30 transition-colors">
+                                            <div className="w-10 h-10 rounded-xl bg-white shadow-sm flex items-center justify-center flex-shrink-0">
+                                                <Download className="w-5 h-5 text-blue-600" />
+                                            </div>
+                                            <div>
+                                                <h4 className="text-[11px] font-black uppercase tracking-tight text-gray-900 font-heading">Ticket Ready</h4>
+                                                <p className="text-[9px] text-gray-400 font-bold uppercase tracking-widest font-body">Check your email</p>
+                                            </div>
+                                        </div>
+                                        <div className="flex items-center gap-4 p-4 rounded-2xl bg-blue-50/30 border border-blue-100/50 group hover:border-blue-500/30 transition-colors">
+                                            <div className="w-10 h-10 rounded-xl bg-white shadow-sm flex items-center justify-center flex-shrink-0">
+                                                <Calendar className="w-5 h-5 text-blue-600" />
+                                            </div>
+                                            <div>
+                                                <h4 className="text-[11px] font-black uppercase tracking-tight text-gray-900 font-heading">Set Calendar</h4>
+                                                <p className="text-[9px] text-gray-400 font-bold uppercase tracking-widest font-body">Mark the schedule</p>
+                                            </div>
+                                        </div>
                                     </div>
                                 </div>
                             </div>

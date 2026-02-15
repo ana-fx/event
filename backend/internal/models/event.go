@@ -6,39 +6,47 @@ import (
 )
 
 type Event struct {
-	ID                     int       `json:"id"`
-	Name                   string    `json:"name"`
-	Slug                   string    `json:"slug"`
-	Category               string    `json:"category"`
-	Status                 string    `json:"status"`
-	BannerPath             *string   `json:"banner_path"`
-	ThumbnailPath          *string   `json:"thumbnail_path"`
-	StartDate              time.Time `json:"start_date"`
-	EndDate                time.Time `json:"end_date"`
-	Description            string    `json:"description"`
-	Terms                  *string   `json:"terms"`
-	Location               *string   `json:"location"`
-	Province               *string   `json:"province"`
-	City                   *string   `json:"city"`
-	Zip                    *string   `json:"zip"`
-	GoogleMapEmbed         *string   `json:"google_map_embed"`
-	SeoTitle               *string   `json:"seo_title"`
-	SeoDescription         *string   `json:"seo_description"`
-	OrganizerName          *string   `json:"organizer_name"`
-	OrganizerLogoPath      *string   `json:"organizer_logo_path"`
-	ResellerFeeType        string    `json:"reseller_fee_type"`
-	ResellerFeeValue       float64   `json:"reseller_fee_value"`
-	OrganizerFeeOnlineType string    `json:"organizer_fee_online_type"`
-	OrganizerFeeOnline     float64   `json:"organizer_fee_online"`
-	MinPrice               float64   `json:"min_price"`
-	YoutubeLink            *string   `json:"youtube_link"`
-	CreatedAt              time.Time `json:"created_at"`
-	UpdatedAt              time.Time `json:"updated_at"`
+	ID                       int       `json:"id"`
+	Name                     string    `json:"name"`
+	Slug                     string    `json:"slug"`
+	Category                 string    `json:"category"`
+	Status                   string    `json:"status"`
+	BannerPath               *string   `json:"banner_path"`
+	ThumbnailPath            *string   `json:"thumbnail_path"`
+	StartDate                time.Time `json:"start_date"`
+	EndDate                  time.Time `json:"end_date"`
+	Description              string    `json:"description"`
+	Terms                    *string   `json:"terms"`
+	Location                 *string   `json:"location"`
+	Province                 *string   `json:"province"`
+	City                     *string   `json:"city"`
+	Zip                      *string   `json:"zip"`
+	GoogleMapEmbed           *string   `json:"google_map_embed"`
+	SeoTitle                 *string   `json:"seo_title"`
+	SeoDescription           *string   `json:"seo_description"`
+	OrganizerName            *string   `json:"organizer_name"`
+	OrganizerLogoPath        *string   `json:"organizer_logo_path"`
+	ResellerFeeType          string    `json:"reseller_fee_type"`
+	ResellerFeeValue         float64   `json:"reseller_fee_value"`
+	OrganizerFeeOnlineType   string    `json:"organizer_fee_online_type"`
+	OrganizerFeeOnline       float64   `json:"organizer_fee_online"`
+	OrganizerFeeResellerType string    `json:"organizer_fee_reseller_type"`
+	OrganizerFeeReseller     float64   `json:"organizer_fee_reseller"`
+	OrganizerTax             float64   `json:"organizer_tax"`
+	OrganizerTaxType         string    `json:"organizer_tax_type"`
+	AdminFee                 float64   `json:"admin_fee"`
+	AdminFeeType             string    `json:"admin_fee_type"`
+	PPN                      float64   `json:"ppn"`
+	PPNType                  string    `json:"ppn_type"`
+	MinPrice                 float64   `json:"min_price"`
+	YoutubeLink              *string   `json:"youtube_link"`
+	CreatedAt                time.Time `json:"created_at"`
+	UpdatedAt                time.Time `json:"updated_at"`
 }
 
 func GetAllEvents() ([]Event, error) {
 	rows, err := database.DB.Query(`
-		SELECT id, name, slug, category, status, banner_path, thumbnail_path, start_date, end_date, description, location, city, organizer_name, youtube_link, created_at 
+		SELECT id, name, slug, category, status, banner_path, thumbnail_path, start_date, end_date, description, location, city, organizer_name, youtube_link, organizer_tax, organizer_tax_type, admin_fee, admin_fee_type, ppn, ppn_type, created_at 
 		FROM events 
 		WHERE deleted_at IS NULL 
 		ORDER BY created_at DESC
@@ -58,6 +66,7 @@ func GetAllEvents() ([]Event, error) {
 			&e.StartDate, &e.EndDate, &e.Description,
 			&e.Location, &e.City, &e.OrganizerName,
 			&e.YoutubeLink,
+			&e.OrganizerTax, &e.OrganizerTaxType, &e.AdminFee, &e.AdminFeeType, &e.PPN, &e.PPNType,
 			&e.CreatedAt,
 		)
 		if err != nil {
@@ -76,6 +85,7 @@ func CreateEvent(e *Event) error {
 			seo_title, seo_description,
 			organizer_name, banner_path, thumbnail_path, organizer_logo_path,
 			youtube_link,
+			organizer_tax, organizer_tax_type, admin_fee, admin_fee_type, ppn, ppn_type,
 			reseller_fee_type, reseller_fee_value, 
 			organizer_fee_online_type, organizer_fee_online,
 			organizer_fee_reseller_type, organizer_fee_reseller,
@@ -86,8 +96,9 @@ func CreateEvent(e *Event) error {
 			$14, $15,
 			$16, $17, $18, $19,
 			$20,
-			'fixed', 0, 'fixed', 0, 'fixed', 0, 
-			$21, $22
+			$21, $22, $23, $24, $25, $26,
+			$27, $28, $29, $30, $31, $32,
+			$33, $34
 		)
 		RETURNING id`
 
@@ -97,6 +108,9 @@ func CreateEvent(e *Event) error {
 		e.SeoTitle, e.SeoDescription,
 		e.OrganizerName, e.BannerPath, e.ThumbnailPath, e.OrganizerLogoPath,
 		e.YoutubeLink,
+		e.OrganizerTax, e.OrganizerTaxType, e.AdminFee, e.AdminFeeType, e.PPN, e.PPNType,
+		e.ResellerFeeType, e.ResellerFeeValue, e.OrganizerFeeOnlineType, e.OrganizerFeeOnline,
+		e.OrganizerFeeResellerType, e.OrganizerFeeReseller,
 		time.Now(), time.Now(),
 	).Scan(&e.ID)
 
@@ -111,8 +125,11 @@ func UpdateEvent(e *Event) error {
 			seo_title=$14, seo_description=$15,
 			organizer_name=$16, banner_path=$17, thumbnail_path=$18, organizer_logo_path=$19,
 			youtube_link=$20,
-			updated_at=$21
-		WHERE id=$22`
+			organizer_tax=$21, organizer_tax_type=$22, admin_fee=$23, admin_fee_type=$24, ppn=$25, ppn_type=$26,
+			reseller_fee_type=$27, reseller_fee_value=$28, organizer_fee_online_type=$29, organizer_fee_online=$30,
+			organizer_fee_reseller_type=$31, organizer_fee_reseller=$32,
+			updated_at=$33
+		WHERE id=$34`
 
 	_, err := database.DB.Exec(query,
 		e.Name, e.Slug, e.Category, e.Status, e.StartDate, e.EndDate, e.Description, e.Terms,
@@ -120,6 +137,9 @@ func UpdateEvent(e *Event) error {
 		e.SeoTitle, e.SeoDescription,
 		e.OrganizerName, e.BannerPath, e.ThumbnailPath, e.OrganizerLogoPath,
 		e.YoutubeLink,
+		e.OrganizerTax, e.OrganizerTaxType, e.AdminFee, e.AdminFeeType, e.PPN, e.PPNType,
+		e.ResellerFeeType, e.ResellerFeeValue, e.OrganizerFeeOnlineType, e.OrganizerFeeOnline,
+		e.OrganizerFeeResellerType, e.OrganizerFeeReseller,
 		time.Now(), e.ID,
 	)
 	return err
@@ -140,6 +160,9 @@ func GetEventByID(id int) (*Event, error) {
 			seo_title, seo_description,
 			organizer_name, banner_path, thumbnail_path, organizer_logo_path,
 			youtube_link,
+			organizer_tax, organizer_tax_type, admin_fee, admin_fee_type, ppn, ppn_type,
+			reseller_fee_type, reseller_fee_value, organizer_fee_online_type, organizer_fee_online,
+			organizer_fee_reseller_type, organizer_fee_reseller,
 			created_at 
 		FROM events 
 		WHERE id=$1 AND deleted_at IS NULL`
@@ -152,6 +175,9 @@ func GetEventByID(id int) (*Event, error) {
 		&e.SeoTitle, &e.SeoDescription,
 		&e.OrganizerName, &e.BannerPath, &e.ThumbnailPath, &e.OrganizerLogoPath,
 		&e.YoutubeLink,
+		&e.OrganizerTax, &e.OrganizerTaxType, &e.AdminFee, &e.AdminFeeType, &e.PPN, &e.PPNType,
+		&e.ResellerFeeType, &e.ResellerFeeValue, &e.OrganizerFeeOnlineType, &e.OrganizerFeeOnline,
+		&e.OrganizerFeeResellerType, &e.OrganizerFeeReseller,
 		&e.CreatedAt,
 	)
 	if err != nil {
@@ -162,7 +188,7 @@ func GetEventByID(id int) (*Event, error) {
 
 func GetPublishedEvents() ([]Event, error) {
 	rows, err := database.DB.Query(`
-		SELECT e.id, e.name, e.slug, e.category, e.status, e.banner_path, e.thumbnail_path, e.start_date, e.end_date, e.description, e.location, e.city, e.youtube_link, e.created_at,
+		SELECT e.id, e.name, e.slug, e.category, e.status, e.banner_path, e.thumbnail_path, e.start_date, e.end_date, e.description, e.location, e.city, e.youtube_link, e.organizer_tax, e.organizer_tax_type, e.admin_fee, e.admin_fee_type, e.ppn, e.ppn_type, e.reseller_fee_type, e.reseller_fee_value, e.organizer_fee_online_type, e.organizer_fee_online, e.organizer_fee_reseller_type, e.organizer_fee_reseller, e.created_at,
 		       COALESCE(MIN(t.price), 0) as min_price
 		FROM events e
 		LEFT JOIN tickets t ON e.id = t.event_id AND t.deleted_at IS NULL
@@ -184,6 +210,9 @@ func GetPublishedEvents() ([]Event, error) {
 			&e.StartDate, &e.EndDate, &e.Description,
 			&e.Location, &e.City,
 			&e.YoutubeLink,
+			&e.OrganizerTax, &e.OrganizerTaxType, &e.AdminFee, &e.AdminFeeType, &e.PPN, &e.PPNType,
+			&e.ResellerFeeType, &e.ResellerFeeValue, &e.OrganizerFeeOnlineType, &e.OrganizerFeeOnline,
+			&e.OrganizerFeeResellerType, &e.OrganizerFeeReseller,
 			&e.CreatedAt,
 			&e.MinPrice,
 		)
@@ -203,6 +232,9 @@ func GetEventBySlug(slug string) (*Event, error) {
 			seo_title, seo_description,
 			organizer_name, banner_path, thumbnail_path, organizer_logo_path,
 			youtube_link,
+			organizer_tax, organizer_tax_type, admin_fee, admin_fee_type, ppn, ppn_type,
+			reseller_fee_type, reseller_fee_value, organizer_fee_online_type, organizer_fee_online,
+			organizer_fee_reseller_type, organizer_fee_reseller,
 			created_at 
 		FROM events 
 		WHERE slug=$1 AND deleted_at IS NULL`
@@ -214,6 +246,9 @@ func GetEventBySlug(slug string) (*Event, error) {
 		&e.SeoTitle, &e.SeoDescription,
 		&e.OrganizerName, &e.BannerPath, &e.ThumbnailPath, &e.OrganizerLogoPath,
 		&e.YoutubeLink,
+		&e.OrganizerTax, &e.OrganizerTaxType, &e.AdminFee, &e.AdminFeeType, &e.PPN, &e.PPNType,
+		&e.ResellerFeeType, &e.ResellerFeeValue, &e.OrganizerFeeOnlineType, &e.OrganizerFeeOnline,
+		&e.OrganizerFeeResellerType, &e.OrganizerFeeReseller,
 		&e.CreatedAt,
 	)
 	if err != nil {

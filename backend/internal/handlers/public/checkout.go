@@ -10,6 +10,8 @@ import (
 	"net/http"
 	"os"
 	"time"
+
+	"event-backend/internal/utils"
 )
 
 // Keys are now in .env, retrieved via os.Getenv()
@@ -158,10 +160,40 @@ func Checkout(w http.ResponseWriter, r *http.Request) {
 	trx.SnapToken.String = snapResp.Token
 	trx.SnapToken.Valid = true
 
+	// 7. Send Payment Required Email via Queue
+	go func(t models.Transaction) {
+		event, err := models.GetEventByID(t.EventID)
+		if err != nil {
+			fmt.Printf("Email error: failed to fetch event for %s: %v\n", t.Code, err)
+			return
+		}
+
+		// Generate payment link (using the code)
+		paymentLink := fmt.Sprintf("http://localhost:3000/payment/%s", t.Code)
+		totalPriceStr := fmt.Sprintf("IDR %s", formatPrice(t.TotalPrice))
+
+		eventImage := ""
+		if event.ThumbnailPath != nil {
+			assetURL := os.Getenv("ASSET_URL")
+			if assetURL == "" {
+				assetURL = "http://localhost:8080" // Fallback for local dev
+			}
+			eventImage = fmt.Sprintf("%s/%s", assetURL, *event.ThumbnailPath)
+		}
+
+		body := utils.GetPaymentRequiredTemplate(t.Name, t.Email, t.Phone, t.NIK, t.Gender, t.City, event.Name, ticket.Name, t.Quantity, totalPriceStr, paymentLink, eventImage)
+		utils.EnqueueEmail(t.Email, "Action Required: Complete Your Payment for "+event.Name, body)
+	}(trx)
+
 	w.WriteHeader(http.StatusCreated)
 	json.NewEncoder(w).Encode(map[string]interface{}{
 		"transaction":  trx,
 		"snap_token":   snapResp.Token,
 		"redirect_url": snapResp.RedirectURL,
 	})
+}
+
+// Helper to format price for emails
+func formatPrice(price float64) string {
+	return fmt.Sprintf("%.0f", price)
 }

@@ -5,8 +5,10 @@ import (
 	"event-backend/internal/database"
 	"event-backend/internal/models"
 	"event-backend/internal/utils"
+	"fmt"
 	"log"
 	"net/http"
+	"os"
 	"time"
 )
 
@@ -74,13 +76,26 @@ func PaymentWebhook(w http.ResponseWriter, r *http.Request) {
 				return
 			}
 
-			body := utils.GetTicketTemplate(trx.Name, event.Name, trx.Code)
-			err = utils.SendEmail(trx.Email, "Your Ticket: "+event.Name, body)
+			ticket, err := models.GetTicketByID(trx.TicketID)
 			if err != nil {
-				log.Printf("Email error: failed to send to %s: %v", trx.Email, err)
-			} else {
-				log.Printf("Email sent successfully to %s for order %s", trx.Email, code)
+				log.Printf("Email error: failed to fetch ticket %d: %v", trx.TicketID, err)
+				return
 			}
+
+			totalPriceStr := fmt.Sprintf("IDR %.0f", trx.TotalPrice)
+
+			eventImage := ""
+			if event.ThumbnailPath != nil {
+				assetURL := os.Getenv("ASSET_URL")
+				if assetURL == "" {
+					assetURL = "http://localhost:8080"
+				}
+				eventImage = fmt.Sprintf("%s/%s", assetURL, *event.ThumbnailPath)
+			}
+
+			// 1. Send Consolidated Payment Success & Digital Ticket
+			successBody := utils.GetSuccessWithTicketTemplate(trx.Name, trx.Email, trx.Phone, trx.NIK, trx.Gender, trx.City, event.Name, ticket.Name, trx.Quantity, totalPriceStr, trx.Code, eventImage)
+			utils.EnqueueEmail(trx.Email, "Success! Your Ticket for "+event.Name, successBody)
 		}(notif.OrderID)
 	}
 

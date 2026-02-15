@@ -5,7 +5,7 @@ import { useRouter, useSearchParams } from "next/navigation";
 import Link from "next/link";
 import axiosInstance from "@/lib/axios";
 import { toast } from "react-hot-toast";
-import { ChevronLeft, Upload, Loader2, Save, Trash, Plus, ScanBarcode, Store } from "lucide-react";
+import { ChevronLeft, Upload, Loader2, Save, Trash, Plus, ScanBarcode, Store, Banknote } from "lucide-react";
 import Tabs from "@/components/ui/Tabs";
 import { Select } from "@/components/ui/Select";
 import { DatePicker } from "@/components/ui/DatePicker";
@@ -42,13 +42,23 @@ interface Ticket {
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 function EventDetailsTab({ id, initialData, refresh }: { id: string, initialData: any, refresh: () => void }) {
     const [loading, setLoading] = useState(false);
-    const [formData, setFormData] = useState(initialData || {
-        name: "", category: "", start_date: "", end_date: "",
-        location: "", province: "", city: "", zip: "",
-        google_map_embed: "",
-        description: "", terms: "", status: "draft",
-        organizer_name: "", seo_title: "", seo_description: "",
-        youtube_link: ""
+    const [formData, setFormData] = useState({
+        name: initialData?.name || "",
+        category: initialData?.category || "",
+        start_date: initialData?.start_date || "",
+        end_date: initialData?.end_date || "",
+        location: initialData?.location || "",
+        province: initialData?.province || "",
+        city: initialData?.city || "",
+        zip: initialData?.zip || "",
+        google_map_embed: initialData?.google_map_embed || "",
+        description: initialData?.description || "",
+        terms: initialData?.terms || "",
+        status: initialData?.status || "draft",
+        organizer_name: initialData?.organizer_name || "",
+        seo_title: initialData?.seo_title || "",
+        seo_description: initialData?.seo_description || "",
+        youtube_link: initialData?.youtube_link || "",
     });
 
     const [previews, setPreviews] = useState({
@@ -77,7 +87,7 @@ function EventDetailsTab({ id, initialData, refresh }: { id: string, initialData
                 organizer_name: initialData.organizer_name || "",
                 seo_title: initialData.seo_title || "",
                 seo_description: initialData.seo_description || "",
-                youtube_link: initialData.youtube_link || ""
+                youtube_link: initialData.youtube_link || "",
             });
             setPreviews({
                 banner: getImageUrl(initialData.banner_path),
@@ -108,13 +118,6 @@ function EventDetailsTab({ id, initialData, refresh }: { id: string, initialData
             if (files.thumbnail) data.append("thumbnail", files.thumbnail);
             if (files.organizerLogo) data.append("organizer_logo", files.organizerLogo);
 
-            // Default fees if missing
-            if (!formData.reseller_fee_type) {
-                data.append("reseller_fee_type", "fixed");
-                data.append("reseller_fee_value", "0");
-                data.append("organizer_fee_online_type", "fixed");
-                data.append("organizer_fee_online_value", "0");
-            }
 
             await axiosInstance.put(`/admin/events?id=${id}`, data);
             toast.success("Event updated successfully!");
@@ -198,6 +201,7 @@ function EventDetailsTab({ id, initialData, refresh }: { id: string, initialData
                     </div>
                 </div>
             </div>
+
 
             {/* Media Section */}
             <div className="bg-(--card) p-6 rounded-2xl border border-(--card-border) shadow-sm space-y-6">
@@ -715,6 +719,212 @@ function TicketsTab({ eventId }: { eventId: string }) {
     );
 }
 
+// --- TAB 4: FINANCE ---
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+function FinanceTab({ id, initialData, refresh }: { id: string, initialData: any, refresh: () => void }) {
+    const [loading, setLoading] = useState(false);
+    const [formData, setFormData] = useState({
+        organizer_tax: initialData?.organizer_tax || 0,
+        organizer_tax_type: initialData?.organizer_tax_type || "fixed",
+        admin_fee: initialData?.admin_fee || 0,
+        admin_fee_type: initialData?.admin_fee_type || "fixed",
+        ppn: initialData?.ppn || 0,
+        ppn_type: initialData?.ppn_type || "fixed",
+        reseller_fee_type: initialData?.reseller_fee_type || "fixed",
+        reseller_fee_value: initialData?.reseller_fee_value || 0,
+        organizer_fee_online_type: initialData?.organizer_fee_online_type || "fixed",
+        organizer_fee_online: initialData?.organizer_fee_online || 0,
+        organizer_fee_reseller_type: initialData?.organizer_fee_reseller_type || "fixed",
+        organizer_fee_reseller: initialData?.organizer_fee_reseller || 0
+    });
+
+    useEffect(() => {
+        if (initialData) {
+            setFormData({
+                organizer_tax: initialData.organizer_tax || 0,
+                organizer_tax_type: initialData.organizer_tax_type || "fixed",
+                admin_fee: initialData.admin_fee || 0,
+                admin_fee_type: initialData.admin_fee_type || "fixed",
+                ppn: initialData.ppn || 0,
+                ppn_type: initialData.ppn_type || "fixed",
+                reseller_fee_type: initialData.reseller_fee_type || "fixed",
+                reseller_fee_value: initialData.reseller_fee_value || 0,
+                organizer_fee_online_type: initialData.organizer_fee_online_type || "fixed",
+                organizer_fee_online: initialData.organizer_fee_online || 0,
+                organizer_fee_reseller_type: initialData.organizer_fee_reseller_type || "fixed",
+                organizer_fee_reseller: initialData.organizer_fee_reseller || 0
+            });
+        }
+    }, [initialData]);
+
+    const handleSubmit = async (e: React.FormEvent) => {
+        e.preventDefault();
+        setLoading(true);
+        try {
+            const data = new FormData();
+            Object.entries(formData).forEach(([key, value]) => {
+                data.append(key, String(value));
+            });
+            await axiosInstance.put(`/admin/events?id=${id}`, data);
+            toast.success("Finance settings updated!");
+            refresh();
+        } catch (error) {
+            // eslint-disable-next-line @typescript-eslint/no-explicit-any
+            toast.error((error as any).response?.data?.error || "Failed to update finance settings");
+        } finally {
+            setLoading(false);
+        }
+    };
+
+    return (
+        <form onSubmit={handleSubmit} className="space-y-8 mt-8 animate-in fade-in slide-in-from-bottom-4 duration-500">
+            <div className="bg-(--card) p-6 rounded-2xl border border-(--card-border) shadow-sm space-y-6">
+                <h3 className="text-lg font-bold text-(--foreground) border-b border-(--card-border) pb-4 flex items-center gap-2">
+                    <Banknote className="w-5 h-5 text-blue-500" /> Fees & Taxes Configuration
+                </h3>
+                <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+                    <div className="space-y-4">
+                        <div>
+                            <label className="block text-sm font-bold text-(--foreground) opacity-70 mb-2">Organizer Tax</label>
+                            <div className="flex gap-2">
+                                <input
+                                    type="number"
+                                    className="flex-1 px-4 py-2.5 rounded-lg border border-(--card-border) bg-(--background) text-(--foreground) focus:border-blue-500 focus:ring-2 focus:ring-blue-100 dark:focus:ring-blue-900/30 outline-none transition-all"
+                                    value={formData.organizer_tax}
+                                    onChange={(e) => setFormData({ ...formData, organizer_tax: Number(e.target.value) })}
+                                />
+                                <select 
+                                    className="w-24 px-2 py-2.5 rounded-lg border border-(--card-border) bg-(--background) text-(--foreground) focus:border-blue-500 outline-none transition-all text-sm font-bold"
+                                    value={formData.organizer_tax_type}
+                                    onChange={(e) => setFormData({ ...formData, organizer_tax_type: e.target.value })}
+                                >
+                                    <option value="fixed">IDR</option>
+                                    <option value="percent">%</option>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+                    <div className="space-y-4">
+                        <div>
+                            <label className="block text-sm font-bold text-(--foreground) opacity-70 mb-2">Buyer Service Fee</label>
+                            <div className="flex gap-2">
+                                <input
+                                    type="number"
+                                    className="flex-1 px-4 py-2.5 rounded-lg border border-(--card-border) bg-(--background) text-(--foreground) focus:border-blue-500 focus:ring-2 focus:ring-blue-100 dark:focus:ring-blue-900/30 outline-none transition-all"
+                                    value={formData.admin_fee}
+                                    onChange={(e) => setFormData({ ...formData, admin_fee: Number(e.target.value) })}
+                                />
+                                <select 
+                                    className="w-24 px-2 py-2.5 rounded-lg border border-(--card-border) bg-(--background) text-(--foreground) focus:border-blue-500 outline-none transition-all text-sm font-bold"
+                                    value={formData.admin_fee_type}
+                                    onChange={(e) => setFormData({ ...formData, admin_fee_type: e.target.value })}
+                                >
+                                    <option value="fixed">IDR</option>
+                                    <option value="percent">%</option>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+                    <div className="space-y-4">
+                        <div>
+                            <label className="block text-sm font-bold text-(--foreground) opacity-70 mb-2">PPN</label>
+                            <div className="flex gap-2">
+                                <input
+                                    type="number"
+                                    className="flex-1 px-4 py-2.5 rounded-lg border border-(--card-border) bg-(--background) text-(--foreground) focus:border-blue-500 focus:ring-2 focus:ring-blue-100 dark:focus:ring-blue-900/30 outline-none transition-all"
+                                    value={formData.ppn}
+                                    onChange={(e) => setFormData({ ...formData, ppn: Number(e.target.value) })}
+                                />
+                                <select 
+                                    className="w-24 px-2 py-2.5 rounded-lg border border-(--card-border) bg-(--background) text-(--foreground) focus:border-blue-500 outline-none transition-all text-sm font-bold"
+                                    value={formData.ppn_type}
+                                    onChange={(e) => setFormData({ ...formData, ppn_type: e.target.value })}
+                                >
+                                    <option value="fixed">IDR</option>
+                                    <option value="percent">%</option>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div className="space-y-4">
+                        <div>
+                            <label className="block text-sm font-bold text-(--foreground) opacity-70 mb-2">Reseller Commission</label>
+                            <div className="flex gap-2">
+                                <input
+                                    type="number"
+                                    className="flex-1 px-4 py-2.5 rounded-lg border border-(--card-border) bg-(--background) text-(--foreground) focus:border-blue-500 focus:ring-2 focus:ring-blue-100 dark:focus:ring-blue-900/30 outline-none transition-all"
+                                    value={formData.reseller_fee_value}
+                                    onChange={(e) => setFormData({ ...formData, reseller_fee_value: Number(e.target.value) })}
+                                />
+                                <select 
+                                    className="w-24 px-2 py-2.5 rounded-lg border border-(--card-border) bg-(--background) text-(--foreground) focus:border-blue-500 outline-none transition-all text-sm font-bold"
+                                    value={formData.reseller_fee_type}
+                                    onChange={(e) => setFormData({ ...formData, reseller_fee_type: e.target.value })}
+                                >
+                                    <option value="fixed">IDR</option>
+                                    <option value="percent">%</option>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div className="space-y-4">
+                        <div>
+                            <label className="block text-sm font-bold text-(--foreground) opacity-70 mb-2">Platform Fee (Online)</label>
+                            <div className="flex gap-2">
+                                <input
+                                    type="number"
+                                    className="flex-1 px-4 py-2.5 rounded-lg border border-(--card-border) bg-(--background) text-(--foreground) focus:border-blue-500 focus:ring-2 focus:ring-blue-100 dark:focus:ring-blue-900/30 outline-none transition-all"
+                                    value={formData.organizer_fee_online}
+                                    onChange={(e) => setFormData({ ...formData, organizer_fee_online: Number(e.target.value) })}
+                                />
+                                <select 
+                                    className="w-24 px-2 py-2.5 rounded-lg border border-(--card-border) bg-(--background) text-(--foreground) focus:border-blue-500 outline-none transition-all text-sm font-bold"
+                                    value={formData.organizer_fee_online_type}
+                                    onChange={(e) => setFormData({ ...formData, organizer_fee_online_type: e.target.value })}
+                                >
+                                    <option value="fixed">IDR</option>
+                                    <option value="percent">%</option>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div className="space-y-4">
+                        <div>
+                            <label className="block text-sm font-bold text-(--foreground) opacity-70 mb-2">Platform Fee (Reseller)</label>
+                            <div className="flex gap-2">
+                                <input
+                                    type="number"
+                                    className="flex-1 px-4 py-2.5 rounded-lg border border-(--card-border) bg-(--background) text-(--foreground) focus:border-blue-500 focus:ring-2 focus:ring-blue-100 dark:focus:ring-blue-900/30 outline-none transition-all"
+                                    value={formData.organizer_fee_reseller}
+                                    onChange={(e) => setFormData({ ...formData, organizer_fee_reseller: Number(e.target.value) })}
+                                />
+                                <select 
+                                    className="w-24 px-2 py-2.5 rounded-lg border border-(--card-border) bg-(--background) text-(--foreground) focus:border-blue-500 outline-none transition-all text-sm font-bold"
+                                    value={formData.organizer_fee_reseller_type}
+                                    onChange={(e) => setFormData({ ...formData, organizer_fee_reseller_type: e.target.value })}
+                                >
+                                    <option value="fixed">IDR</option>
+                                    <option value="percent">%</option>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div className="flex justify-end pt-4">
+                <button type="submit" disabled={loading} className="px-6 py-2.5 bg-blue-600 text-white font-bold rounded-lg hover:bg-blue-700 transition-colors shadow-sm shadow-blue-600/20 disabled:opacity-70 flex items-center justify-center gap-2">
+                    {loading ? <Loader2 className="w-5 h-5 animate-spin" /> : <Save className="w-5 h-5" />}
+                    Update Finance Settings
+                </button>
+            </div>
+        </form>
+    );
+}
+
 // --- MAIN PAGE ---
 function EditEventWrapper() {
     const searchParams = useSearchParams();
@@ -755,12 +965,14 @@ function EditEventWrapper() {
                 items={[
                     { key: "details", label: "Event Details" },
                     { key: "tickets", label: "Tickets" },
+                    { key: "finance", label: "Finance" },
                     { key: "assignments", label: "Assignments" },
                 ]}
             />
 
             {activeTab === "details" && <EventDetailsTab id={id} initialData={eventData} refresh={fetchEvent} />}
             {activeTab === "tickets" && <TicketsTab eventId={id} />}
+            {activeTab === "finance" && <FinanceTab id={id} initialData={eventData} refresh={fetchEvent} />}
             {activeTab === "assignments" && <AssignmentsTab eventId={id} />}
         </div>
     );

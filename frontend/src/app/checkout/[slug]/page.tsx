@@ -192,13 +192,13 @@ function CheckoutContent({ params }: { params: { slug: string } }) {
                                     {/* IDENTITY NUMBER */}
                                     <div className="space-y-2">
                                         <label className="block text-[10px] font-black uppercase tracking-[0.15em] text-gray-400 font-heading ml-2">
-                                            NIK / Passport Number
+                                            NIK/ID NUMBER
                                         </label>
                                         <input
                                             type="text" name="nik" required
                                             inputMode="numeric"
                                             value={form.nik} onChange={handleChange}
-                                            className="w-full px-6 py-4 sm:px-8 sm:py-5 rounded-[18px] sm:rounded-[22px] bg-white border border-gray-100 shadow-sm focus:ring-4 focus:ring-blue-600/5 focus:border-blue-600 outline-none transition-all text-[14px] sm:text-[15px] font-semibold text-gray-900 placeholder:text-gray-200"
+                                            className="w-full px-5 py-4 rounded-xl bg-white border border-slate-200 shadow-sm focus:ring-4 focus:ring-blue-600/5 focus:border-blue-600 outline-none transition-all text-sm font-medium text-gray-900 placeholder:text-gray-300"
                                             placeholder="16-digit NIK"
                                         />
                                     </div>
@@ -212,7 +212,7 @@ function CheckoutContent({ params }: { params: { slug: string } }) {
                                             <select
                                                 name="gender" required
                                                 value={form.gender} onChange={handleChange}
-                                                className="w-full px-6 py-4 sm:px-8 sm:py-5 rounded-[18px] sm:rounded-[22px] bg-white border border-gray-100 shadow-sm focus:ring-4 focus:ring-blue-600/5 focus:border-blue-600 outline-none transition-all text-[14px] sm:text-[15px] font-semibold text-gray-900 appearance-none cursor-pointer"
+                                                className="w-full px-5 py-4 rounded-xl bg-white border border-slate-200 shadow-sm focus:ring-4 focus:ring-blue-600/5 focus:border-blue-600 outline-none transition-all text-sm font-medium text-gray-900 appearance-none cursor-pointer"
                                             >
                                                 <option value="Male">Male</option>
                                                 <option value="Female">Female</option>
@@ -241,7 +241,7 @@ function CheckoutContent({ params }: { params: { slug: string } }) {
                                         <input
                                             type="text" name="name" required
                                             value={form.name} onChange={handleChange}
-                                            className="w-full px-6 py-4 sm:px-8 sm:py-5 rounded-[18px] sm:rounded-[22px] bg-white border border-gray-100 shadow-sm focus:ring-4 focus:ring-blue-600/5 focus:border-blue-600 outline-none transition-all text-[14px] sm:text-[15px] font-semibold text-gray-900 placeholder:text-gray-200"
+                                            className="w-full px-5 py-4 rounded-xl bg-white border border-slate-200 shadow-sm focus:ring-4 focus:ring-blue-600/5 focus:border-blue-600 outline-none transition-all text-sm font-medium text-gray-900 placeholder:text-gray-300"
                                             placeholder="Your full name"
                                         />
                                     </div>
@@ -254,7 +254,7 @@ function CheckoutContent({ params }: { params: { slug: string } }) {
                                         <input
                                             type="email" name="email" required
                                             value={form.email} onChange={handleChange}
-                                            className="w-full px-6 py-4 sm:px-8 sm:py-5 rounded-[18px] sm:rounded-[22px] bg-white border border-gray-100 shadow-sm focus:ring-4 focus:ring-blue-600/5 focus:border-blue-600 outline-none transition-all text-[14px] sm:text-[15px] font-semibold text-gray-900 placeholder:text-gray-200"
+                                            className="w-full px-5 py-4 rounded-xl bg-white border border-slate-200 shadow-sm focus:ring-4 focus:ring-blue-600/5 focus:border-blue-600 outline-none transition-all text-sm font-medium text-gray-900 placeholder:text-gray-300"
                                             placeholder="your@email.com"
                                         />
                                     </div>
@@ -268,7 +268,7 @@ function CheckoutContent({ params }: { params: { slug: string } }) {
                                             type="tel" name="phone" required
                                             inputMode="numeric"
                                             value={form.phone} onChange={handleChange}
-                                            className="w-full px-6 py-4 sm:px-8 sm:py-5 rounded-[18px] sm:rounded-[22px] bg-white border border-gray-100 shadow-sm focus:ring-4 focus:ring-blue-600/5 focus:border-blue-600 outline-none transition-all text-[14px] sm:text-[15px] font-semibold text-gray-900 placeholder:text-gray-200"
+                                            className="w-full px-5 py-4 rounded-xl bg-white border border-slate-200 shadow-sm focus:ring-4 focus:ring-blue-600/5 focus:border-blue-600 outline-none transition-all text-sm font-medium text-gray-900 placeholder:text-gray-300"
                                             placeholder="+62"
                                         />
                                     </div>
@@ -281,7 +281,7 @@ function CheckoutContent({ params }: { params: { slug: string } }) {
                                         <input
                                             type="text" name="city" required
                                             value={form.city} onChange={handleChange}
-                                            className="w-full px-6 py-4 sm:px-8 sm:py-5 rounded-[18px] sm:rounded-[22px] bg-white border border-gray-100 shadow-sm focus:ring-4 focus:ring-blue-600/5 focus:border-blue-600 outline-none transition-all text-[14px] sm:text-[15px] font-semibold text-gray-900 placeholder:text-gray-200"
+                                            className="w-full px-5 py-4 rounded-xl bg-white border border-slate-200 shadow-sm focus:ring-4 focus:ring-blue-600/5 focus:border-blue-600 outline-none transition-all text-sm font-medium text-gray-900 placeholder:text-gray-300"
                                             placeholder="City"
                                         />
                                     </div>
