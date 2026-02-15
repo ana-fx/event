@@ -151,6 +151,12 @@ func CreateEvent(w http.ResponseWriter, r *http.Request) {
 		req.OrganizerFeeResellerType = "fixed"
 	}
 
+	req.PgFee, _ = strconv.ParseFloat(r.FormValue("pg_fee"), 64)
+	req.PgFeeType = r.FormValue("pg_fee_type")
+	if req.PgFeeType == "" {
+		req.PgFeeType = "fixed"
+	}
+
 	// Dates
 	layout := "2006-01-02T15:04" // HTML datetime-local format
 	// Also support ISO format from DatePicker
@@ -300,47 +306,54 @@ func UpdateEvent(w http.ResponseWriter, r *http.Request) {
 		req.Status = r.FormValue("status")
 
 		// Finance Fields
-		if r.Form["organizer_tax"] != nil {
-			req.OrganizerTax, _ = strconv.ParseFloat(r.FormValue("organizer_tax"), 64)
+		if val := r.FormValue("organizer_tax"); val != "" {
+			req.OrganizerTax, _ = strconv.ParseFloat(val, 64)
 		} else {
-			req.OrganizerTax = -1 // Sentinel value or handle differently
+			req.OrganizerTax = -1 // Sentinel value
 		}
 		req.OrganizerTaxType = r.FormValue("organizer_tax_type")
 
-		if r.Form["admin_fee"] != nil {
-			req.AdminFee, _ = strconv.ParseFloat(r.FormValue("admin_fee"), 64)
+		if val := r.FormValue("admin_fee"); val != "" {
+			req.AdminFee, _ = strconv.ParseFloat(val, 64)
 		} else {
 			req.AdminFee = -1
 		}
 		req.AdminFeeType = r.FormValue("admin_fee_type")
 
-		if r.Form["ppn"] != nil {
-			req.PPN, _ = strconv.ParseFloat(r.FormValue("ppn"), 64)
+		if val := r.FormValue("ppn"); val != "" {
+			req.PPN, _ = strconv.ParseFloat(val, 64)
 		} else {
 			req.PPN = -1
 		}
 		req.PPNType = r.FormValue("ppn_type")
 
-		if r.Form["reseller_fee_value"] != nil {
-			req.ResellerFeeValue, _ = strconv.ParseFloat(r.FormValue("reseller_fee_value"), 64)
+		if val := r.FormValue("reseller_fee_value"); val != "" {
+			req.ResellerFeeValue, _ = strconv.ParseFloat(val, 64)
 		} else {
 			req.ResellerFeeValue = -1
 		}
 		req.ResellerFeeType = r.FormValue("reseller_fee_type")
 
-		if r.Form["organizer_fee_online"] != nil {
-			req.OrganizerFeeOnline, _ = strconv.ParseFloat(r.FormValue("organizer_fee_online"), 64)
+		if val := r.FormValue("organizer_fee_online"); val != "" {
+			req.OrganizerFeeOnline, _ = strconv.ParseFloat(val, 64)
 		} else {
 			req.OrganizerFeeOnline = -1
 		}
 		req.OrganizerFeeOnlineType = r.FormValue("organizer_fee_online_type")
 
-		if r.Form["organizer_fee_reseller"] != nil {
-			req.OrganizerFeeReseller, _ = strconv.ParseFloat(r.FormValue("organizer_fee_reseller"), 64)
+		if val := r.FormValue("organizer_fee_reseller"); val != "" {
+			req.OrganizerFeeReseller, _ = strconv.ParseFloat(val, 64)
 		} else {
 			req.OrganizerFeeReseller = -1
 		}
 		req.OrganizerFeeResellerType = r.FormValue("organizer_fee_reseller_type")
+
+		if val := r.FormValue("pg_fee"); val != "" {
+			req.PgFee, _ = strconv.ParseFloat(val, 64)
+		} else {
+			req.PgFee = -1
+		}
+		req.PgFeeType = r.FormValue("pg_fee_type")
 
 		layout := "2006-01-02T15:04"
 		if s := r.FormValue("start_date"); s != "" {

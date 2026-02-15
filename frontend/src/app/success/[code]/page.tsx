@@ -48,8 +48,36 @@ export default function SuccessPage({ params }: { params: Promise<{ code: string
 
     if (!transaction) return null;
 
-    const subtotal = transaction.total_price - 6000;
-    const handlingFee = 6000;
+    const calculateBreakdown = () => {
+        const qty = transaction.quantity;
+        const ticketPrice = transaction.ticket_price || 0;
+        const subtotal = ticketPrice * qty;
+
+        let serviceFee = 0;
+        if (transaction.admin_fee_type === "fixed") {
+            serviceFee = transaction.admin_fee * qty;
+        } else {
+            serviceFee = subtotal * (transaction.admin_fee / 100);
+        }
+
+        let handlingFee = 0;
+        if (transaction.organizer_fee_online_type === "fixed") {
+            handlingFee = transaction.organizer_fee_online;
+        } else {
+            handlingFee = subtotal * (transaction.organizer_fee_online / 100);
+        }
+
+        let ppn = 0;
+        if (transaction.ppn_type === "fixed") {
+            ppn = transaction.ppn;
+        } else {
+            ppn = subtotal * (transaction.ppn / 100);
+        }
+
+        return { subtotal, serviceFee, handlingFee, ppn };
+    };
+
+    const { subtotal, serviceFee, handlingFee, ppn } = calculateBreakdown();
 
     return (
         <div className="min-h-screen bg-[#FDFDFD] font-body selection:bg-blue-600/10">
@@ -182,17 +210,34 @@ export default function SuccessPage({ params }: { params: Promise<{ code: string
                                 Payment Proof Summary
                             </h3>
 
-                            <div className="space-y-6">
+                            <div className="space-y-4">
                                 <div className="flex justify-between items-start">
                                     <div className="space-y-1">
                                         <p className="font-black text-[#1A1A1A] text-[14px] sm:text-[16px] font-heading tracking-tight leading-none uppercase">{transaction.ticket_name}</p>
-                                        <p className="text-[11px] sm:text-[12px] font-bold text-gray-400 font-body">Subtotal Amount</p>
+                                        <p className="text-[11px] sm:text-[12px] font-bold text-gray-400 font-body">{transaction.quantity} Ticket(s) &bull; {formatIDR(transaction.ticket_price)}</p>
                                     </div>
                                     <p className="font-black text-[#1A1A1A] text-[14px] sm:text-[16px] font-heading leading-none">{formatIDR(subtotal)}</p>
                                 </div>
-                                <div className="flex justify-between items-center text-gray-400 border-t border-gray-50 pt-6">
-                                    <p className="text-[11px] sm:text-[12px] font-bold font-body">Taxes & Fees</p>
-                                    <p className="font-black text-[14px] font-heading">{formatIDR(handlingFee)}</p>
+                                
+                                <div className="space-y-3 pt-4 border-t border-gray-50">
+                                    {serviceFee > 0 && (
+                                        <div className="flex justify-between items-center text-gray-400">
+                                            <p className="text-[11px] sm:text-[12px] font-bold font-body uppercase tracking-wider">Service Fee</p>
+                                            <p className="font-black text-[13px] font-heading uppercase">{formatIDR(serviceFee)}</p>
+                                        </div>
+                                    )}
+                                    {handlingFee > 0 && (
+                                        <div className="flex justify-between items-center text-gray-400">
+                                            <p className="text-[11px] sm:text-[12px] font-bold font-body uppercase tracking-wider">Handling Fee</p>
+                                            <p className="font-black text-[13px] font-heading uppercase">{formatIDR(handlingFee)}</p>
+                                        </div>
+                                    )}
+                                    {ppn > 0 && (
+                                        <div className="flex justify-between items-center text-gray-400">
+                                            <p className="text-[11px] sm:text-[12px] font-bold font-body uppercase tracking-wider">PPN</p>
+                                            <p className="font-black text-[13px] font-heading uppercase">{formatIDR(ppn)}</p>
+                                        </div>
+                                    )}
                                 </div>
                             </div>
 

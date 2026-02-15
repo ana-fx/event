@@ -44,6 +44,8 @@ export default function CreateEvent() {
         organizer_fee_online: "0",
         organizer_fee_reseller_type: "fixed",
         organizer_fee_reseller: "0",
+        pg_fee: "0",
+        pg_fee_type: "fixed",
     });
 
     // Files
@@ -338,7 +340,7 @@ export default function CreateEvent() {
                 {/* 4. Fees & Taxes */}
                 <div className="bg-(--card) p-6 rounded-2xl border border-(--card-border) shadow-sm space-y-6">
                     <h3 className="text-lg font-bold text-(--foreground) border-b border-(--card-border) pb-4">Fees & Taxes</h3>
-                    <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                         <div className="space-y-4">
                             <div>
                                 <label className="block text-sm font-bold text-(--foreground) opacity-70 mb-2">Organizer Tax</label>
@@ -362,7 +364,7 @@ export default function CreateEvent() {
                         </div>
                         <div className="space-y-4">
                             <div>
-                                <label className="block text-sm font-bold text-(--foreground) opacity-70 mb-2">Buyer Service Fee</label>
+                                <label className="block text-sm font-bold text-(--foreground) opacity-70 mb-2">Service Fee</label>
                                 <div className="flex gap-2">
                                     <input
                                         type="number"
@@ -403,7 +405,8 @@ export default function CreateEvent() {
                             </div>
                         </div>
 
-                        <div className="space-y-4">
+                        {/* Hidden Reseller Commission */}
+                        {/* <div className="space-y-4">
                             <div>
                                 <label className="block text-sm font-bold text-(--foreground) opacity-70 mb-2">Reseller Commission</label>
                                 <div className="flex gap-2">
@@ -423,11 +426,11 @@ export default function CreateEvent() {
                                     </select>
                                 </div>
                             </div>
-                        </div>
+                        </div> */}
 
                         <div className="space-y-4">
                             <div>
-                                <label className="block text-sm font-bold text-(--foreground) opacity-70 mb-2">Platform Fee (Online)</label>
+                                <label className="block text-sm font-bold text-(--foreground) opacity-70 mb-2">Platform Fee</label>
                                 <div className="flex gap-2">
                                     <input
                                         type="number"
@@ -449,6 +452,29 @@ export default function CreateEvent() {
 
                         <div className="space-y-4">
                             <div>
+                                <label className="block text-sm font-bold text-(--foreground) opacity-70 mb-2">Payment Gateway Fee (Midtrans)</label>
+                                <div className="flex gap-2">
+                                    <input
+                                        type="number"
+                                        className="flex-1 px-4 py-2.5 rounded-lg border border-(--card-border) bg-(--background) text-(--foreground) focus:border-blue-500 focus:ring-4 focus:ring-blue-500/10 outline-none transition-all"
+                                        value={formData.pg_fee}
+                                        onChange={(e) => setFormData({ ...formData, pg_fee: e.target.value })}
+                                    />
+                                    <select 
+                                        className="w-24 px-2 py-2.5 rounded-lg border border-(--card-border) bg-(--background) text-(--foreground) focus:border-blue-500 outline-none transition-all text-sm font-bold"
+                                        value={formData.pg_fee_type}
+                                        onChange={(e) => setFormData({ ...formData, pg_fee_type: e.target.value })}
+                                    >
+                                        <option value="fixed">IDR</option>
+                                        <option value="percent">%</option>
+                                    </select>
+                                </div>
+                            </div>
+                        </div>
+
+                        {/* Hidden Platform Fee (Reseller) */}
+                        {/* <div className="space-y-4">
+                            <div>
                                 <label className="block text-sm font-bold text-(--foreground) opacity-70 mb-2">Platform Fee (Reseller)</label>
                                 <div className="flex gap-2">
                                     <input
@@ -467,7 +493,7 @@ export default function CreateEvent() {
                                     </select>
                                 </div>
                             </div>
-                        </div>
+                        </div> */}
                     </div>
                 </div>
 

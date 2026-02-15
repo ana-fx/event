@@ -101,9 +101,43 @@ function CheckoutContent({ params }: { params: { slug: string } }) {
         }, 0);
     };
 
-    const handlingFee = 6000;
     const subtotal = calculateSubtotal();
-    const total = subtotal + (subtotal > 0 ? handlingFee : 0);
+    
+    // Dynamic Fee Calculation
+    const getFees = () => {
+        if (!event || subtotal === 0) return { serviceFee: 0, handlingFee: 0, ppn: 0, total: subtotal };
+
+        const totalQty = items.reduce((acc, item) => acc + item.qty, 0);
+
+        // 1. Service Fee (Admin Fee)
+        let serviceFee = 0;
+        if (event.admin_fee_type === "fixed") {
+            serviceFee = event.admin_fee * totalQty;
+        } else {
+            serviceFee = subtotal * (event.admin_fee / 100);
+        }
+
+        // 2. Handling Fee (Platform Fee Online)
+        let handlingFee = 0;
+        if (event.organizer_fee_online_type === "fixed") {
+            handlingFee = event.organizer_fee_online;
+        } else {
+            handlingFee = subtotal * (event.organizer_fee_online / 100);
+        }
+
+        // 3. PPN
+        let ppn = 0;
+        if (event.ppn_type === "fixed") {
+            ppn = event.ppn;
+        } else {
+            ppn = subtotal * (event.ppn / 100);
+        }
+
+        const total = subtotal + serviceFee + handlingFee + ppn;
+        return { serviceFee, handlingFee, ppn, total };
+    };
+
+    const { serviceFee, handlingFee, ppn, total } = getFees();
 
     const formatIDR = (price: number) => {
         return new Intl.NumberFormat("id-ID", {
@@ -197,9 +231,10 @@ function CheckoutContent({ params }: { params: { slug: string } }) {
                                         <input
                                             type="text" name="nik" required
                                             inputMode="numeric"
+                                            maxLength={20}
                                             value={form.nik} onChange={handleChange}
                                             className="w-full px-5 py-4 rounded-xl bg-white border border-slate-200 shadow-sm focus:ring-4 focus:ring-blue-600/5 focus:border-blue-600 outline-none transition-all text-sm font-medium text-gray-900 placeholder:text-gray-300"
-                                            placeholder="16-digit NIK"
+                                            placeholder="NIK / IDENTITY NUMBER (Max 20 digits)"
                                         />
                                     </div>
 
@@ -392,8 +427,37 @@ function CheckoutContent({ params }: { params: { slug: string } }) {
                                 })}
                             </div>
 
-                            <div className="pt-6 sm:pt-8 border-t-2 border-dashed border-gray-100 space-y-8 sm:space-y-10">
-                                <div>
+                            <div className="pt-6 sm:pt-8 border-t-2 border-dashed border-gray-100 space-y-4">
+                                {/* Fee Breakdown */}
+                                <div className="space-y-3 px-2">
+                                    <div className="flex justify-between items-center text-[12px] sm:text-[13px]">
+                                        <p className="font-bold text-gray-400 uppercase tracking-wider">Subtotal</p>
+                                        <p className="font-black text-gray-600">{formatIDR(subtotal)}</p>
+                                    </div>
+                                    
+                                    {serviceFee > 0 && (
+                                        <div className="flex justify-between items-center text-[12px] sm:text-[13px]">
+                                            <p className="font-bold text-gray-400 uppercase tracking-wider">Service Fee</p>
+                                            <p className="font-black text-gray-600">{formatIDR(serviceFee)}</p>
+                                        </div>
+                                    )}
+
+                                    {handlingFee > 0 && (
+                                        <div className="flex justify-between items-center text-[12px] sm:text-[13px]">
+                                            <p className="font-bold text-gray-400 uppercase tracking-wider">Handling Fee</p>
+                                            <p className="font-black text-gray-600">{formatIDR(handlingFee)}</p>
+                                        </div>
+                                    )}
+
+                                    {ppn > 0 && (
+                                        <div className="flex justify-between items-center text-[12px] sm:text-[13px]">
+                                            <p className="font-bold text-gray-400 uppercase tracking-wider">PPN</p>
+                                            <p className="font-black text-gray-600">{formatIDR(ppn)}</p>
+                                        </div>
+                                    )}
+                                </div>
+
+                                <div className="pt-6 border-t border-gray-50">
                                     <div className="flex justify-center mb-3 sm:mb-4">
                                         <p className="text-[9px] sm:text-[10px] font-black uppercase tracking-[0.25em] text-[#D1D1D1] font-heading">Total Amount Due</p>
                                     </div>
@@ -401,9 +465,8 @@ function CheckoutContent({ params }: { params: { slug: string } }) {
                                         <p className="text-[40px] sm:text-[48px] lg:text-[56px] font-black text-blue-600 leading-none tracking-[-0.05em] font-heading">
                                             {formatIDR(total)}
                                         </p>
-                                        <div className="flex items-center justify-center gap-2 sm:gap-3 py-2 sm:py-3 px-4 sm:px-6 bg-blue-50/40 rounded-2xl w-fit mx-auto ring-1 ring-blue-50/50">
-                                            <span className="text-[8px] sm:text-[9px] font-black bg-blue-600 text-white px-2 py-0.5 rounded uppercase tracking-wider font-heading">Inc. Fee</span>
-                                            <p className="text-[10px] sm:text-[11px] font-bold text-blue-600/60 font-body">{formatIDR(handlingFee)} Handling Fee</p>
+                                        <div className="flex items-center justify-center gap-2 py-3 px-6 bg-blue-50/40 rounded-2xl w-fit mx-auto ring-1 ring-blue-50/50">
+                                            <span className="text-[8px] sm:text-[9px] font-black bg-blue-600 text-white px-2 py-0.5 rounded uppercase tracking-wider font-heading">Summary</span>
                                         </div>
                                     </div>
                                 </div>

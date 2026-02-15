@@ -51,6 +51,8 @@ CREATE TABLE IF NOT EXISTS events (
     admin_fee_type VARCHAR(50) DEFAULT 'fixed' NOT NULL,
     ppn DECIMAL(12, 2) DEFAULT 0 NOT NULL,
     ppn_type VARCHAR(50) DEFAULT 'fixed' NOT NULL,
+    pg_fee DECIMAL(12, 2) DEFAULT 0 NOT NULL,
+    pg_fee_type VARCHAR(50) DEFAULT 'fixed' NOT NULL,
     youtube_link TEXT NULL,
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,

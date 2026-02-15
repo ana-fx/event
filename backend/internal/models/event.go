@@ -38,6 +38,8 @@ type Event struct {
 	AdminFeeType             string    `json:"admin_fee_type"`
 	PPN                      float64   `json:"ppn"`
 	PPNType                  string    `json:"ppn_type"`
+	PgFee                    float64   `json:"pg_fee"`
+	PgFeeType                string    `json:"pg_fee_type"`
 	MinPrice                 float64   `json:"min_price"`
 	YoutubeLink              *string   `json:"youtube_link"`
 	CreatedAt                time.Time `json:"created_at"`
@@ -89,6 +91,7 @@ func CreateEvent(e *Event) error {
 			reseller_fee_type, reseller_fee_value, 
 			organizer_fee_online_type, organizer_fee_online,
 			organizer_fee_reseller_type, organizer_fee_reseller,
+			pg_fee, pg_fee_type,
 			created_at, updated_at
 		) VALUES (
 			$1, $2, $3, $4, $5, $6, $7, $8, 
@@ -98,7 +101,7 @@ func CreateEvent(e *Event) error {
 			$20,
 			$21, $22, $23, $24, $25, $26,
 			$27, $28, $29, $30, $31, $32,
-			$33, $34
+			$33, $34, $35, $36
 		)
 		RETURNING id`
 
@@ -111,6 +114,7 @@ func CreateEvent(e *Event) error {
 		e.OrganizerTax, e.OrganizerTaxType, e.AdminFee, e.AdminFeeType, e.PPN, e.PPNType,
 		e.ResellerFeeType, e.ResellerFeeValue, e.OrganizerFeeOnlineType, e.OrganizerFeeOnline,
 		e.OrganizerFeeResellerType, e.OrganizerFeeReseller,
+		e.PgFee, e.PgFeeType,
 		time.Now(), time.Now(),
 	).Scan(&e.ID)
 
@@ -128,8 +132,9 @@ func UpdateEvent(e *Event) error {
 			organizer_tax=$21, organizer_tax_type=$22, admin_fee=$23, admin_fee_type=$24, ppn=$25, ppn_type=$26,
 			reseller_fee_type=$27, reseller_fee_value=$28, organizer_fee_online_type=$29, organizer_fee_online=$30,
 			organizer_fee_reseller_type=$31, organizer_fee_reseller=$32,
-			updated_at=$33
-		WHERE id=$34`
+			pg_fee=$33, pg_fee_type=$34,
+			updated_at=$35
+		WHERE id=$36`
 
 	_, err := database.DB.Exec(query,
 		e.Name, e.Slug, e.Category, e.Status, e.StartDate, e.EndDate, e.Description, e.Terms,
@@ -140,6 +145,7 @@ func UpdateEvent(e *Event) error {
 		e.OrganizerTax, e.OrganizerTaxType, e.AdminFee, e.AdminFeeType, e.PPN, e.PPNType,
 		e.ResellerFeeType, e.ResellerFeeValue, e.OrganizerFeeOnlineType, e.OrganizerFeeOnline,
 		e.OrganizerFeeResellerType, e.OrganizerFeeReseller,
+		e.PgFee, e.PgFeeType,
 		time.Now(), e.ID,
 	)
 	return err
@@ -163,6 +169,7 @@ func GetEventByID(id int) (*Event, error) {
 			organizer_tax, organizer_tax_type, admin_fee, admin_fee_type, ppn, ppn_type,
 			reseller_fee_type, reseller_fee_value, organizer_fee_online_type, organizer_fee_online,
 			organizer_fee_reseller_type, organizer_fee_reseller,
+			pg_fee, pg_fee_type,
 			created_at 
 		FROM events 
 		WHERE id=$1 AND deleted_at IS NULL`
@@ -178,6 +185,7 @@ func GetEventByID(id int) (*Event, error) {
 		&e.OrganizerTax, &e.OrganizerTaxType, &e.AdminFee, &e.AdminFeeType, &e.PPN, &e.PPNType,
 		&e.ResellerFeeType, &e.ResellerFeeValue, &e.OrganizerFeeOnlineType, &e.OrganizerFeeOnline,
 		&e.OrganizerFeeResellerType, &e.OrganizerFeeReseller,
+		&e.PgFee, &e.PgFeeType,
 		&e.CreatedAt,
 	)
 	if err != nil {
@@ -235,6 +243,7 @@ func GetEventBySlug(slug string) (*Event, error) {
 			organizer_tax, organizer_tax_type, admin_fee, admin_fee_type, ppn, ppn_type,
 			reseller_fee_type, reseller_fee_value, organizer_fee_online_type, organizer_fee_online,
 			organizer_fee_reseller_type, organizer_fee_reseller,
+			pg_fee, pg_fee_type,
 			created_at 
 		FROM events 
 		WHERE slug=$1 AND deleted_at IS NULL`
@@ -249,6 +258,7 @@ func GetEventBySlug(slug string) (*Event, error) {
 		&e.OrganizerTax, &e.OrganizerTaxType, &e.AdminFee, &e.AdminFeeType, &e.PPN, &e.PPNType,
 		&e.ResellerFeeType, &e.ResellerFeeValue, &e.OrganizerFeeOnlineType, &e.OrganizerFeeOnline,
 		&e.OrganizerFeeResellerType, &e.OrganizerFeeReseller,
+		&e.PgFee, &e.PgFeeType,
 		&e.CreatedAt,
 	)
 	if err != nil {

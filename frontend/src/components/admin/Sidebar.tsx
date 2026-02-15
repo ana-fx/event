@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import Link from "next/link";
-import { usePathname } from "next/navigation";
+import { useRouter, usePathname, useSearchParams } from "next/navigation";
 import {
     LayoutDashboard,
     Users,
@@ -23,7 +23,6 @@ import {
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import Cookies from "js-cookie";
-import { useRouter } from "next/navigation";
 import { useSidebar } from "@/context/SidebarContext";
 
 interface MenuItem {
@@ -43,7 +42,7 @@ const menuItems: MenuItem[] = [
         children: [
             { name: "Admins", href: "/admin/users?role=admin", icon: Shield },
             { name: "Scanners", href: "/admin/users?role=scanner", icon: ScanBarcode },
-            { name: "Resellers", href: "/admin/resellers", icon: Store }, // Pointing to specialized page
+            // { name: "Resellers", href: "/admin/resellers", icon: Store }, // Pointing to specialized page
         ]
     },
     { name: "Banners", href: "/admin/banners", icon: ImageIcon },
@@ -54,6 +53,7 @@ const menuItems: MenuItem[] = [
 
 export default function Sidebar() {
     const pathname = usePathname();
+    const searchParams = useSearchParams();
     const router = useRouter();
     const [openMenus, setOpenMenus] = useState<string[]>(["User Management"]); // specific menu open by default
     const { isOpen, close } = useSidebar(); // Consume context
@@ -133,8 +133,17 @@ export default function Sidebar() {
                                     {isOpenMenu && (
                                         <div className="pl-4 space-y-1 animate-in slide-in-from-top-2 duration-200">
                                             {item.children?.map(child => {
-                                                // Simplify active check
-                                                const isChildActive = pathname === child.href.split('?')[0];
+                                                const [childPath, childQuery] = child.href.split('?');
+                                                let isChildActive = pathname === childPath;
+
+                                                if (isChildActive && childQuery) {
+                                                    const params = new URLSearchParams(childQuery);
+                                                    params.forEach((value, key) => {
+                                                        if (searchParams.get(key) !== value) {
+                                                            isChildActive = false;
+                                                        }
+                                                    });
+                                                }
 
                                                 return (
                                                     <Link

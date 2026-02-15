@@ -464,107 +464,13 @@ function AssignmentsTab({ eventId }: { eventId: string }) {
                 </div>
             </div>
 
-            {/* Resellers Section */}
-            <div className="relative group">
+            {/* Resellers Section Hidden */}
+            {/* <div className="relative group">
                 <div className="absolute -inset-0.5 bg-linear-to-r from-emerald-500 to-teal-500 rounded-2xl opacity-20 group-hover:opacity-30 transition duration-500 blur-sm"></div>
                 <div className="relative bg-(--card) p-8 rounded-2xl border border-(--card-border) shadow-xl">
-                    <div className="flex justify-between items-center mb-6 border-b border-(--card-border) pb-4">
-                        <div>
-                            <h3 className="text-xl font-bold text-(--foreground)">Assigned Resellers</h3>
-                            <p className="text-sm text-gray-500 mt-1">Set up commission rates and assign resellers.</p>
-                        </div>
-                        <div className="w-10 h-10 bg-emerald-500/10 rounded-full flex items-center justify-center text-emerald-600">
-                            <Store className="w-5 h-5" />
-                        </div>
-                    </div>
-
-                    <div className="bg-(--background) p-6 rounded-2xl border border-(--card-border) mb-8">
-                        <div className="grid grid-cols-1 md:grid-cols-12 gap-4 items-end">
-                            <div className="md:col-span-12 lg:col-span-5">
-                                <Select
-                                    label="Select Reseller"
-                                    value={selectedReseller}
-                                    onChange={(val) => setSelectedReseller(val)}
-                                    className="py-3 rounded-xl border-emerald-200 dark:border-emerald-900/50 focus:border-emerald-500"
-                                    placeholder="Choose a partner..."
-                                    options={availableResellersList.map(u => ({ label: `${u.name} (${u.email})`, value: String(u.id) }))}
-                                />
-                            </div>
-
-                            <div className="md:col-span-6 lg:col-span-3">
-                                <Select
-                                    label="Type"
-                                    value={commissionType}
-                                    onChange={(val) => setCommissionType(val)}
-                                    className="py-3 rounded-xl border-emerald-200 dark:border-emerald-900/50 focus:border-emerald-500"
-                                    options={[
-                                        { label: "Fixed Amount (Rp)", value: "fixed" },
-                                        { label: "Percentage (%)", value: "percent" }
-                                    ]}
-                                />
-                            </div>
-
-                            <div className="md:col-span-6 lg:col-span-2">
-                                <label className="block text-xs font-bold text-gray-500 uppercase tracking-wider mb-2 ml-1">Commission</label>
-                                <input
-                                    type="number"
-                                    className="w-full px-4 py-3 rounded-xl border border-(--card-border) focus:border-emerald-500 focus:ring-4 focus:ring-emerald-500/10 outline-none transition-all bg-(--background) text-(--foreground) font-medium"
-                                    value={commissionValue}
-                                    min="0"
-                                    onChange={e => setCommissionValue(e.target.value)}
-                                />
-                            </div>
-
-                            <div className="md:col-span-12 lg:col-span-2">
-                                <button
-                                    onClick={handleAssignReseller}
-                                    className="w-full py-3 bg-emerald-600 text-white font-bold rounded-xl hover:bg-emerald-700 transition-all shadow-lg shadow-emerald-600/30 disabled:opacity-70 disabled:shadow-none flex items-center justify-center gap-2 active:scale-95"
-                                    disabled={!selectedReseller}
-                                >
-                                    <Plus className="w-5 h-5" /> Add
-                                </button>
-                            </div>
-                        </div>
-                    </div>
-
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                        {resellers.map(r => (
-                            <div key={r.id} className="relative p-5 bg-(--card) border border-(--card-border) rounded-2xl hover:border-emerald-200 hover:shadow-lg transition-all group/card">
-                                <div className="flex justify-between items-start mb-3">
-                                    <div className="flex items-center gap-3">
-                                        <div className="w-10 h-10 rounded-full bg-emerald-500/10 text-emerald-600 flex items-center justify-center font-bold">
-                                            {r.name.charAt(0)}
-                                        </div>
-                                        <div>
-                                            <p className="font-bold text-(--foreground) line-clamp-1">{r.name}</p>
-                                            <p className="text-xs text-gray-500">{r.email}</p>
-                                        </div>
-                                    </div>
-                                    <button
-                                        onClick={() => handleUnassign("/admin/events/assign-reseller", r.id)}
-                                        className="text-gray-300 hover:text-red-500 transition-colors p-1"
-                                    >
-                                        <Trash className="w-4 h-4" />
-                                    </button>
-                                </div>
-                                <div className="flex items-center gap-2 bg-emerald-500/5 p-2 rounded-lg border border-emerald-500/10">
-                                    <span className="text-xs font-bold text-emerald-800 dark:text-emerald-400 uppercase tracking-wide">Commission:</span>
-                                    <span className="text-sm font-bold text-emerald-600 dark:text-emerald-400">
-                                        {r.commission_type === 'fixed' ? 'Rp ' : ''}{new Intl.NumberFormat('id-ID').format(r.commission_value)}{r.commission_type === 'percent' ? '%' : ''}
-                                    </span>
-                                </div>
-                            </div>
-                        ))}
-                        {resellers.length === 0 && (
-                            <div className="col-span-full text-center py-12 bg-(--background) rounded-2xl border-2 border-dashed border-(--card-border)">
-                                <Store className="w-12 h-12 text-gray-300 mx-auto mb-3" />
-                                <p className="text-gray-500 font-bold opacity-60">No resellers assigned yet.</p>
-                                <p className="text-xs text-gray-400 mt-1">Add users above to start tracking commissions.</p>
-                            </div>
-                        )}
-                    </div>
+                    ...
                 </div>
-            </div>
+            </div> */}
         </div>
     );
 }
@@ -735,7 +641,9 @@ function FinanceTab({ id, initialData, refresh }: { id: string, initialData: any
         organizer_fee_online_type: initialData?.organizer_fee_online_type || "fixed",
         organizer_fee_online: initialData?.organizer_fee_online || 0,
         organizer_fee_reseller_type: initialData?.organizer_fee_reseller_type || "fixed",
-        organizer_fee_reseller: initialData?.organizer_fee_reseller || 0
+        organizer_fee_reseller: initialData?.organizer_fee_reseller || 0,
+        pg_fee: initialData?.pg_fee || 0,
+        pg_fee_type: initialData?.pg_fee_type || "fixed"
     });
 
     useEffect(() => {
@@ -752,7 +660,9 @@ function FinanceTab({ id, initialData, refresh }: { id: string, initialData: any
                 organizer_fee_online_type: initialData.organizer_fee_online_type || "fixed",
                 organizer_fee_online: initialData.organizer_fee_online || 0,
                 organizer_fee_reseller_type: initialData.organizer_fee_reseller_type || "fixed",
-                organizer_fee_reseller: initialData.organizer_fee_reseller || 0
+                organizer_fee_reseller: initialData.organizer_fee_reseller || 0,
+                pg_fee: initialData.pg_fee || 0,
+                pg_fee_type: initialData.pg_fee_type || "fixed"
             });
         }
     }, [initialData]);
@@ -782,7 +692,7 @@ function FinanceTab({ id, initialData, refresh }: { id: string, initialData: any
                 <h3 className="text-lg font-bold text-(--foreground) border-b border-(--card-border) pb-4 flex items-center gap-2">
                     <Banknote className="w-5 h-5 text-blue-500" /> Fees & Taxes Configuration
                 </h3>
-                <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                     <div className="space-y-4">
                         <div>
                             <label className="block text-sm font-bold text-(--foreground) opacity-70 mb-2">Organizer Tax</label>
@@ -806,7 +716,7 @@ function FinanceTab({ id, initialData, refresh }: { id: string, initialData: any
                     </div>
                     <div className="space-y-4">
                         <div>
-                            <label className="block text-sm font-bold text-(--foreground) opacity-70 mb-2">Buyer Service Fee</label>
+                            <label className="block text-sm font-bold text-(--foreground) opacity-70 mb-2">Service Fee</label>
                             <div className="flex gap-2">
                                 <input
                                     type="number"
@@ -847,7 +757,8 @@ function FinanceTab({ id, initialData, refresh }: { id: string, initialData: any
                         </div>
                     </div>
 
-                    <div className="space-y-4">
+                    {/* Hidden Reseller Commission */}
+                    {/* <div className="space-y-4">
                         <div>
                             <label className="block text-sm font-bold text-(--foreground) opacity-70 mb-2">Reseller Commission</label>
                             <div className="flex gap-2">
@@ -867,11 +778,11 @@ function FinanceTab({ id, initialData, refresh }: { id: string, initialData: any
                                 </select>
                             </div>
                         </div>
-                    </div>
+                    </div> */}
 
                     <div className="space-y-4">
                         <div>
-                            <label className="block text-sm font-bold text-(--foreground) opacity-70 mb-2">Platform Fee (Online)</label>
+                            <label className="block text-sm font-bold text-(--foreground) opacity-70 mb-2">Platform Fee</label>
                             <div className="flex gap-2">
                                 <input
                                     type="number"
@@ -893,6 +804,29 @@ function FinanceTab({ id, initialData, refresh }: { id: string, initialData: any
 
                     <div className="space-y-4">
                         <div>
+                            <label className="block text-sm font-bold text-(--foreground) opacity-70 mb-2">Payment Gateway Fee (Midtrans)</label>
+                            <div className="flex gap-2">
+                                <input
+                                    type="number"
+                                    className="flex-1 px-4 py-2.5 rounded-lg border border-(--card-border) bg-(--background) text-(--foreground) focus:border-blue-500 focus:ring-2 focus:ring-blue-100 dark:focus:ring-blue-900/30 outline-none transition-all"
+                                    value={formData.pg_fee}
+                                    onChange={(e) => setFormData({ ...formData, pg_fee: Number(e.target.value) })}
+                                />
+                                <select 
+                                    className="w-24 px-2 py-2.5 rounded-lg border border-(--card-border) bg-(--background) text-(--foreground) focus:border-blue-500 outline-none transition-all text-sm font-bold"
+                                    value={formData.pg_fee_type}
+                                    onChange={(e) => setFormData({ ...formData, pg_fee_type: e.target.value })}
+                                >
+                                    <option value="fixed">IDR</option>
+                                    <option value="percent">%</option>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+
+                    {/* Hidden Platform Fee (Reseller) */}
+                    {/* <div className="space-y-4">
+                        <div>
                             <label className="block text-sm font-bold text-(--foreground) opacity-70 mb-2">Platform Fee (Reseller)</label>
                             <div className="flex gap-2">
                                 <input
@@ -911,7 +845,7 @@ function FinanceTab({ id, initialData, refresh }: { id: string, initialData: any
                                 </select>
                             </div>
                         </div>
-                    </div>
+                    </div> */}
                 </div>
             </div>
 

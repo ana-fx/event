@@ -60,10 +60,51 @@ func Checkout(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	// 3. Calculate Price
-	totalPrice := ticket.Price * float64(req.Quantity)
+	// 3. Get Event for Finance Settings
+	event, err := models.GetEventByID(ticket.EventID)
+	if err != nil {
+		http.Error(w, "Event not found", http.StatusNotFound)
+		return
+	}
 
-	// 4. Create Transaction in DB first
+	// 4. Calculate Subtotal and Fees
+	subtotal := ticket.Price * float64(req.Quantity)
+
+	// Service Fee (admin_fee)
+	serviceFee := 0.0
+	if event.AdminFeeType == "fixed" {
+		serviceFee = event.AdminFee * float64(req.Quantity)
+	} else {
+		serviceFee = subtotal * (event.AdminFee / 100)
+	}
+
+	// PPN
+	ppn := 0.0
+	if event.PPNType == "fixed" {
+		ppn = event.PPN // Fixed PPN per transaction? Usually it's % of price. Assuming user settings.
+	} else {
+		ppn = subtotal * (event.PPN / 100)
+	}
+
+	// Platform Fee (organizer_fee_online)
+	platformFee := 0.0
+	if event.OrganizerFeeOnlineType == "fixed" {
+		platformFee = event.OrganizerFeeOnline
+	} else {
+		platformFee = subtotal * (event.OrganizerFeeOnline / 100)
+	}
+
+	// Payment Gateway Fee (pg_fee)
+	pgFee := 0.0
+	if event.PgFeeType == "fixed" {
+		pgFee = event.PgFee
+	} else {
+		pgFee = subtotal * (event.PgFee / 100)
+	}
+
+	totalPrice := subtotal + serviceFee + ppn + platformFee + pgFee
+
+	// 5. Create Transaction in DB first
 	code := fmt.Sprintf("INGATE-%d-%d", time.Now().Unix(), rand.Intn(1000))
 
 	trx := models.Transaction{
@@ -86,7 +127,7 @@ func Checkout(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	// 5. Call Midtrans Snap Manually
+	// 6. Call Midtrans Snap Manually
 	fmt.Println("Initializing Midtrans (Manual)...")
 	apiURL := "https://app.sandbox.midtrans.com/snap/v1/transactions"
 
@@ -95,6 +136,52 @@ func Checkout(w http.ResponseWriter, r *http.Request) {
 		fmt.Println("Error: MIDTRANS_SERVER_KEY is not set")
 		http.Error(w, "Payment configuration error", http.StatusInternalServerError)
 		return
+	}
+
+	// Midtrans item details including fees
+	itemDetails := []map[string]interface{}{
+		{
+			"id":       fmt.Sprintf("T-%d", ticket.ID),
+			"price":    int64(ticket.Price),
+			"quantity": int32(req.Quantity),
+			"name":     ticket.Name,
+		},
+	}
+
+	if serviceFee > 0 {
+		itemDetails = append(itemDetails, map[string]interface{}{
+			"id":       "SERVICE-FEE",
+			"price":    int64(serviceFee),
+			"quantity": 1,
+			"name":     "Service Fee",
+		})
+	}
+
+	if ppn > 0 {
+		itemDetails = append(itemDetails, map[string]interface{}{
+			"id":       "PPN",
+			"price":    int64(ppn),
+			"quantity": 1,
+			"name":     "PPN",
+		})
+	}
+
+	if platformFee > 0 {
+		itemDetails = append(itemDetails, map[string]interface{}{
+			"id":       "HANDLING-FEE",
+			"price":    int64(platformFee),
+			"quantity": 1,
+			"name":     "Handling Fee",
+		})
+	}
+
+	if pgFee > 0 {
+		itemDetails = append(itemDetails, map[string]interface{}{
+			"id":       "PAYMENT-FEE",
+			"price":    int64(pgFee),
+			"quantity": 1,
+			"name":     "Payment Fee",
+		})
 	}
 
 	snapReq := map[string]interface{}{
@@ -107,14 +194,7 @@ func Checkout(w http.ResponseWriter, r *http.Request) {
 			"email":      req.Email,
 			"phone":      req.Phone,
 		},
-		"item_details": []map[string]interface{}{
-			{
-				"id":       fmt.Sprintf("T-%d", ticket.ID),
-				"price":    int64(ticket.Price),
-				"quantity": int32(req.Quantity),
-				"name":     ticket.Name,
-			},
-		},
+		"item_details": itemDetails,
 	}
 
 	reqBody, _ := json.Marshal(snapReq)
