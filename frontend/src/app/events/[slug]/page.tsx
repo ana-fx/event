@@ -124,7 +124,7 @@ export default async function EventDetailPage({ params }: { params: Promise<{ sl
             <div className="pt-[80px] bg-stone-50 border-b border-stone-200/60 overflow-visible relative z-10">
                 <div className="max-w-7xl mx-auto px-6 lg:px-10 pt-16 pb-24 md:pt-24 md:pb-32">
                     <div className="flex flex-col lg:flex-row gap-16 lg:items-center">
-                        
+
                         <div className="flex-1 space-y-12 text-center lg:text-left">
                             <div className="space-y-4">
                                 <span className="text-blue-600 text-[10px] font-black uppercase tracking-[0.5em] block">Exclusive Event</span>
@@ -134,18 +134,18 @@ export default async function EventDetailPage({ params }: { params: Promise<{ sl
                             </div>
 
                             {/* Ticket Strip Meta-info */}
-                            <div className="flex flex-wrap justify-center lg:justify-start items-center gap-px bg-stone-200/50 p-px rounded-2xl overflow-hidden border border-stone-200 max-w-fit mx-auto lg:mx-0 shadow-sm backdrop-blur-sm">
-                                <div className="px-6 py-4 bg-white flex flex-col gap-1 items-start min-w-[140px]">
-                                    <span className="text-[9px] font-black uppercase tracking-widest text-stone-400">Date</span>
-                                    <span className="font-bold text-sm text-gray-900">{formatDate(event.start_date)}</span>
+                            <div className="inline-grid grid-cols-2 sm:grid-cols-3 gap-px bg-stone-200/50 p-px rounded-[24px] overflow-hidden border border-stone-200/60 shadow-sm max-w-fit mx-auto lg:mx-0 backdrop-blur-sm">
+                                <div className="col-span-2 sm:col-span-1 px-8 py-5 bg-white flex flex-col gap-1 items-center sm:items-start min-w-[180px]">
+                                    <span className="text-[10px] font-black uppercase tracking-[0.2em] text-stone-400">Date</span>
+                                    <span className="font-bold text-sm text-gray-950 whitespace-nowrap">{formatDate(event.start_date)}</span>
                                 </div>
-                                <div className="px-6 py-4 bg-white flex flex-col gap-1 items-start min-w-[140px]">
-                                    <span className="text-[9px] font-black uppercase tracking-widest text-stone-400">Time</span>
-                                    <span className="font-bold text-sm text-gray-900">{formatTime(event.start_date)} WIB</span>
+                                <div className="px-8 py-5 bg-white flex flex-col gap-1 items-center sm:items-start min-w-[140px]">
+                                    <span className="text-[10px] font-black uppercase tracking-[0.2em] text-stone-400">Time</span>
+                                    <span className="font-bold text-sm text-gray-950">{formatTime(event.start_date)} WIB</span>
                                 </div>
-                                <div className="px-6 py-4 bg-white flex flex-col gap-1 items-start min-w-[140px]">
-                                    <span className="text-[9px] font-black uppercase tracking-widest text-stone-400">City</span>
-                                    <span className="font-bold text-sm text-gray-900">{event.city || "Jakarta"}</span>
+                                <div className="px-8 py-5 bg-white flex flex-col gap-1 items-center sm:items-start min-w-[140px]">
+                                    <span className="text-[10px] font-black uppercase tracking-[0.2em] text-stone-400">City</span>
+                                    <span className="font-bold text-sm text-gray-950">{event.city || "Jakarta"}</span>
                                 </div>
                             </div>
 
@@ -159,7 +159,7 @@ export default async function EventDetailPage({ params }: { params: Promise<{ sl
                         {event.thumbnail_path && (
                             <div className="relative group/poster mx-auto lg:mx-0">
                                 <div className="absolute -inset-4 bg-stone-900/5 blur-3xl rounded-full opacity-60"></div>
-                                <div className="w-64 sm:w-80 lg:w-[450px] xl:w-[500px] aspect-square relative rounded-[48px] overflow-hidden shadow-[0_48px_96px_-24px_rgba(0,0,0,0.35)] border-[12px] border-white z-10 transition-all duration-700 group-hover/poster:scale-[1.02] group-hover/poster:shadow-[0_64px_128px_-32px_rgba(0,0,0,0.45)]">
+                                <div className="w-64 sm:w-80 lg:w-[450px] xl:w-[500px] aspect-square relative rounded-[48px] overflow-hidden shadow-[0_48px_96px_-24px_rgba(0,0,0,0.35)] border-12 border-white z-10 transition-all duration-700 group-hover/poster:scale-[1.02] group-hover/poster:shadow-[0_64px_128px_-32px_rgba(0,0,0,0.45)]">
                                     <Image
                                         src={getImageUrl(event.thumbnail_path)}
                                         alt={event.name}
@@ -256,7 +256,7 @@ export default async function EventDetailPage({ params }: { params: Promise<{ sl
                                         <p className="text-gray-400 text-[10px] font-black uppercase tracking-[0.2em]">{event.city}</p>
                                     </div>
                                 </div>
-                                <div 
+                                <div
                                     className="w-full h-[450px] rounded-[40px] overflow-hidden shadow-2xl border-8 border-gray-50 grayscale hover:grayscale-0 transition-all duration-700"
                                     dangerouslySetInnerHTML={{ __html: event.google_map_embed }}
                                 />
@@ -276,7 +276,7 @@ export default async function EventDetailPage({ params }: { params: Promise<{ sl
                                         </div>
                                         <h2 className="text-xl md:text-2xl font-black uppercase tracking-widest italic font-heading">Terms & Conditions</h2>
                                     </div>
-                                    <div 
+                                    <div
                                         className="prose prose-invert prose-sm max-w-none text-gray-400 leading-relaxed font-body mt-4
                                                    [&_ul]:list-disc [&_ul]:pl-5 [&_ol]:list-decimal [&_ol]:pl-5 [&_li]:mb-2 [&_p]:mb-4"
                                         dangerouslySetInnerHTML={{ __html: event.terms }}

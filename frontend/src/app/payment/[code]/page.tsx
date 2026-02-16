@@ -12,7 +12,7 @@ import api from "@/lib/axios";
 export default function PaymentPage({ params }: { params: Promise<{ code: string }> }) {
     const router = useRouter();
     const { code } = use(params);
-    
+
     const [transaction, setTransaction] = useState<any>(null);
     const [loading, setLoading] = useState(true);
     const [processing, setProcessing] = useState(false);
@@ -21,7 +21,14 @@ export default function PaymentPage({ params }: { params: Promise<{ code: string
         const fetchTransaction = async () => {
             try {
                 const res = await api.get(`/transaction/status?code=${code}`);
-                setTransaction(res.data);
+                const data = res.data;
+
+                if (data.status === "paid") {
+                    router.push(`/success/${code}`);
+                    return;
+                }
+
+                setTransaction(data);
             } catch (err) {
                 console.error("Failed to fetch transaction", err);
                 toast.error("Transaction not found");
@@ -78,9 +85,8 @@ export default function PaymentPage({ params }: { params: Promise<{ code: string
     if (!transaction) return null;
 
     const calculateBreakdown = () => {
-        const qty = transaction.quantity;
-        const ticketPrice = transaction.ticket_price || 0;
-        const subtotal = ticketPrice * qty;
+        const subtotal = transaction.items?.reduce((acc: number, item: any) => acc + (item.price * item.quantity), 0) || (transaction.ticket_price * (transaction.quantity?.Int64 || transaction.quantity || 0));
+        const qty = transaction.items?.reduce((acc: number, item: any) => acc + item.quantity, 0) || (transaction.quantity?.Int64 || transaction.quantity || 0);
 
         let serviceFee = 0;
         if (transaction.admin_fee_type === "fixed") {
@@ -108,11 +114,17 @@ export default function PaymentPage({ params }: { params: Promise<{ code: string
 
     const { subtotal, serviceFee, handlingFee, ppn } = calculateBreakdown();
 
+    const clientKey = process.env.NEXT_PUBLIC_MIDTRANS_CLIENT_KEY || "";
+    const isProduction = process.env.NEXT_PUBLIC_MIDTRANS_IS_PRODUCTION === "true";
+    const snapUrl = isProduction
+        ? "https://app.midtrans.com/snap/snap.js"
+        : "https://app.sandbox.midtrans.com/snap/snap.js";
+
     return (
         <div className="min-h-screen bg-[#FDFDFD] font-body selection:bg-blue-600/10">
             <Script
-                src="https://app.sandbox.midtrans.com/snap/snap.js"
-                data-client-key={process.env.NEXT_PUBLIC_MIDTRANS_CLIENT_KEY}
+                src={snapUrl}
+                data-client-key={clientKey}
                 strategy="lazyOnload"
             />
             <Navbar />
@@ -127,10 +139,10 @@ export default function PaymentPage({ params }: { params: Promise<{ code: string
                 </div>
 
                 <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 lg:gap-24 items-start">
-                    
+
                     {/* Left Column: Order Chapters */}
                     <div className="lg:col-span-7 space-y-12 sm:space-y-16">
-                        
+
                         {/* Chapter 01: Order Details */}
                         <section className="space-y-8 sm:space-y-10">
                             <div className="flex items-center gap-4 sm:gap-6">
@@ -140,7 +152,7 @@ export default function PaymentPage({ params }: { params: Promise<{ code: string
 
                             <div className="bg-white p-8 sm:p-10 rounded-[32px] sm:rounded-[40px] border border-gray-100 shadow-sm space-y-8">
                                 <div className="flex items-start gap-6 pb-8 border-b border-gray-50">
-                                    <div className="w-12 h-12 rounded-2xl bg-blue-600 flex items-center justify-center flex-shrink-0">
+                                    <div className="w-12 h-12 rounded-2xl bg-blue-600 flex items-center justify-center shrink-0">
                                         <Receipt className="w-6 h-6 text-white" />
                                     </div>
                                     <div className="space-y-1">
@@ -151,12 +163,18 @@ export default function PaymentPage({ params }: { params: Promise<{ code: string
 
                                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-8">
                                     <div className="space-y-1">
-                                        <p className="text-[9px] font-black uppercase tracking-widest text-gray-400 font-heading">Ticket Category</p>
-                                        <p className="text-sm font-bold text-gray-900 font-body">{transaction.ticket_name}</p>
+                                        <p className="text-[9px] font-black uppercase tracking-widest text-gray-400 font-heading">Ticket Categories</p>
+                                        <p className="text-sm font-bold text-gray-900 font-body">
+                                            {transaction.items?.length > 0
+                                                ? transaction.items.map((it: any) => `${it.name} (${it.quantity})`).join(", ")
+                                                : transaction.ticket_name}
+                                        </p>
                                     </div>
                                     <div className="space-y-1">
-                                        <p className="text-[9px] font-black uppercase tracking-widest text-gray-400 font-heading">Quantity</p>
-                                        <p className="text-sm font-bold text-gray-900 font-body">{transaction.quantity} Ticket(s)</p>
+                                        <p className="text-[9px] font-black uppercase tracking-widest text-gray-400 font-heading">Total Quantity</p>
+                                        <p className="text-sm font-bold text-gray-900 font-body">
+                                            {transaction.items?.reduce((acc: number, it: any) => acc + it.quantity, 0) || (transaction.quantity?.Int64 || transaction.quantity)} Ticket(s)
+                                        </p>
                                     </div>
                                     <div className="space-y-1">
                                         <p className="text-[9px] font-black uppercase tracking-widest text-gray-400 font-heading">Order ID</p>
@@ -175,7 +193,7 @@ export default function PaymentPage({ params }: { params: Promise<{ code: string
 
                             <div className="bg-white p-8 sm:p-10 rounded-[32px] sm:rounded-[40px] border border-gray-100 shadow-sm space-y-8">
                                 <div className="flex items-start gap-6 pb-8 border-b border-gray-50">
-                                    <div className="w-12 h-12 rounded-2xl bg-gray-50 flex items-center justify-center flex-shrink-0 ring-1 ring-gray-100">
+                                    <div className="w-12 h-12 rounded-2xl bg-gray-50 flex items-center justify-center shrink-0 ring-1 ring-gray-100">
                                         <User className="w-6 h-6 text-gray-400" />
                                     </div>
                                     <div className="space-y-1">
@@ -211,7 +229,7 @@ export default function PaymentPage({ params }: { params: Promise<{ code: string
 
                         {/* Cancel Action */}
                         <div className="pt-4">
-                            <button 
+                            <button
                                 onClick={() => router.back()}
                                 className="text-[10px] font-black uppercase tracking-widest text-gray-300 hover:text-blue-600 transition-colors font-heading flex items-center gap-2 group"
                             >
@@ -229,14 +247,26 @@ export default function PaymentPage({ params }: { params: Promise<{ code: string
                             </h3>
 
                             <div className="space-y-4">
-                                <div className="flex justify-between items-start group">
-                                    <div className="space-y-1">
-                                        <p className="font-black text-[#1A1A1A] text-[14px] sm:text-[16px] font-heading tracking-tight leading-none uppercase">{transaction.ticket_name}</p>
-                                        <p className="text-[11px] sm:text-[12px] font-bold text-gray-400 font-body">{transaction.quantity} Ticket(s) &bull; {formatIDR(transaction.ticket_price)}</p>
+                                {transaction.items?.length > 0 ? (
+                                    transaction.items.map((item: any) => (
+                                        <div key={item.id} className="flex justify-between items-start group">
+                                            <div className="space-y-1">
+                                                <p className="font-black text-[#1A1A1A] text-[14px] sm:text-[16px] font-heading tracking-tight leading-none uppercase">{item.name}</p>
+                                                <p className="text-[11px] sm:text-[12px] font-bold text-gray-400 font-body">{item.quantity} Ticket(s) &bull; {formatIDR(item.price)}</p>
+                                            </div>
+                                            <p className="font-black text-[#1A1A1A] text-[14px] sm:text-[16px] font-heading leading-none">{formatIDR(item.price * item.quantity)}</p>
+                                        </div>
+                                    ))
+                                ) : (
+                                    <div className="flex justify-between items-start group">
+                                        <div className="space-y-1">
+                                            <p className="font-black text-[#1A1A1A] text-[14px] sm:text-[16px] font-heading tracking-tight leading-none uppercase">{transaction.ticket_name}</p>
+                                            <p className="text-[11px] sm:text-[12px] font-bold text-gray-400 font-body">{(transaction.quantity?.Int64 || transaction.quantity)} Ticket(s) &bull; {formatIDR(transaction.ticket_price)}</p>
+                                        </div>
+                                        <p className="font-black text-[#1A1A1A] text-[14px] sm:text-[16px] font-heading leading-none">{formatIDR(subtotal)}</p>
                                     </div>
-                                    <p className="font-black text-[#1A1A1A] text-[14px] sm:text-[16px] font-heading leading-none">{formatIDR(subtotal)}</p>
-                                </div>
-                                
+                                )}
+
                                 <div className="space-y-3 pt-4 border-t border-gray-50">
                                     {serviceFee > 0 && (
                                         <div className="flex justify-between items-center text-gray-400">
@@ -288,10 +318,10 @@ export default function PaymentPage({ params }: { params: Promise<{ code: string
                                         </>
                                     )}
                                 </button>
-                                
+
                                 <div className="flex items-center justify-center gap-3 text-gray-300">
                                     <CreditCard className="w-4 h-4" />
-                                    <span className="text-[9px] font-bold uppercase tracking-[0.1em] font-body">Powered by Midtrans Snap</span>
+                                    <span className="text-[9px] font-bold uppercase tracking-widest font-body">Powered by Midtrans Snap</span>
                                 </div>
                             </div>
                         </div>

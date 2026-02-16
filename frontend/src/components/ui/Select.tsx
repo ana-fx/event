@@ -17,6 +17,7 @@ interface SelectProps {
     placeholder?: string;
     error?: string;
     className?: string; // Trigger button class
+    labelClassName?: string;
     containerClassName?: string;
     disabled?: boolean;
 }
@@ -29,6 +30,7 @@ export function Select({
     placeholder = "Select option",
     error,
     className,
+    labelClassName,
     containerClassName,
     disabled
 }: SelectProps) {
@@ -57,7 +59,7 @@ export function Select({
     return (
         <div className={cn("space-y-2", containerClassName)} ref={containerRef}>
             {label && (
-                <label className="block text-sm font-bold text-(--foreground) opacity-70">
+                <label className={cn("block text-sm font-bold text-(--foreground) opacity-70", labelClassName)}>
                     {label}
                 </label>
             )}

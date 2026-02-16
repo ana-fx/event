@@ -7,6 +7,7 @@ import Footer from "@/components/public/Footer";
 import { CheckCircle, ChevronRight, Loader2 } from "lucide-react";
 import { toast } from "react-hot-toast";
 import api from "@/lib/axios";
+import { Select } from "@/components/ui/Select";
 
 interface CartItem {
     id: number;
@@ -102,7 +103,7 @@ function CheckoutContent({ params }: { params: { slug: string } }) {
     };
 
     const subtotal = calculateSubtotal();
-    
+
     // Dynamic Fee Calculation
     const getFees = () => {
         if (!event || subtotal === 0) return { serviceFee: 0, handlingFee: 0, ppn: 0, total: subtotal };
@@ -155,14 +156,20 @@ function CheckoutContent({ params }: { params: { slug: string } }) {
             return;
         }
 
+        if (!event?.id) {
+            toast.error("Event data not loaded. Please refresh.");
+            return;
+        }
+
         setProcessing(true);
 
         try {
-            const firstItem = items[0];
             const payload = {
-                event_id: event?.id,
-                ticket_id: firstItem.id,
-                quantity: firstItem.qty,
+                event_id: event.id,
+                items: items.map(item => ({
+                    ticket_id: item.id,
+                    quantity: item.qty
+                })),
                 name: form.name,
                 email: form.email,
                 phone: form.phone,
@@ -241,21 +248,18 @@ function CheckoutContent({ params }: { params: { slug: string } }) {
                                     {/* GENDER */}
                                     <div className="space-y-2">
                                         <label className="block text-[10px] font-black uppercase tracking-[0.15em] text-gray-400 font-heading ml-2">
-                                            Gender
+                                            GENDER
                                         </label>
-                                        <div className="relative">
-                                            <select
-                                                name="gender" required
-                                                value={form.gender} onChange={handleChange}
-                                                className="w-full px-5 py-4 rounded-xl bg-white border border-slate-200 shadow-sm focus:ring-4 focus:ring-blue-600/5 focus:border-blue-600 outline-none transition-all text-sm font-medium text-gray-900 appearance-none cursor-pointer"
-                                            >
-                                                <option value="Male">Male</option>
-                                                <option value="Female">Female</option>
-                                            </select>
-                                            <div className="absolute right-6 sm:right-8 top-1/2 -translate-y-1/2 pointer-events-none text-gray-300">
-                                                <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M19 9l-7 7-7-7"></path></svg>
-                                            </div>
-                                        </div>
+                                        <Select
+                                            value={form.gender}
+                                            onChange={(val) => setForm({ ...form, gender: val })}
+                                            options={[
+                                                { label: "Male", value: "Male" },
+                                                { label: "Female", value: "Female" }
+                                            ]}
+                                            className="w-full px-5 py-4 rounded-xl bg-white! border-slate-200! shadow-sm focus:ring-4 focus:ring-blue-600/5 focus:border-blue-600 outline-none transition-all text-sm font-medium text-gray-900 hover:border-slate-300!"
+                                            containerClassName="space-y-0!"
+                                        />
                                     </div>
                                 </div>
                             </section>
@@ -266,7 +270,7 @@ function CheckoutContent({ params }: { params: { slug: string } }) {
                                     <span className="w-8 h-8 sm:w-10 sm:h-10 rounded-full bg-blue-600 text-white flex items-center justify-center font-black text-xs sm:text-sm font-heading">02</span>
                                     <h3 className="text-lg sm:text-xl font-black text-[#1A1A1A] uppercase tracking-tighter font-heading">Personal Information</h3>
                                 </div>
-                                
+
                                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-x-6 gap-y-6 sm:gap-x-10 sm:gap-y-8">
                                     {/* FULL NAME */}
                                     <div className="space-y-2">
@@ -324,7 +328,7 @@ function CheckoutContent({ params }: { params: { slug: string } }) {
                             </section>
 
                             {/* Aggrement Group */}
-                            <div className="space-y-4 !mt-0">
+                            <div className="space-y-4 mt-0!">
                                 <div className="space-y-4">
                                     <label className="flex items-center gap-4 sm:gap-5 cursor-pointer group">
                                         <div className="relative flex items-center">
@@ -381,9 +385,9 @@ function CheckoutContent({ params }: { params: { slug: string } }) {
                         {event && (
                             <div className="bg-white overflow-hidden rounded-[32px] sm:rounded-[40px] border border-gray-100/50 shadow-sm transition-all group p-1.5 ring-1 ring-gray-100/30">
                                 <div className="flex items-center gap-4 sm:gap-6 p-3 sm:p-4">
-                                    <div className="relative w-20 h-20 sm:w-28 sm:h-28 flex-shrink-0 overflow-hidden rounded-[20px] sm:rounded-[28px] bg-gray-50">
+                                    <div className="relative w-20 h-20 sm:w-28 sm:h-28 shrink-0 overflow-hidden rounded-[20px] sm:rounded-[28px] bg-gray-50">
                                         {event.thumbnail_path ? (
-                                            <img 
+                                            <img
                                                 src={`${process.env.NEXT_PUBLIC_BASE_URL || 'http://localhost:8080'}${event.thumbnail_path}`}
                                                 alt={event.name}
                                                 className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
@@ -434,7 +438,7 @@ function CheckoutContent({ params }: { params: { slug: string } }) {
                                         <p className="font-bold text-gray-400 uppercase tracking-wider">Subtotal</p>
                                         <p className="font-black text-gray-600">{formatIDR(subtotal)}</p>
                                     </div>
-                                    
+
                                     {serviceFee > 0 && (
                                         <div className="flex justify-between items-center text-[12px] sm:text-[13px]">
                                             <p className="font-bold text-gray-400 uppercase tracking-wider">Service Fee</p>
@@ -484,7 +488,7 @@ function CheckoutContent({ params }: { params: { slug: string } }) {
 
 export default function CheckoutPage({ params }: { params: Promise<{ slug: string }> }) {
     const resolvedParams = typeof (params as any).then === 'function' ? (params as any) : Promise.resolve(params);
-    
+
     return (
         <Suspense fallback={<div className="min-h-screen flex items-center justify-center bg-white"><Loader2 className="w-8 h-8 animate-spin text-blue-600" /></div>}>
             <CheckoutPageInner paramsPromise={resolvedParams} />

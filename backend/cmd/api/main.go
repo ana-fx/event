@@ -26,7 +26,7 @@ func main() {
 	// 1. Connect to Database
 	connStr := os.Getenv("DATABASE_URL")
 	if connStr == "" {
-		connStr = "postgres://postgres:root@localhost:5432/event_db?sslmode=disable"
+		connStr = "postgres://postgres:root@localhost:5432/event_app_db?sslmode=disable"
 	}
 	database.Connect(connStr)
 	database.RunMigrations()
@@ -109,6 +109,7 @@ func main() {
 
 	// Admin Report Routes
 	http.HandleFunc("/api/admin/reports/transactions", middleware.AuthMiddleware(admin.TransactionReport))
+	http.HandleFunc("/api/admin/reports/detail", middleware.AuthMiddleware(admin.GetTransactionDetail))
 
 	// Banners
 	http.HandleFunc("/api/admin/banners", middleware.AuthMiddleware(func(w http.ResponseWriter, r *http.Request) {

@@ -13,7 +13,7 @@ export default function Navbar() {
                 <div className="flex justify-between items-center h-24">
                     {/* Logo */}
                     <Link href="/" className="flex items-center gap-2 md:gap-3 group">
-                        <div className="w-10 h-10 md:w-14 md:h-14 rounded-xl md:rounded-2xl bg-gray-950 flex items-center justify-center transform group-hover:rotate-[10deg] transition-all duration-500 shadow-xl shadow-gray-950/20">
+                        <div className="w-10 h-10 md:w-14 md:h-14 rounded-xl md:rounded-2xl bg-gray-950 flex items-center justify-center transform group-hover:rotate-10 transition-all duration-500 shadow-xl shadow-gray-950/20">
                             <Ticket className="w-5 h-5 md:w-7 md:h-7 text-white" />
                         </div>
                         <span className="text-xl md:text-3xl font-black tracking-tighter uppercase flex items-center gap-1">

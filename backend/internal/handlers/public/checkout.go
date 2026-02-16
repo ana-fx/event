@@ -2,6 +2,7 @@ package public
 
 import (
 	"bytes"
+	"database/sql"
 	"encoding/json"
 	"event-backend/internal/models"
 	"fmt"
@@ -17,15 +18,19 @@ import (
 // Keys are now in .env, retrieved via os.Getenv()
 
 type CheckoutRequest struct {
-	EventID  int    `json:"event_id"`
-	TicketID int    `json:"ticket_id"`
-	Quantity int    `json:"quantity"`
-	Name     string `json:"name"`
-	Email    string `json:"email"`
-	Phone    string `json:"phone"`
-	City     string `json:"city"`
-	NIK      string `json:"nik"`
-	Gender   string `json:"gender"`
+	EventID int        `json:"event_id"`
+	Items   []CartItem `json:"items"`
+	Name    string     `json:"name"`
+	Email   string     `json:"email"`
+	Phone   string     `json:"phone"`
+	City    string     `json:"city"`
+	NIK     string     `json:"nik"`
+	Gender  string     `json:"gender"`
+}
+
+type CartItem struct {
+	TicketID int `json:"ticket_id"`
+	Quantity int `json:"quantity"`
 }
 
 func Checkout(w http.ResponseWriter, r *http.Request) {
@@ -43,63 +48,95 @@ func Checkout(w http.ResponseWriter, r *http.Request) {
 
 	var req CheckoutRequest
 	if err := json.NewDecoder(r.Body).Decode(&req); err != nil {
+		fmt.Println("[ERROR] Checkout: Invalid body:", err)
 		http.Error(w, "Invalid body", http.StatusBadRequest)
 		return
 	}
+	fmt.Printf("[DEBUG] Checkout Request: %+v\n", req)
 
-	// 1. Get Ticket
-	ticket, err := models.GetTicketByID(req.TicketID)
-	if err != nil {
-		http.Error(w, "Ticket not found", http.StatusNotFound)
+	if len(req.Items) == 0 {
+		fmt.Println("[ERROR] Checkout: No tickets selected")
+		http.Error(w, "No tickets selected", http.StatusBadRequest)
 		return
 	}
 
-	// 2. Validate Quota/Max Purchase
-	if req.Quantity > ticket.MaxPurchasePerUser {
-		http.Error(w, "Quantity exceeds limit per user", http.StatusBadRequest)
-		return
-	}
-
-	// 3. Get Event for Finance Settings
-	event, err := models.GetEventByID(ticket.EventID)
+	// 1. Get Event for Finance Settings
+	event, err := models.GetEventByID(req.EventID)
 	if err != nil {
+		fmt.Printf("[ERROR] Checkout: Event %d not found: %v\n", req.EventID, err)
 		http.Error(w, "Event not found", http.StatusNotFound)
 		return
 	}
 
-	// 4. Calculate Subtotal and Fees
-	subtotal := ticket.Price * float64(req.Quantity)
+	var transactionItems []models.TransactionItem
+	var totalTickets int
+	var subtotalFloat float64
+	var itemDetails []map[string]interface{}
+
+	// 2. Process Items
+	for _, item := range req.Items {
+		ticket, err := models.GetTicketByID(item.TicketID)
+		if err != nil {
+			fmt.Printf("[ERROR] Checkout: Ticket %d not found: %v\n", item.TicketID, err)
+			http.Error(w, fmt.Sprintf("Ticket %d not found", item.TicketID), http.StatusNotFound)
+			return
+		}
+
+		if item.Quantity > ticket.MaxPurchasePerUser {
+			http.Error(w, fmt.Sprintf("Quantity for %s exceeds limit per user", ticket.Name), http.StatusBadRequest)
+			return
+		}
+
+		subtotalFloat += ticket.Price * float64(item.Quantity)
+		totalTickets += item.Quantity
+
+		transactionItems = append(transactionItems, models.TransactionItem{
+			TicketID: ticket.ID,
+			Name:     ticket.Name,
+			Price:    ticket.Price,
+			Quantity: item.Quantity,
+		})
+
+		itemDetails = append(itemDetails, map[string]interface{}{
+			"id":       fmt.Sprintf("T-%d", ticket.ID),
+			"price":    int64(ticket.Price),
+			"quantity": int32(item.Quantity),
+			"name":     ticket.Name,
+		})
+	}
+
+	subtotal := float64(int64(subtotalFloat + 0.5))
 
 	// Service Fee (admin_fee)
 	serviceFee := 0.0
 	if event.AdminFeeType == "fixed" {
-		serviceFee = event.AdminFee * float64(req.Quantity)
+		serviceFee = float64(int64(event.AdminFee*float64(totalTickets) + 0.5))
 	} else {
-		serviceFee = subtotal * (event.AdminFee / 100)
+		serviceFee = float64(int64(subtotal*(event.AdminFee/100) + 0.5))
 	}
 
 	// PPN
 	ppn := 0.0
 	if event.PPNType == "fixed" {
-		ppn = event.PPN // Fixed PPN per transaction? Usually it's % of price. Assuming user settings.
+		ppn = float64(int64(event.PPN + 0.5))
 	} else {
-		ppn = subtotal * (event.PPN / 100)
+		ppn = float64(int64(subtotal*(event.PPN/100) + 0.5))
 	}
 
 	// Platform Fee (organizer_fee_online)
 	platformFee := 0.0
 	if event.OrganizerFeeOnlineType == "fixed" {
-		platformFee = event.OrganizerFeeOnline
+		platformFee = float64(int64(event.OrganizerFeeOnline + 0.5))
 	} else {
-		platformFee = subtotal * (event.OrganizerFeeOnline / 100)
+		platformFee = float64(int64(subtotal*(event.OrganizerFeeOnline/100) + 0.5))
 	}
 
 	// Payment Gateway Fee (pg_fee)
 	pgFee := 0.0
 	if event.PgFeeType == "fixed" {
-		pgFee = event.PgFee
+		pgFee = float64(int64(event.PgFee + 0.5))
 	} else {
-		pgFee = subtotal * (event.PgFee / 100)
+		pgFee = float64(int64(subtotal*(event.PgFee/100) + 0.5))
 	}
 
 	totalPrice := subtotal + serviceFee + ppn + platformFee + pgFee
@@ -109,28 +146,28 @@ func Checkout(w http.ResponseWriter, r *http.Request) {
 
 	trx := models.Transaction{
 		Code:       code,
-		EventID:    ticket.EventID,
-		TicketID:   ticket.ID,
+		EventID:    event.ID,
+		TicketID:   sql.NullInt64{Int64: int64(transactionItems[0].TicketID), Valid: true}, // Backward compat for first ticket
 		Name:       req.Name,
 		Email:      req.Email,
 		Phone:      req.Phone,
 		City:       req.City,
 		NIK:        req.NIK,
 		Gender:     req.Gender,
-		Quantity:   req.Quantity,
+		Quantity:   sql.NullInt64{Int64: int64(totalTickets), Valid: true},
 		TotalPrice: totalPrice,
 		Status:     "pending",
+		Items:      transactionItems,
 	}
 
 	if err := models.CreateTransaction(&trx); err != nil {
+		fmt.Printf("[ERROR] Failed to create transaction: %v\n", err)
 		http.Error(w, "Failed to create transaction: "+err.Error(), http.StatusInternalServerError)
 		return
 	}
+	fmt.Printf("[DEBUG] Transaction created in DB: ID=%d Code=%s\n", trx.ID, trx.Code)
 
 	// 6. Call Midtrans Snap Manually
-	fmt.Println("Initializing Midtrans (Manual)...")
-	apiURL := "https://app.sandbox.midtrans.com/snap/v1/transactions"
-
 	serverKey := os.Getenv("MIDTRANS_SERVER_KEY")
 	if serverKey == "" {
 		fmt.Println("Error: MIDTRANS_SERVER_KEY is not set")
@@ -138,15 +175,17 @@ func Checkout(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	// Midtrans item details including fees
-	itemDetails := []map[string]interface{}{
-		{
-			"id":       fmt.Sprintf("T-%d", ticket.ID),
-			"price":    int64(ticket.Price),
-			"quantity": int32(req.Quantity),
-			"name":     ticket.Name,
-		},
+	// Environment Detection
+	isProduction := os.Getenv("MIDTRANS_IS_PRODUCTION") == "true"
+	apiURL := "https://app.sandbox.midtrans.com/snap/v1/transactions"
+	if isProduction {
+		apiURL = "https://app.midtrans.com/snap/v1/transactions"
+		fmt.Println("[DEBUG] Initializing Midtrans (Production)...")
+	} else {
+		fmt.Println("[DEBUG] Initializing Midtrans (Sandbox)...")
 	}
+
+	// Add Fees to Item Details
 
 	if serviceFee > 0 {
 		itemDetails = append(itemDetails, map[string]interface{}{
@@ -205,19 +244,20 @@ func Checkout(w http.ResponseWriter, r *http.Request) {
 	sysReq.Header.Set("Content-Type", "application/json")
 	sysReq.Header.Set("Accept", "application/json")
 
-	fmt.Println("Sending Snap Request:", string(reqBody))
+	fmt.Printf("[DEBUG] Sending Snap Request: %s\n", string(reqBody))
 	resp, err := client.Do(sysReq)
 	if err != nil {
-		fmt.Printf("Midtrans HTTP Error: %v\n", err)
+		fmt.Printf("[ERROR] Midtrans HTTP Error: %v\n", err)
 		http.Error(w, "Payment gateway connection failed", http.StatusInternalServerError)
 		return
 	}
 	defer resp.Body.Close()
 
 	bodyBytes, _ := io.ReadAll(resp.Body)
-	fmt.Println("Midtrans Response:", string(bodyBytes))
+	fmt.Printf("[DEBUG] Midtrans Response [%d]: %s\n", resp.StatusCode, string(bodyBytes))
 
 	if resp.StatusCode >= 400 {
+		fmt.Printf("[ERROR] Midtrans API Error: %s\n", string(bodyBytes))
 		http.Error(w, "Payment gateway returned error: "+string(bodyBytes), http.StatusBadGateway)
 		return
 	}
@@ -261,7 +301,12 @@ func Checkout(w http.ResponseWriter, r *http.Request) {
 			eventImage = fmt.Sprintf("%s/%s", assetURL, *event.ThumbnailPath)
 		}
 
-		body := utils.GetPaymentRequiredTemplate(t.Name, t.Email, t.Phone, t.NIK, t.Gender, t.City, event.Name, ticket.Name, t.Quantity, totalPriceStr, paymentLink, eventImage)
+		ticketName := transactionItems[0].Name
+		if len(transactionItems) > 1 {
+			ticketName += fmt.Sprintf(" (+%d others)", len(transactionItems)-1)
+		}
+
+		body := utils.GetPaymentRequiredTemplate(t.Name, t.Email, t.Phone, t.NIK, t.Gender, t.City, event.Name, ticketName, int(t.Quantity.Int64), totalPriceStr, paymentLink, eventImage)
 		utils.EnqueueEmail(t.Email, "Action Required: Complete Your Payment for "+event.Name, body)
 	}(trx)
 

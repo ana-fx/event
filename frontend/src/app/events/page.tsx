@@ -5,12 +5,22 @@ import { Search } from "lucide-react";
 
 async function getEvents() {
     try {
-        const res = await fetch("http://localhost:8080/api/events", {
+        const apiUrl = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8080/api';
+        const res = await fetch(`${apiUrl}/events`, {
             cache: "no-store",
+            // next: { revalidate: 0 } // Alternative for App Router caching
         });
-        if (!res.ok) return [];
-        return await res.json();
+
+        if (!res.ok) {
+            console.error(`API Error: ${res.status} ${res.statusText}`);
+            return [];
+        }
+
+        const data = await res.json();
+        console.log(`Fetched ${data?.length || 0} events from ${apiUrl}/events`);
+        return data;
     } catch (error) {
+        console.error("Failed to fetch events:", error);
         return [];
     }
 }

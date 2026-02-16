@@ -79,14 +79,14 @@ CREATE TABLE IF NOT EXISTS transactions (
     id SERIAL PRIMARY KEY,
     code VARCHAR(255) UNIQUE NOT NULL,
     event_id INTEGER REFERENCES events(id) ON DELETE CASCADE,
-    ticket_id INTEGER REFERENCES tickets(id) ON DELETE CASCADE,
+    ticket_id INTEGER REFERENCES tickets(id) ON DELETE CASCADE, -- NULL means multi-ticket
     name VARCHAR(255) NOT NULL,
     email VARCHAR(255) NOT NULL,
     phone VARCHAR(255) NOT NULL,
     city VARCHAR(255) NOT NULL,
     nik VARCHAR(255) NOT NULL,
     gender VARCHAR(20) NOT NULL,
-    quantity INTEGER NOT NULL,
+    quantity INTEGER, -- NULL means multi-ticket
     total_price DECIMAL(15, 2) NOT NULL,
     status VARCHAR(50) DEFAULT 'pending' NOT NULL,
     redeemed_at TIMESTAMP NULL,
@@ -99,6 +99,17 @@ CREATE TABLE IF NOT EXISTS transactions (
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     deleted_at TIMESTAMP NULL
+);
+
+CREATE TABLE IF NOT EXISTS transaction_items (
+    id SERIAL PRIMARY KEY,
+    transaction_id INTEGER REFERENCES transactions(id) ON DELETE CASCADE,
+    ticket_id INTEGER REFERENCES tickets(id) ON DELETE CASCADE,
+    name VARCHAR(255) NOT NULL,
+    price DECIMAL(15, 2) NOT NULL,
+    quantity INTEGER NOT NULL,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
 
 CREATE TABLE IF NOT EXISTS contacts (
@@ -181,6 +192,7 @@ DROP TABLE IF EXISTS settings;
 DROP TABLE IF EXISTS banners;
 DROP TABLE IF EXISTS event_scanner;
 DROP TABLE IF EXISTS contacts;
+DROP TABLE IF EXISTS transaction_items;
 DROP TABLE IF EXISTS transactions;
 DROP TABLE IF EXISTS tickets;
 DROP TABLE IF EXISTS events;

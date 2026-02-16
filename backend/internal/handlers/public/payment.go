@@ -76,10 +76,18 @@ func PaymentWebhook(w http.ResponseWriter, r *http.Request) {
 				return
 			}
 
-			ticket, err := models.GetTicketByID(trx.TicketID)
-			if err != nil {
-				log.Printf("Email error: failed to fetch ticket %d: %v", trx.TicketID, err)
-				return
+			ticketName := "Ticket"
+			if len(trx.Items) > 0 {
+				ticketName = trx.Items[0].Name
+				if len(trx.Items) > 1 {
+					ticketName += fmt.Sprintf(" (+%d others)", len(trx.Items)-1)
+				}
+			} else if trx.TicketID.Valid {
+				// Fallback for legacy data
+				ticket, _ := models.GetTicketByID(int(trx.TicketID.Int64))
+				if ticket != nil {
+					ticketName = ticket.Name
+				}
 			}
 
 			totalPriceStr := fmt.Sprintf("IDR %.0f", trx.TotalPrice)
@@ -94,7 +102,7 @@ func PaymentWebhook(w http.ResponseWriter, r *http.Request) {
 			}
 
 			// 1. Send Consolidated Payment Success & Digital Ticket
-			successBody := utils.GetSuccessWithTicketTemplate(trx.Name, trx.Email, trx.Phone, trx.NIK, trx.Gender, trx.City, event.Name, ticket.Name, trx.Quantity, totalPriceStr, trx.Code, eventImage)
+			successBody := utils.GetSuccessWithTicketTemplate(trx.Name, trx.Email, trx.Phone, trx.NIK, trx.Gender, trx.City, event.Name, ticketName, int(trx.Quantity.Int64), totalPriceStr, trx.Code, eventImage)
 			utils.EnqueueEmail(trx.Email, "Success! Your Ticket for "+event.Name, successBody)
 		}(notif.OrderID)
 	}

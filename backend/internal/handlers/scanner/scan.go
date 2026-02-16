@@ -33,7 +33,7 @@ func Verify(w http.ResponseWriter, r *http.Request) {
 		ID         int
 		Name       string
 		Email      string
-		Quantity   int
+		Quantity   sql.NullInt64
 		Status     string
 		RedeemedAt sql.NullTime
 	}
@@ -44,14 +44,39 @@ func Verify(w http.ResponseWriter, r *http.Request) {
 			http.Error(w, "Ticket not found", http.StatusNotFound)
 			return
 		}
-		http.Error(w, "Database error", http.StatusInternalServerError)
+		http.Error(w, "Database error: "+err.Error(), http.StatusInternalServerError)
 		return
 	}
 
+	// Fetch Items if Quantity is NULL or just to be safe
+	var items []models.TransactionItem
+	rows, err := database.DB.Query(`SELECT id, ticket_id, name, quantity FROM transaction_items WHERE transaction_id = $1`, t.ID)
+	if err == nil {
+		defer rows.Close()
+		for rows.Next() {
+			var item models.TransactionItem
+			if err := rows.Scan(&item.ID, &item.TicketID, &item.Name, &item.Quantity); err == nil {
+				items = append(items, item)
+			}
+		}
+	}
+
+	// Calculate total quantity if not set
+	totalQty := 0
+	if t.Quantity.Valid {
+		totalQty = int(t.Quantity.Int64)
+	} else {
+		for _, item := range items {
+			totalQty += item.Quantity
+		}
+	}
+
 	res := map[string]interface{}{
-		"valid": false,
-		"data":  t,
-		"msg":   "Invalid",
+		"valid":    false,
+		"data":     t,
+		"quantity": totalQty,
+		"items":    items,
+		"msg":      "Invalid",
 	}
 
 	if t.Status == "paid" {

@@ -33,3 +33,25 @@ func TransactionReport(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "application/json")
 	json.NewEncoder(w).Encode(transactions)
 }
+
+func GetTransactionDetail(w http.ResponseWriter, r *http.Request) {
+	if r.Method != http.MethodGet {
+		http.Error(w, "Method not allowed", http.StatusMethodNotAllowed)
+		return
+	}
+
+	code := r.URL.Query().Get("code")
+	if code == "" {
+		http.Error(w, "Transaction code is required", http.StatusBadRequest)
+		return
+	}
+
+	transaction, err := models.GetTransactionByCode(code)
+	if err != nil {
+		http.Error(w, "Transaction not found: "+err.Error(), http.StatusNotFound)
+		return
+	}
+
+	w.Header().Set("Content-Type", "application/json")
+	json.NewEncoder(w).Encode(transaction)
+}

@@ -89,17 +89,25 @@ func CreateTransaction(w http.ResponseWriter, r *http.Request) {
 	trx := models.Transaction{
 		Code:       code,
 		EventID:    ticket.EventID,
-		TicketID:   ticket.ID,
+		TicketID:   sql.NullInt64{Int64: int64(ticket.ID), Valid: true},
 		Name:       req.Name,
 		Email:      req.Email,
 		Phone:      req.Phone,
 		City:       req.City,
 		NIK:        req.NIK,
 		Gender:     req.Gender,
-		Quantity:   req.Quantity,
+		Quantity:   sql.NullInt64{Int64: int64(req.Quantity), Valid: true},
 		TotalPrice: totalPrice,
 		Status:     "paid", // Reseller pays immediately from wallet
 		ResellerID: sql.NullInt64{Int64: int64(userID), Valid: true},
+		Items: []models.TransactionItem{
+			{
+				TicketID: ticket.ID,
+				Name:     ticket.Name,
+				Price:    ticket.Price,
+				Quantity: req.Quantity,
+			},
+		},
 	}
 
 	if err := models.CreateTransaction(&trx); err != nil {
