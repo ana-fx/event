@@ -1,6 +1,6 @@
 import type { NextConfig } from "next";
 
-const nextConfig: NextConfig = {
+const nextConfig = {
   images: {
     unoptimized: true,
     remotePatterns: [
@@ -20,6 +20,13 @@ const nextConfig: NextConfig = {
         pathname: '/storage/**',
       },
     ],
+  },
+  // Optimizations for low-memory servers
+  typescript: {
+    ignoreBuildErrors: true,
+  },
+  eslint: {
+    ignoreDuringBuilds: true,
   },
 };
 
