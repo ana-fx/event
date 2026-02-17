@@ -32,10 +32,6 @@ func main() {
 		City     string
 	}{
 		{"Music Festival 2024", "music-fest-2024", "Music", "Jakarta"},
-		{"Tech Conference 2024", "tech-conf-2024", "Technology", "Bandung"},
-		{"Art Exhibition", "art-exhibition-2024", "Art", "Yogyakarta"},
-		{"Food Carnival", "food-carnival-2024", "Food", "Surabaya"},
-		{"Startup Summit", "startup-summit-2024", "Business", "Jakarta"},
 	}
 
 	for _, eData := range events {
