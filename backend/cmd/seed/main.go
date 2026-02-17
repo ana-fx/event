@@ -3,7 +3,6 @@ package main
 import (
 	"log"
 	"os"
-	"time"
 
 	"event-backend/internal/database"
 	"event-backend/internal/models"
@@ -83,54 +82,14 @@ func main() {
 		log.Fatal("Failed to create admin user:", err)
 	}
 
-	// 6. Create Sample Event
-	log.Println("Creating sample event...")
+	// 6. Create Sample Event (SKIP)
+	log.Println("Skipping sample event creation...")
 	bannerPath := "/uploads/events/1770321313086990300.webp"
 	thumbPath := "/uploads/events/1770321313087489500.png"
+	_ = thumbPath // use to suppress unused variable error if thumbPath is not used elsewhere
 
-	event := &models.Event{
-		Name:          "Jakarta International Jazz Festival 2026",
-		Slug:          "jakarta-jazz-2026",
-		Category:      "Music",
-		Status:        "published",
-		BannerPath:    &bannerPath,
-		ThumbnailPath: &thumbPath,
-		StartDate:     time.Now().AddDate(0, 2, 0),
-		EndDate:       time.Now().AddDate(0, 2, 2),
-		Description:   "<p>The biggest jazz festival in Southeast Asia is back. Featuring world-class musicians and local legends.</p>",
-		Location:      stringPtr("JIEXPO Kemayoran"),
-		City:          stringPtr("Jakarta"),
-		OrganizerName: stringPtr("Ingate Promotions"),
-	}
-
-	err = models.CreateEvent(event)
-	if err != nil {
-		log.Fatal("Failed to create event:", err)
-	}
-
-	// 7. Create Tickets
-	log.Println("Creating tickets...")
-	tickets := []struct {
-		Name  string
-		Price float64
-	}{
-		{"General Admission", 500000},
-		{"VIP Experience", 1500000},
-	}
-
-	for _, t := range tickets {
-		ticket := &models.Ticket{
-			EventID:            event.ID,
-			Name:               t.Name,
-			Price:              t.Price,
-			Quota:              500,
-			MaxPurchasePerUser: 4,
-			IsActive:           true,
-			StartDate:          time.Now(),
-			EndDate:            event.StartDate,
-		}
-		models.CreateTicket(ticket)
-	}
+	// 7. Create Tickets (SKIP)
+	log.Println("Skipping tickets...")
 
 	// 8. Create Banner
 	log.Println("Creating sample banner...")
