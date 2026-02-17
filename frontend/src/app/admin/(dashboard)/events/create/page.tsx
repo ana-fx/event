@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, Suspense } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
 import axiosInstance from "@/lib/axios";
@@ -12,6 +12,14 @@ import { DatePicker } from "@/components/ui/DatePicker";
 import RichTextEditor from "@/components/ui/RichTextEditor";
 
 export default function CreateEvent() {
+    return (
+        <Suspense fallback={<div className="flex items-center justify-center min-h-screen"><Loader2 className="w-8 h-8 animate-spin text-blue-600" /></div>}>
+            <CreateEventContent />
+        </Suspense>
+    );
+}
+
+function CreateEventContent() {
     const router = useRouter();
     const [loading, setLoading] = useState(false);
 
@@ -46,6 +54,7 @@ export default function CreateEvent() {
         organizer_fee_reseller: "0",
         pg_fee: "0",
         pg_fee_type: "fixed",
+        pg_fee_percent: "0" // Added missing field just in case
     });
 
     // Files
@@ -351,7 +360,7 @@ export default function CreateEvent() {
                                         value={formData.organizer_tax}
                                         onChange={(e) => setFormData({ ...formData, organizer_tax: e.target.value })}
                                     />
-                                    <select 
+                                    <select
                                         className="w-24 px-2 py-2.5 rounded-lg border border-(--card-border) bg-(--background) text-(--foreground) focus:border-blue-500 outline-none transition-all text-sm font-bold"
                                         value={formData.organizer_tax_type}
                                         onChange={(e) => setFormData({ ...formData, organizer_tax_type: e.target.value })}
@@ -372,7 +381,7 @@ export default function CreateEvent() {
                                         value={formData.admin_fee}
                                         onChange={(e) => setFormData({ ...formData, admin_fee: e.target.value })}
                                     />
-                                    <select 
+                                    <select
                                         className="w-24 px-2 py-2.5 rounded-lg border border-(--card-border) bg-(--background) text-(--foreground) focus:border-blue-500 outline-none transition-all text-sm font-bold"
                                         value={formData.admin_fee_type}
                                         onChange={(e) => setFormData({ ...formData, admin_fee_type: e.target.value })}
@@ -393,7 +402,7 @@ export default function CreateEvent() {
                                         value={formData.ppn}
                                         onChange={(e) => setFormData({ ...formData, ppn: e.target.value })}
                                     />
-                                    <select 
+                                    <select
                                         className="w-24 px-2 py-2.5 rounded-lg border border-(--card-border) bg-(--background) text-(--foreground) focus:border-blue-500 outline-none transition-all text-sm font-bold"
                                         value={formData.ppn_type}
                                         onChange={(e) => setFormData({ ...formData, ppn_type: e.target.value })}
@@ -438,7 +447,7 @@ export default function CreateEvent() {
                                         value={formData.organizer_fee_online}
                                         onChange={(e) => setFormData({ ...formData, organizer_fee_online: e.target.value })}
                                     />
-                                    <select 
+                                    <select
                                         className="w-24 px-2 py-2.5 rounded-lg border border-(--card-border) bg-(--background) text-(--foreground) focus:border-blue-500 outline-none transition-all text-sm font-bold"
                                         value={formData.organizer_fee_online_type}
                                         onChange={(e) => setFormData({ ...formData, organizer_fee_online_type: e.target.value })}
@@ -460,7 +469,7 @@ export default function CreateEvent() {
                                         value={formData.pg_fee}
                                         onChange={(e) => setFormData({ ...formData, pg_fee: e.target.value })}
                                     />
-                                    <select 
+                                    <select
                                         className="w-24 px-2 py-2.5 rounded-lg border border-(--card-border) bg-(--background) text-(--foreground) focus:border-blue-500 outline-none transition-all text-sm font-bold"
                                         value={formData.pg_fee_type}
                                         onChange={(e) => setFormData({ ...formData, pg_fee_type: e.target.value })}
