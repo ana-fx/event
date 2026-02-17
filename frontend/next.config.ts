@@ -19,6 +19,10 @@ const nextConfig = {
         port: '8080',
         pathname: '/storage/**',
       },
+      {
+        protocol: 'https',
+        hostname: 'ingate.id',
+      },
     ],
   },
   // Optimizations for low-memory servers
