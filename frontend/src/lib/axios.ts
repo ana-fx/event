@@ -2,7 +2,7 @@ import axios from 'axios';
 import Cookies from 'js-cookie';
 
 const api = axios.create({
-  baseURL: process.env.NEXT_PUBLIC_API_URL,
+  baseURL: process.env.NEXT_PUBLIC_API_URL || "/api",
   // Don't set default Content-Type - let the request set it (FormData needs to set boundary)
 });
 
@@ -25,10 +25,10 @@ api.interceptors.response.use(
   (response) => response,
   (error) => {
     if (error.response?.status === 401) {
-       // Redirect to login if unauthorized (optional: only if not already on login)
-       if (typeof window !== 'undefined' && !window.location.pathname.includes('/admin/login')) {
-           // window.location.href = '/admin/login'; // logic handled by middleware/guard usually
-       }
+      // Redirect to login if unauthorized (optional: only if not already on login)
+      if (typeof window !== 'undefined' && !window.location.pathname.includes('/admin/login')) {
+        // window.location.href = '/admin/login'; // logic handled by middleware/guard usually
+      }
     }
     return Promise.reject(error);
   }
