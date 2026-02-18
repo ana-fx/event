@@ -21,7 +21,8 @@ export default function Hero() {
     useEffect(() => {
         const fetchBanners = async () => {
             try {
-                const apiUrl = process.env.NEXT_PUBLIC_API_URL || "http://localhost:8080/api";
+                // Client-side: Always use relative path to avoid Mixed Content/CORS
+                const apiUrl = "/api";
                 const res = await fetch(`${apiUrl}/banners`);
                 const data = await res.json();
                 setBanners(data || []);
@@ -72,7 +73,7 @@ export default function Hero() {
                                 />
                                 {/* Subtle Overlay for safety */}
                                 <div className="absolute inset-0 bg-black/5 group-hover:bg-black/0 transition-colors duration-500" />
-                                
+
                                 {slide.title && (
                                     <div className="absolute inset-0 flex flex-col items-start justify-end p-6 md:p-10 lg:p-12 text-white bg-linear-to-t from-black/60 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500">
                                         <h2 className="text-xl md:text-3xl font-black uppercase tracking-tighter">
