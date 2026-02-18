@@ -52,7 +52,8 @@ function CheckoutContent({ params }: { params: { slug: string } }) {
                     setItems(parsed);
 
                     // 2. Fetch Event & Ticket Details by Slug
-                    const apiUrl = process.env.NEXT_PUBLIC_API_URL || "http://localhost:8080/api";
+                    // Client-side: Always use relative path
+                    const apiUrl = "/api";
                     const res = await fetch(`${apiUrl}/events/detail?slug=${slug}`);
                     if (!res.ok) {
                         const text = await res.text();
@@ -388,7 +389,7 @@ function CheckoutContent({ params }: { params: { slug: string } }) {
                                     <div className="relative w-20 h-20 sm:w-28 sm:h-28 shrink-0 overflow-hidden rounded-[20px] sm:rounded-[28px] bg-gray-50">
                                         {event.thumbnail_path ? (
                                             <img
-                                                src={`${process.env.NEXT_PUBLIC_BASE_URL || 'http://localhost:8080'}${event.thumbnail_path}`}
+                                                src={getImageUrl(event.thumbnail_path)}
                                                 alt={event.name}
                                                 className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
                                             />
