@@ -2,7 +2,8 @@ import axios from 'axios';
 import Cookies from 'js-cookie';
 
 const api = axios.create({
-  baseURL: process.env.NEXT_PUBLIC_API_URL || "/api",
+  // baseURL: process.env.NEXT_PUBLIC_API_URL || "/api",
+  baseURL: "/api", // Force relative path because env var is stuck on localhost
   // Don't set default Content-Type - let the request set it (FormData needs to set boundary)
 });
 
