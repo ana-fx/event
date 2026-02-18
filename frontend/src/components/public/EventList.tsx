@@ -136,7 +136,7 @@ export default function EventList({ initialEvents, serverNow }: { initialEvents?
                         <div className="space-y-2 mb-4">
                             <div className="flex items-center gap-2 text-xs font-bold text-gray-400 uppercase tracking-widest font-body">
                                 <Calendar className="w-4 h-4 text-blue-500" />
-                                <span>{new Date(event.start_date).toLocaleDateString('id-ID', { day: 'numeric', month: 'long', year: 'numeric' })}</span>
+                                <span suppressHydrationWarning>{new Date(event.start_date).toLocaleDateString('id-ID', { day: 'numeric', month: 'long', year: 'numeric' })}</span>
                             </div>
                             <div className="flex items-center gap-2 text-xs font-bold text-gray-400 uppercase tracking-widest font-body">
                                 <MapPin className="w-4 h-4 text-red-500" />

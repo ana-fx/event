@@ -7,6 +7,7 @@ import Footer from "@/components/public/Footer";
 import { CheckCircle, ChevronRight, Loader2 } from "lucide-react";
 import { toast } from "react-hot-toast";
 import api from "@/lib/axios";
+import { getImageUrl } from "@/lib/utils";
 import { Select } from "@/components/ui/Select";
 
 interface CartItem {
