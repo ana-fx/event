@@ -9,7 +9,9 @@ export function getImageUrl(path: string | null | undefined): string {
     if (!path) return "";
     if (path.startsWith("http") || path.startsWith("data:")) return path;
 
-    const apiUrl = process.env.NEXT_PUBLIC_API_URL || "/api";
+    // const apiUrl = process.env.NEXT_PUBLIC_API_URL || "/api";
+    // Force relative path to bypass persistent environment variable issue
+    const apiUrl = "/api";
     // If apiUrl is just "/api", baseUrl should be empty string to allow relative path "/uploads/..."
     // If apiUrl is "http://localhost:8080/api", baseUrl is "http://localhost:8080"
     const baseUrl = apiUrl.endsWith("/api") ? apiUrl.slice(0, -4) : apiUrl;
