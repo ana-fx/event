@@ -3,7 +3,7 @@
 import { useEffect, useState } from "react";
 import Link from "next/link";
 import axiosInstance from "@/lib/axios";
-import { Search, Plus, Calendar, MapPin, Edit2, Trash2, Users } from "lucide-react";
+import { Search, Plus, Calendar, MapPin, Edit2, Trash2, Users, BarChart3 } from "lucide-react";
 import { toast } from "react-hot-toast";
 import { getImageUrl } from "@/lib/utils";
 
@@ -65,7 +65,7 @@ export default function EventListContent() {
                 </div>
                 <Link
                     href="/admin/events/create"
-                    className="flex items-center gap-2 px-4 py-2.5 bg-blue-600 text-white font-medium rounded-lg hover:bg-blue-700 transition-colors shadow-sm shadow-blue-600/20"
+                    className="flex items-center gap-2 px-4 py-2.5 bg-primary text-white font-medium rounded-lg hover:bg-primary transition-colors shadow-sm shadow-primary/20"
                 >
                     <Plus className="w-4 h-4" />
                     Create Event
@@ -76,11 +76,11 @@ export default function EventListContent() {
             <div className="bg-(--card) p-6 rounded-2xl border border-(--card-border) shadow-sm space-y-4 mb-8">
                 <div className="grid grid-cols-1 md:grid-cols-12 gap-4">
                     <div className="md:col-span-8 relative group">
-                        <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400 group-focus-within:text-blue-500 transition-colors" />
+                        <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400 group-focus-within:text-primary transition-colors" />
                         <input
                             type="text"
                             placeholder="Search events by name or location..."
-                            className="w-full pl-11 pr-4 py-3 rounded-xl border border-(--card-border) focus:border-blue-500 focus:ring-4 focus:ring-blue-500/10 outline-none transition-all bg-(--background) text-(--foreground)"
+                            className="w-full pl-11 pr-4 py-3 rounded-xl border border-(--card-border) focus:border-primary focus:ring-4 focus:ring-primary/10 outline-none transition-all bg-(--background) text-(--foreground)"
                             value={search}
                             onChange={(e) => setSearch(e.target.value)}
                         />
@@ -106,7 +106,7 @@ export default function EventListContent() {
                                 <tr>
                                     <td colSpan={5} className="px-6 py-8 text-center text-gray-500">
                                         <div className="flex justify-center items-center gap-2">
-                                            <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-blue-600"></div>
+                                            <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-primary"></div>
                                             Loading events...
                                         </div>
                                     </td>
@@ -119,7 +119,7 @@ export default function EventListContent() {
                                 </tr>
                             ) : (
                                 filteredEvents.map((event) => (
-                                    <tr key={event.id} className="hover:bg-blue-600/5 transition-colors group">
+                                    <tr key={event.id} className="hover:bg-primary/5 transition-colors group">
                                         <td className="px-6 py-4 text-(--foreground)">
                                             <div className="flex items-center gap-4">
                                                 <div className="w-12 h-12 rounded-lg bg-(--background) overflow-hidden shrink-0 border border-(--card-border)">
@@ -161,7 +161,7 @@ export default function EventListContent() {
                                         </td>
                                         <td className="px-6 py-4">
                                             <div className="flex items-center gap-2 text-(--foreground)">
-                                                <div className="w-10 h-10 bg-blue-100 dark:bg-blue-900/30 text-blue-600 rounded-lg flex items-center justify-center shrink-0">
+                                                <div className="w-10 h-10 bg-primary/20 dark:bg-primary/20 text-primary rounded-lg flex items-center justify-center shrink-0">
                                                     <Users className="w-4 h-4" />
                                                 </div>
                                                 <span className="font-bold">Active</span>
@@ -170,8 +170,15 @@ export default function EventListContent() {
                                         <td className="px-6 py-4 text-right">
                                             <div className="flex items-center justify-end gap-2">
                                                 <Link
+                                                    href={`/admin/events/report/${event.id}`}
+                                                    className="p-2 text-gray-400 hover:text-green-600 hover:bg-green-600/10 rounded-lg transition-colors"
+                                                    title="Report"
+                                                >
+                                                    <BarChart3 className="w-4 h-4" />
+                                                </Link>
+                                                <Link
                                                     href={`/admin/events/edit?id=${event.id}`}
-                                                    className="p-2 text-gray-400 hover:text-blue-600 hover:bg-blue-600/10 rounded-lg transition-colors"
+                                                    className="p-2 text-gray-400 hover:text-primary hover:bg-primary/10 rounded-lg transition-colors"
                                                     title="Edit"
                                                 >
                                                     <Edit2 className="w-4 h-4" />

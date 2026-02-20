@@ -50,7 +50,7 @@ export default function BannersContent() {
                 </div>
                 <button
                     onClick={() => setIsModalOpen(true)}
-                    className="px-4 py-2.5 bg-blue-600 text-white font-bold rounded-lg hover:bg-blue-700 transition-colors shadow-sm shadow-blue-600/20 flex items-center justify-center"
+                    className="px-4 py-2.5 bg-primary text-white font-bold rounded-lg hover:bg-primary transition-colors shadow-sm shadow-primary/20 flex items-center justify-center"
                 >
                     <Plus className="w-5 h-5 mr-2" />
                     Add Banner
@@ -79,7 +79,7 @@ export default function BannersContent() {
                         <div className="p-4">
                             <h3 className="font-bold text-(--foreground) truncate">{banner.title}</h3>
                             {banner.link_url && (
-                                <div className="flex items-center text-sm text-blue-600 mt-1 truncate">
+                                <div className="flex items-center text-sm text-primary mt-1 truncate">
                                     <LinkIcon className="w-3 h-3 mr-1" />
                                     <a href={banner.link_url} target="_blank" rel="noopener noreferrer" className="hover:underline">{banner.link_url}</a>
                                 </div>
@@ -144,11 +144,11 @@ function CreateBannerModal({ onClose, onSuccess }: { onClose: () => void, onSucc
                 <form onSubmit={handleSubmit} className="space-y-4">
                     <div>
                         <label className="block text-sm font-bold text-(--foreground) opacity-70 mb-2">Title</label>
-                        <input type="text" required className="w-full px-4 py-2.5 rounded-lg border border-(--card-border) focus:border-blue-500 focus:ring-4 focus:ring-blue-500/10 outline-none transition-all bg-(--background) text-(--foreground)" value={title} onChange={e => setTitle(e.target.value)} />
+                        <input type="text" required className="w-full px-4 py-2.5 rounded-lg border border-(--card-border) focus:border-primary focus:ring-4 focus:ring-primary/10 outline-none transition-all bg-(--background) text-(--foreground)" value={title} onChange={e => setTitle(e.target.value)} />
                     </div>
                     <div>
                         <label className="block text-sm font-bold text-(--foreground) opacity-70 mb-2">Link URL (Optional)</label>
-                        <input type="url" className="w-full px-4 py-2.5 rounded-lg border border-(--card-border) focus:border-blue-500 focus:ring-4 focus:ring-blue-500/10 outline-none transition-all bg-(--background) text-(--foreground)" value={link} onChange={e => setLink(e.target.value)} placeholder="https://..." />
+                        <input type="url" className="w-full px-4 py-2.5 rounded-lg border border-(--card-border) focus:border-primary focus:ring-4 focus:ring-primary/10 outline-none transition-all bg-(--background) text-(--foreground)" value={link} onChange={e => setLink(e.target.value)} placeholder="https://..." />
                     </div>
                     <div>
                         <label className="block text-sm font-bold text-(--foreground) opacity-70 mb-2">Image</label>
@@ -166,7 +166,7 @@ function CreateBannerModal({ onClose, onSuccess }: { onClose: () => void, onSucc
                     </div>
                     <div className="flex gap-3 pt-2">
                         <button type="button" onClick={onClose} className="flex-1 py-2.5 rounded-lg border border-(--card-border) font-bold text-(--foreground) hover:bg-(--background) transition-all">Cancel</button>
-                        <button type="submit" disabled={loading} className="flex-1 py-2.5 bg-blue-600 text-white rounded-lg font-bold hover:bg-blue-700 disabled:opacity-70 flex justify-center items-center gap-2">
+                        <button type="submit" disabled={loading} className="flex-1 py-2.5 bg-primary text-white rounded-lg font-bold hover:bg-primary disabled:opacity-70 flex justify-center items-center gap-2">
                             {loading && <Loader2 className="w-4 h-4 animate-spin" />} Create
                         </button>
                     </div>

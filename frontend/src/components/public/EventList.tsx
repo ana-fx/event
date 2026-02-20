@@ -66,7 +66,7 @@ export default function EventList({ initialEvents, serverNow }: { initialEvents?
     if (loading) {
         return (
             <div className="flex justify-center py-20">
-                <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600"></div>
+                <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary"></div>
             </div>
         );
     }
@@ -122,20 +122,20 @@ export default function EventList({ initialEvents, serverNow }: { initialEvents?
                                     New
                                 </div>
                             )}
-                            <div className="bg-white/90 backdrop-blur-sm px-2 py-1 rounded-lg text-xs font-bold text-blue-600 shadow-sm">
+                            <div className="bg-white/90 backdrop-blur-sm px-2 py-1 rounded-lg text-xs font-bold text-primary shadow-sm">
                                 Upcoming
                             </div>
                         </div>
                     </div>
 
                     <div className="p-5 flex-1 flex flex-col">
-                        <h3 className="font-black text-xl text-gray-900 group-hover:text-blue-600 transition-colors line-clamp-2 mb-3 tracking-tight font-heading uppercase leading-tight">
+                        <h3 className="font-black text-xl text-brand-dark group-hover:text-primary transition-colors line-clamp-2 mb-3 tracking-tight font-heading uppercase leading-tight">
                             {event.name}
                         </h3>
 
                         <div className="space-y-2 mb-4">
                             <div className="flex items-center gap-2 text-xs font-bold text-gray-400 uppercase tracking-widest font-body">
-                                <Calendar className="w-4 h-4 text-blue-500" />
+                                <Calendar className="w-4 h-4 text-primary" />
                                 <span suppressHydrationWarning>{new Date(event.start_date).toLocaleDateString('id-ID', { day: 'numeric', month: 'long', year: 'numeric' })}</span>
                             </div>
                             <div className="flex items-center gap-2 text-xs font-bold text-gray-400 uppercase tracking-widest font-body">
@@ -146,7 +146,7 @@ export default function EventList({ initialEvents, serverNow }: { initialEvents?
 
                         <div className="pt-4 border-t border-gray-50 mt-auto flex items-center justify-between">
                             <span className="text-[10px] text-gray-400 font-black uppercase tracking-widest whitespace-nowrap font-heading">Starts from</span>
-                            <span className="font-black text-gray-950 text-lg font-heading tracking-tighter">
+                            <span className="font-black text-brand-dark text-lg font-heading tracking-tighter">
                                 {event.min_price > 0
                                     ? `Rp ${event.min_price.toLocaleString('id-ID')}`
                                     : "Free/TBA"

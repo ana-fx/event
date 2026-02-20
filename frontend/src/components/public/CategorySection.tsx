@@ -2,7 +2,7 @@ import { Music, Mic2, Palette, ChefHat, Rocket, Ticket } from "lucide-react";
 import Link from "next/link";
 
 const categories = [
-    { name: "Concert", icon: Music, color: "bg-blue-600", count: 12 },
+    { name: "Concert", icon: Music, color: "bg-primary", count: 12 },
     { name: "Workshop", icon: Rocket, color: "bg-purple-600", count: 8 },
     { name: "Exhibition", icon: Palette, color: "bg-red-500", count: 5 },
     { name: "Food", icon: ChefHat, color: "bg-orange-500", count: 14 },
@@ -23,7 +23,7 @@ export default function CategorySection() {
                         <div className={`w-14 h-14 rounded-2xl ${cat.color} flex items-center justify-center text-white mb-6 group-hover:scale-110 transition-transform shadow-lg`}>
                             <cat.icon className="w-6 h-6" />
                         </div>
-                        <h3 className="text-sm font-black uppercase tracking-widest text-gray-900 mb-1">{cat.name}</h3>
+                        <h3 className="text-sm font-black uppercase tracking-widest text-brand-dark mb-1">{cat.name}</h3>
                         <span className="text-[10px] font-bold text-gray-400 uppercase tracking-widest">{cat.count} Events</span>
                         
                         {/* Decorative Gradient on hover */}

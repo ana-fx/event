@@ -36,7 +36,7 @@ export default async function EventsPage() {
                 {/* Header */}
                 <div className="bg-white border-b border-gray-100 py-12 px-6">
                     <div className="max-w-7xl mx-auto">
-                        <h1 className="text-4xl md:text-5xl lg:text-6xl font-black text-gray-950 mb-6 tracking-tighter uppercase font-heading">Explore Events</h1>
+                        <h1 className="text-4xl md:text-5xl lg:text-6xl font-black text-brand-dark mb-6 tracking-tighter uppercase font-heading">Explore Events</h1>
                         <p className="text-gray-500 max-w-2xl font-medium font-body">Discover the best concerts, workshops, and gatherings happening around you.</p>
 
                         {/* Search Bar Placeholder (Functional search requires client component wrapping) */}
@@ -44,7 +44,7 @@ export default async function EventsPage() {
                             <input
                                 type="text"
                                 placeholder="Search events..."
-                                className="w-full pl-12 pr-4 py-3 rounded-xl border border-gray-200 bg-gray-50 focus:bg-white focus:ring-2 focus:ring-blue-500 outline-none transition-all"
+                                className="w-full pl-12 pr-4 py-3 rounded-xl border border-gray-200 bg-gray-50 focus:bg-white focus:ring-2 focus:ring-primary outline-none transition-all"
                             />
                             <Search className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400 w-5 h-5" />
                         </div>

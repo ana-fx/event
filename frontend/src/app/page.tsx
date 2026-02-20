@@ -72,10 +72,10 @@ export default async function Home() {
         <section className="max-w-7xl mx-auto px-6 lg:px-10 py-24">
           <div className="flex flex-col md:flex-row justify-between items-start md:items-end mb-16 gap-8">
             <div>
-              <span className="text-blue-600 text-[10px] font-black uppercase tracking-[0.4em] mb-4 block">
+              <span className="text-primary text-[10px] font-black uppercase tracking-[0.4em] mb-4 block">
                 Discover More
               </span>
-              <h2 className="text-5xl md:text-7xl font-black text-gray-950 tracking-tighter uppercase leading-none">
+              <h2 className="text-5xl md:text-7xl font-black text-brand-dark tracking-tighter uppercase leading-none">
                 Upcoming <br /> <span className="text-gray-300">Events</span>
               </h2>
             </div>
@@ -86,10 +86,10 @@ export default async function Home() {
               </p>
               <a
                 href="/events"
-                className="group flex items-center gap-4 text-[11px] font-black uppercase tracking-[0.3em] text-gray-900 transition-all"
+                className="group flex items-center gap-4 text-[11px] font-black uppercase tracking-[0.3em] text-brand-dark transition-all"
               >
                 Explore All
-                <div className="w-12 h-12 rounded-full border border-gray-200 flex items-center justify-center group-hover:bg-gray-900 group-hover:text-white group-hover:border-gray-900 transition-all">
+                <div className="w-12 h-12 rounded-full border border-gray-200 flex items-center justify-center group-hover:bg-brand-dark group-hover:text-white group-hover:border-brand-dark transition-all">
                   <span className="text-xl">&rarr;</span>
                 </div>
               </a>

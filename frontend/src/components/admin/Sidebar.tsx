@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import Link from "next/link";
+import Image from "next/image";
 import { useRouter, usePathname, useSearchParams } from "next/navigation";
 import {
     LayoutDashboard,
@@ -86,15 +87,16 @@ export default function Sidebar() {
             <aside className={`fixed inset-y-0 left-0 z-50 w-72 bg-(--card) text-(--foreground) border-r border-(--card-border) transition-transform duration-300 ease-in-out md:translate-x-0 ${isOpen ? 'translate-x-0' : '-translate-x-full'}`}>
                 {/* Logo Section */}
                 <div className="p-8 pb-4 flex justify-between items-center">
-                    <div className="flex items-center gap-3">
-                        <div className="w-10 h-10 bg-blue-600 rounded-xl flex items-center justify-center transform rotate-3 shadow-lg shadow-blue-500/30">
-                            <Ticket className="w-6 h-6 text-white" />
-                        </div>
-                        <div>
-                            <h1 className="font-bold text-xl tracking-tight text-(--foreground)">Event<span className="text-blue-500">Admin</span></h1>
-                            <p className="text-[10px] text-gray-500 uppercase tracking-widest font-semibold">Dashboard v1.0</p>
-                        </div>
-                    </div>
+                    <Link href="/admin" className="flex items-center gap-3">
+                        <Image 
+                            src="/logo-ingate.png" 
+                            alt="Ingate Logo" 
+                            width={120} 
+                            height={36} 
+                            className="h-8 w-auto object-contain"
+                            priority
+                        />
+                    </Link>
                     {/* Close button for mobile */}
                     <button
                         onClick={close}
@@ -122,10 +124,10 @@ export default function Sidebar() {
                                         onClick={() => toggleMenu(item.name)}
                                         className={cn(
                                             "w-full flex items-center gap-3 px-4 py-3.5 rounded-2xl transition-all duration-300 group relative overflow-hidden text-left",
-                                            isActive || isOpenMenu ? "text-blue-600 dark:text-blue-400 bg-blue-50 dark:bg-blue-900/20" : "text-gray-500 hover:text-blue-600 hover:bg-gray-100 dark:hover:bg-gray-800/50"
+                                            isActive || isOpenMenu ? "text-primary dark:text-primary bg-primary/10 dark:bg-primary/20" : "text-gray-500 hover:text-primary hover:bg-gray-100 dark:hover:bg-gray-800/50"
                                         )}
                                     >
-                                        <item.icon className={cn("w-5 h-5 transition-transform duration-300", isActive ? "text-blue-500" : "text-gray-500 group-hover:text-white")} />
+                                        <item.icon className={cn("w-5 h-5 transition-transform duration-300", isActive ? "text-primary" : "text-gray-500 group-hover:text-white")} />
                                         <span className="flex-1 font-medium">{item.name}</span>
                                         <ChevronDown className={cn("w-4 h-4 transition-transform duration-300", isOpenMenu ? "rotate-180" : "")} />
                                     </button>
@@ -152,8 +154,8 @@ export default function Sidebar() {
                                                         onClick={() => close()} // Close on mobile click
                                                         className={cn(
                                                             "flex items-center gap-3 px-4 py-2.5 rounded-xl transition-all duration-300 text-sm",
-                                                            "text-gray-500 hover:text-blue-600 hover:bg-gray-100 dark:hover:bg-gray-800/30",
-                                                            isChildActive ? "text-blue-600 dark:text-blue-400 font-semibold bg-white dark:bg-gray-800 shadow-sm" : ""
+                                                            "text-gray-500 hover:text-primary hover:bg-gray-100 dark:hover:bg-gray-800/30",
+                                                            isChildActive ? "text-primary dark:text-primary font-semibold bg-white dark:bg-gray-800 shadow-sm" : ""
                                                         )}
                                                     >
                                                         {child.icon ? <child.icon className="w-4 h-4" /> : <div className="w-1.5 h-1.5 rounded-full bg-gray-600" />}
@@ -175,14 +177,14 @@ export default function Sidebar() {
                                 className={cn(
                                     "flex items-center gap-3 px-4 py-3.5 rounded-2xl transition-all duration-300 group relative overflow-hidden",
                                     isActive
-                                        ? "bg-blue-600/10 text-blue-600 dark:text-blue-400 font-semibold shadow-[0_0_20px_rgba(37,99,235,0.05)]"
-                                        : "text-gray-500 hover:text-blue-600 hover:bg-gray-100 dark:hover:bg-gray-800/50"
+                                        ? "bg-primary/10 text-primary dark:text-primary font-semibold shadow-[0_0_20px_rgba(37,99,235,0.05)]"
+                                        : "text-gray-500 hover:text-primary hover:bg-gray-100 dark:hover:bg-gray-800/50"
                                 )}
                             >
-                                {isActive && <div className="absolute left-0 top-1/2 -translate-y-1/2 w-1 h-8 bg-blue-500 rounded-r-full" />}
-                                <item.icon className={cn("w-5 h-5 transition-transform group-hover:scale-110 duration-300", isActive ? "text-blue-500" : "text-gray-500 group-hover:text-white")} />
+                                {isActive && <div className="absolute left-0 top-1/2 -translate-y-1/2 w-1 h-8 bg-primary rounded-r-full" />}
+                                <item.icon className={cn("w-5 h-5 transition-transform group-hover:scale-110 duration-300", isActive ? "text-primary" : "text-gray-500 group-hover:text-white")} />
                                 <span className="flex-1">{item.name}</span>
-                                {isActive && <ChevronRight className="w-4 h-4 text-blue-500 animate-pulse" />}
+                                {isActive && <ChevronRight className="w-4 h-4 text-primary animate-pulse" />}
                             </Link>
                         );
                     })}

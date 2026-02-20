@@ -49,7 +49,7 @@ export default function ContactsContent() {
             <div className="bg-(--card) rounded-xl border border-(--card-border) shadow-sm overflow-hidden">
                 <div className="divide-y divide-(--card-border)">
                     {contacts.map(c => (
-                        <div key={c.id} className="p-6 hover:bg-blue-600/5 transition-colors">
+                        <div key={c.id} className="p-6 hover:bg-primary/5 transition-colors">
                             <div className="flex justify-between items-start mb-2">
                                 <div>
                                     <h3 className="font-bold text-(--foreground)">{c.name}</h3>

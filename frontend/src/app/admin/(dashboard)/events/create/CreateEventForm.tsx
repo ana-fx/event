@@ -132,7 +132,7 @@ export default function CreateEventForm() {
                             <input
                                 type="text"
                                 required
-                                className="w-full px-4 py-2.5 rounded-lg border border-(--card-border) bg-(--background) text-(--foreground) focus:border-blue-500 focus:ring-4 focus:ring-blue-500/10 outline-none transition-all"
+                                className="w-full px-4 py-2.5 rounded-lg border border-(--card-border) bg-(--background) text-(--foreground) focus:border-primary focus:ring-4 focus:ring-primary/10 outline-none transition-all"
                                 value={formData.name}
                                 onChange={(e) => setFormData({ ...formData, name: e.target.value })}
                             />
@@ -143,7 +143,7 @@ export default function CreateEventForm() {
                             <input
                                 type="text"
                                 required
-                                className="w-full px-4 py-2.5 rounded-lg border border-(--card-border) bg-(--background) text-(--foreground) focus:border-blue-500 focus:ring-4 focus:ring-blue-500/10 outline-none transition-all"
+                                className="w-full px-4 py-2.5 rounded-lg border border-(--card-border) bg-(--background) text-(--foreground) focus:border-primary focus:ring-4 focus:ring-primary/10 outline-none transition-all"
                                 value={formData.category}
                                 onChange={(e) => setFormData({ ...formData, category: e.target.value })}
                             />
@@ -173,7 +173,7 @@ export default function CreateEventForm() {
                             <label className="block text-sm font-bold text-(--foreground) opacity-70 mb-2">Maps Embed (HTML)</label>
                             <textarea
                                 rows={3}
-                                className="w-full px-4 py-2.5 rounded-lg border border-(--card-border) bg-(--background) text-(--foreground) focus:border-blue-500 focus:ring-4 focus:ring-blue-500/10 outline-none transition-all font-mono text-xs"
+                                className="w-full px-4 py-2.5 rounded-lg border border-(--card-border) bg-(--background) text-(--foreground) focus:border-primary focus:ring-4 focus:ring-primary/10 outline-none transition-all font-mono text-xs"
                                 value={formData.google_map_embed || ''}
                                 onChange={(e) => setFormData({ ...formData, google_map_embed: e.target.value })}
                                 placeholder='<iframe src="..."></iframe>'
@@ -203,7 +203,7 @@ export default function CreateEventForm() {
                         {/* Banner */}
                         <div>
                             <label className="block text-sm font-bold text-(--foreground) opacity-70 mb-2">Event Banner</label>
-                            <div className="border-2 border-dashed border-(--card-border) rounded-xl aspect-video relative flex items-center justify-center bg-(--background) hover:border-blue-500 transition-colors cursor-pointer overflow-hidden group">
+                            <div className="border-2 border-dashed border-(--card-border) rounded-xl aspect-video relative flex items-center justify-center bg-(--background) hover:border-primary transition-colors cursor-pointer overflow-hidden group">
                                 {previews.banner ? (
                                     <img src={previews.banner} alt="Preview" className="w-full h-full object-cover" />
                                 ) : (
@@ -225,7 +225,7 @@ export default function CreateEventForm() {
                         {/* Thumbnail */}
                         <div>
                             <label className="block text-sm font-bold text-gray-700 mb-2">Thumbnail (Square)</label>
-                            <div className="border-2 border-dashed border-gray-300 rounded-xl aspect-square w-48 relative flex items-center justify-center bg-gray-50 hover:border-blue-500 transition-colors cursor-pointer overflow-hidden">
+                            <div className="border-2 border-dashed border-gray-300 rounded-xl aspect-square w-48 relative flex items-center justify-center bg-gray-50 hover:border-primary transition-colors cursor-pointer overflow-hidden">
                                 {previews.thumbnail ? (
                                     <img src={previews.thumbnail} alt="Preview" className="w-full h-full object-cover" />
                                 ) : (
@@ -246,7 +246,7 @@ export default function CreateEventForm() {
                         {/* Organizer Logo */}
                         <div>
                             <label className="block text-sm font-bold text-gray-700 mb-2">Organizer Logo</label>
-                            <div className="border-2 border-dashed border-gray-300 rounded-xl aspect-square w-48 relative flex items-center justify-center bg-gray-50 hover:border-blue-500 transition-colors cursor-pointer overflow-hidden">
+                            <div className="border-2 border-dashed border-gray-300 rounded-xl aspect-square w-48 relative flex items-center justify-center bg-gray-50 hover:border-primary transition-colors cursor-pointer overflow-hidden">
                                 {previews.organizerLogo ? (
                                     <img src={previews.organizerLogo} alt="Preview" className="w-full h-full object-cover" />
                                 ) : (
@@ -268,7 +268,7 @@ export default function CreateEventForm() {
                             <label className="block text-sm font-bold text-(--foreground) opacity-70 mb-2">Organizer Name</label>
                             <input
                                 type="text"
-                                className="w-full px-4 py-2.5 rounded-lg border border-(--card-border) bg-(--background) text-(--foreground) focus:border-blue-500 focus:ring-4 focus:ring-blue-500/10 outline-none transition-all"
+                                className="w-full px-4 py-2.5 rounded-lg border border-(--card-border) bg-(--background) text-(--foreground) focus:border-primary focus:ring-4 focus:ring-primary/10 outline-none transition-all"
                                 value={formData.organizer_name}
                                 onChange={(e) => setFormData({ ...formData, organizer_name: e.target.value })}
                             />
@@ -301,7 +301,7 @@ export default function CreateEventForm() {
                             <input
                                 type="text"
                                 placeholder="e.g. Jakarta Convention Center"
-                                className="w-full px-4 py-2.5 rounded-lg border border-(--card-border) bg-(--background) text-(--foreground) focus:border-blue-500 focus:ring-4 focus:ring-blue-500/10 outline-none transition-all"
+                                className="w-full px-4 py-2.5 rounded-lg border border-(--card-border) bg-(--background) text-(--foreground) focus:border-primary focus:ring-4 focus:ring-primary/10 outline-none transition-all"
                                 value={formData.location}
                                 onChange={(e) => setFormData({ ...formData, location: e.target.value })}
                             />
@@ -310,7 +310,7 @@ export default function CreateEventForm() {
                             <label className="block text-sm font-bold text-(--foreground) opacity-70 mb-2">City</label>
                             <input
                                 type="text"
-                                className="w-full px-4 py-2.5 rounded-lg border border-(--card-border) bg-(--background) text-(--foreground) focus:border-blue-500 focus:ring-4 focus:ring-blue-500/10 outline-none transition-all"
+                                className="w-full px-4 py-2.5 rounded-lg border border-(--card-border) bg-(--background) text-(--foreground) focus:border-primary focus:ring-4 focus:ring-primary/10 outline-none transition-all"
                                 value={formData.city}
                                 onChange={(e) => setFormData({ ...formData, city: e.target.value })}
                             />
@@ -320,7 +320,7 @@ export default function CreateEventForm() {
                             <label className="block text-sm font-bold text-(--foreground) opacity-70 mb-2">Province</label>
                             <input
                                 type="text"
-                                className="w-full px-4 py-2.5 rounded-lg border border-(--card-border) bg-(--background) text-(--foreground) focus:border-blue-500 focus:ring-4 focus:ring-blue-500/10 outline-none transition-all"
+                                className="w-full px-4 py-2.5 rounded-lg border border-(--card-border) bg-(--background) text-(--foreground) focus:border-primary focus:ring-4 focus:ring-primary/10 outline-none transition-all"
                                 value={formData.province}
                                 onChange={(e) => setFormData({ ...formData, province: e.target.value })}
                             />
@@ -329,7 +329,7 @@ export default function CreateEventForm() {
                             <label className="block text-sm font-bold text-(--foreground) opacity-70 mb-2">ZIP Code</label>
                             <input
                                 type="text"
-                                className="w-full px-4 py-2.5 rounded-lg border border-(--card-border) bg-(--background) text-(--foreground) focus:border-blue-500 focus:ring-4 focus:ring-blue-500/10 outline-none transition-all"
+                                className="w-full px-4 py-2.5 rounded-lg border border-(--card-border) bg-(--background) text-(--foreground) focus:border-primary focus:ring-4 focus:ring-primary/10 outline-none transition-all"
                                 value={formData.zip}
                                 onChange={(e) => setFormData({ ...formData, zip: e.target.value })}
                             />
@@ -347,12 +347,12 @@ export default function CreateEventForm() {
                                 <div className="flex gap-2">
                                     <input
                                         type="number"
-                                        className="flex-1 px-4 py-2.5 rounded-lg border border-(--card-border) bg-(--background) text-(--foreground) focus:border-blue-500 focus:ring-4 focus:ring-blue-500/10 outline-none transition-all"
+                                        className="flex-1 px-4 py-2.5 rounded-lg border border-(--card-border) bg-(--background) text-(--foreground) focus:border-primary focus:ring-4 focus:ring-primary/10 outline-none transition-all"
                                         value={formData.organizer_tax}
                                         onChange={(e) => setFormData({ ...formData, organizer_tax: e.target.value })}
                                     />
                                     <select
-                                        className="w-24 px-2 py-2.5 rounded-lg border border-(--card-border) bg-(--background) text-(--foreground) focus:border-blue-500 outline-none transition-all text-sm font-bold"
+                                        className="w-24 px-2 py-2.5 rounded-lg border border-(--card-border) bg-(--background) text-(--foreground) focus:border-primary outline-none transition-all text-sm font-bold"
                                         value={formData.organizer_tax_type}
                                         onChange={(e) => setFormData({ ...formData, organizer_tax_type: e.target.value })}
                                     >
@@ -368,12 +368,12 @@ export default function CreateEventForm() {
                                 <div className="flex gap-2">
                                     <input
                                         type="number"
-                                        className="flex-1 px-4 py-2.5 rounded-lg border border-(--card-border) bg-(--background) text-(--foreground) focus:border-blue-500 focus:ring-4 focus:ring-blue-500/10 outline-none transition-all"
+                                        className="flex-1 px-4 py-2.5 rounded-lg border border-(--card-border) bg-(--background) text-(--foreground) focus:border-primary focus:ring-4 focus:ring-primary/10 outline-none transition-all"
                                         value={formData.admin_fee}
                                         onChange={(e) => setFormData({ ...formData, admin_fee: e.target.value })}
                                     />
                                     <select
-                                        className="w-24 px-2 py-2.5 rounded-lg border border-(--card-border) bg-(--background) text-(--foreground) focus:border-blue-500 outline-none transition-all text-sm font-bold"
+                                        className="w-24 px-2 py-2.5 rounded-lg border border-(--card-border) bg-(--background) text-(--foreground) focus:border-primary outline-none transition-all text-sm font-bold"
                                         value={formData.admin_fee_type}
                                         onChange={(e) => setFormData({ ...formData, admin_fee_type: e.target.value })}
                                     >
@@ -389,12 +389,12 @@ export default function CreateEventForm() {
                                 <div className="flex gap-2">
                                     <input
                                         type="number"
-                                        className="flex-1 px-4 py-2.5 rounded-lg border border-(--card-border) bg-(--background) text-(--foreground) focus:border-blue-500 focus:ring-4 focus:ring-blue-500/10 outline-none transition-all"
+                                        className="flex-1 px-4 py-2.5 rounded-lg border border-(--card-border) bg-(--background) text-(--foreground) focus:border-primary focus:ring-4 focus:ring-primary/10 outline-none transition-all"
                                         value={formData.ppn}
                                         onChange={(e) => setFormData({ ...formData, ppn: e.target.value })}
                                     />
                                     <select
-                                        className="w-24 px-2 py-2.5 rounded-lg border border-(--card-border) bg-(--background) text-(--foreground) focus:border-blue-500 outline-none transition-all text-sm font-bold"
+                                        className="w-24 px-2 py-2.5 rounded-lg border border-(--card-border) bg-(--background) text-(--foreground) focus:border-primary outline-none transition-all text-sm font-bold"
                                         value={formData.ppn_type}
                                         onChange={(e) => setFormData({ ...formData, ppn_type: e.target.value })}
                                     >
@@ -411,12 +411,12 @@ export default function CreateEventForm() {
                                 <div className="flex gap-2">
                                     <input
                                         type="number"
-                                        className="flex-1 px-4 py-2.5 rounded-lg border border-(--card-border) bg-(--background) text-(--foreground) focus:border-blue-500 focus:ring-4 focus:ring-blue-500/10 outline-none transition-all"
+                                        className="flex-1 px-4 py-2.5 rounded-lg border border-(--card-border) bg-(--background) text-(--foreground) focus:border-primary focus:ring-4 focus:ring-primary/10 outline-none transition-all"
                                         value={formData.organizer_fee_online}
                                         onChange={(e) => setFormData({ ...formData, organizer_fee_online: e.target.value })}
                                     />
                                     <select
-                                        className="w-24 px-2 py-2.5 rounded-lg border border-(--card-border) bg-(--background) text-(--foreground) focus:border-blue-500 outline-none transition-all text-sm font-bold"
+                                        className="w-24 px-2 py-2.5 rounded-lg border border-(--card-border) bg-(--background) text-(--foreground) focus:border-primary outline-none transition-all text-sm font-bold"
                                         value={formData.organizer_fee_online_type}
                                         onChange={(e) => setFormData({ ...formData, organizer_fee_online_type: e.target.value })}
                                     >
@@ -433,12 +433,12 @@ export default function CreateEventForm() {
                                 <div className="flex gap-2">
                                     <input
                                         type="number"
-                                        className="flex-1 px-4 py-2.5 rounded-lg border border-(--card-border) bg-(--background) text-(--foreground) focus:border-blue-500 focus:ring-4 focus:ring-blue-500/10 outline-none transition-all"
+                                        className="flex-1 px-4 py-2.5 rounded-lg border border-(--card-border) bg-(--background) text-(--foreground) focus:border-primary focus:ring-4 focus:ring-primary/10 outline-none transition-all"
                                         value={formData.pg_fee}
                                         onChange={(e) => setFormData({ ...formData, pg_fee: e.target.value })}
                                     />
                                     <select
-                                        className="w-24 px-2 py-2.5 rounded-lg border border-(--card-border) bg-(--background) text-(--foreground) focus:border-blue-500 outline-none transition-all text-sm font-bold"
+                                        className="w-24 px-2 py-2.5 rounded-lg border border-(--card-border) bg-(--background) text-(--foreground) focus:border-primary outline-none transition-all text-sm font-bold"
                                         value={formData.pg_fee_type}
                                         onChange={(e) => setFormData({ ...formData, pg_fee_type: e.target.value })}
                                     >
@@ -459,7 +459,7 @@ export default function CreateEventForm() {
                             <label className="block text-sm font-bold text-(--foreground) opacity-70 mb-2">Meta Title</label>
                             <input
                                 type="text"
-                                className="w-full px-4 py-2.5 rounded-lg border border-(--card-border) bg-(--background) text-(--foreground) focus:border-blue-500 focus:ring-4 focus:ring-blue-500/10 outline-none transition-all"
+                                className="w-full px-4 py-2.5 rounded-lg border border-(--card-border) bg-(--background) text-(--foreground) focus:border-primary focus:ring-4 focus:ring-primary/10 outline-none transition-all"
                                 value={formData.seo_title}
                                 onChange={(e) => setFormData({ ...formData, seo_title: e.target.value })}
                             />
@@ -468,7 +468,7 @@ export default function CreateEventForm() {
                             <label className="block text-sm font-bold text-(--foreground) opacity-70 mb-2">Meta Description</label>
                             <textarea
                                 rows={2}
-                                className="w-full px-4 py-2.5 rounded-lg border border-(--card-border) bg-(--background) text-(--foreground) focus:border-blue-500 focus:ring-4 focus:ring-blue-500/10 outline-none transition-all"
+                                className="w-full px-4 py-2.5 rounded-lg border border-(--card-border) bg-(--background) text-(--foreground) focus:border-primary focus:ring-4 focus:ring-primary/10 outline-none transition-all"
                                 value={formData.seo_description}
                                 onChange={(e) => setFormData({ ...formData, seo_description: e.target.value })}
                             ></textarea>
@@ -485,7 +485,7 @@ export default function CreateEventForm() {
                             <button
                                 type="submit"
                                 disabled={loading}
-                                className="px-8 py-3 bg-blue-600 text-white font-bold rounded-xl hover:bg-blue-700 transition-colors shadow-lg shadow-blue-600/20 disabled:opacity-70 flex items-center gap-2"
+                                className="px-8 py-3 bg-primary text-white font-bold rounded-xl hover:bg-primary transition-colors shadow-lg shadow-primary/20 disabled:opacity-70 flex items-center gap-2"
                             >
                                 {loading ? <Loader2 className="w-5 h-5 animate-spin" /> : <Save className="w-5 h-5" />}
                                 Create Event

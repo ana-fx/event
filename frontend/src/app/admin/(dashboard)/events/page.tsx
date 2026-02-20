@@ -8,7 +8,7 @@ export const fetchCache = "force-no-store";
 
 export default function EventList() {
     return (
-        <Suspense fallback={<div className="flex center h-screen justify-center items-center"><Loader2 className="animate-spin text-blue-600 w-8 h-8" /></div>}>
+        <Suspense fallback={<div className="flex center h-screen justify-center items-center"><Loader2 className="animate-spin text-primary w-8 h-8" /></div>}>
             <EventListContent />
         </Suspense>
     );

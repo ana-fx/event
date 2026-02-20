@@ -109,6 +109,7 @@ func main() {
 
 	// Admin Report Routes
 	http.HandleFunc("/api/admin/reports/transactions", middleware.AuthMiddleware(admin.TransactionReport))
+	http.HandleFunc("/api/admin/reports/event-tickets", middleware.AuthMiddleware(admin.GetEventTicketReport))
 	http.HandleFunc("/api/admin/reports/detail", middleware.AuthMiddleware(admin.GetTransactionDetail))
 
 	// Banners

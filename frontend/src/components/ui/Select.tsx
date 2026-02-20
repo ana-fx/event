@@ -70,7 +70,7 @@ export function Select({
                     disabled={disabled}
                     className={cn(
                         "w-full text-left px-4 py-2.5 rounded-lg border border-(--card-border) bg-(--card) text-(--foreground) font-medium transition-all flex items-center justify-between outline-none",
-                        "hover:border-blue-400 focus:ring-2 focus:ring-blue-100 dark:focus:ring-blue-900/30",
+                        "hover:border-primary focus:ring-2 focus:ring-primary/20 dark:focus:ring-primary/20",
                         disabled ? "opacity-50 cursor-not-allowed bg-(--background)" : "cursor-pointer",
                         error ? "border-red-500 focus:ring-red-100" : "",
                         className
@@ -102,7 +102,7 @@ export function Select({
                                     className={cn(
                                         "px-4 py-2.5 text-sm font-medium cursor-pointer flex items-center justify-between transition-colors",
                                         option.value === value
-                                            ? "bg-blue-600/10 text-blue-600 dark:text-blue-400"
+                                            ? "bg-primary/10 text-primary dark:text-primary"
                                             : "text-(--foreground) hover:bg-(--background) opacity-80 hover:opacity-100"
                                     )}
                                 >

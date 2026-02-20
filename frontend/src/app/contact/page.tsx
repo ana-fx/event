@@ -43,8 +43,8 @@ export default function ContactPage() {
             <Navbar />
 
             {/* Hero */}
-            <div className="relative bg-gray-900 py-24 px-6 text-center text-white mt-[80px]">
-                <div className="absolute inset-0 bg-linear-to-b from-gray-800 to-gray-900 opacity-90"></div>
+            <div className="relative bg-brand-dark py-24 px-6 text-center text-white mt-[80px]">
+                <div className="absolute inset-0 bg-linear-to-b from-gray-800 to-brand-dark opacity-90"></div>
                 <div className="relative max-w-2xl mx-auto">
                     <h1 className="text-5xl md:text-7xl lg:text-8xl font-black mb-6 tracking-tighter uppercase font-heading">Get in Touch</h1>
                     <p className="text-xl text-gray-300 font-medium font-body">Have questions or need support? We&apos;re here to help.</p>
@@ -55,34 +55,34 @@ export default function ContactPage() {
                 {/* Contact Info */}
                 <div className="bg-white p-8 rounded-2xl shadow-xl border border-gray-100 flex flex-col justify-between h-full">
                     <div>
-                        <h2 className="text-2xl font-black text-gray-950 mb-8 uppercase tracking-tight font-heading">Contact Info</h2>
+                        <h2 className="text-2xl font-black text-brand-dark mb-8 uppercase tracking-tight font-heading">Contact Info</h2>
                         <div className="space-y-6">
                             <div className="flex items-start gap-4">
-                                <div className="w-12 h-12 bg-blue-50 rounded-lg flex items-center justify-center text-blue-600 shrink-0">
+                                <div className="w-12 h-12 bg-primary/10 rounded-lg flex items-center justify-center text-primary shrink-0">
                                     <Mail className="w-6 h-6" />
                                 </div>
                                 <div>
-                                    <h3 className="font-bold text-gray-900">Email</h3>
+                                    <h3 className="font-bold text-brand-dark">Email</h3>
                                     <p className="text-gray-500">support@ingate.id</p>
                                     <p className="text-gray-500">partners@ingate.id</p>
                                 </div>
                             </div>
                             <div className="flex items-start gap-4">
-                                <div className="w-12 h-12 bg-blue-50 rounded-lg flex items-center justify-center text-blue-600 shrink-0">
+                                <div className="w-12 h-12 bg-primary/10 rounded-lg flex items-center justify-center text-primary shrink-0">
                                     <Phone className="w-6 h-6" />
                                 </div>
                                 <div>
-                                    <h3 className="font-bold text-gray-900">Phone</h3>
+                                    <h3 className="font-bold text-brand-dark">Phone</h3>
                                     <p className="text-gray-500">+62 21 1234 5678</p>
                                     <p className="text-xs text-gray-400">Mon-Fri, 9am - 5pm WIB</p>
                                 </div>
                             </div>
                             <div className="flex items-start gap-4">
-                                <div className="w-12 h-12 bg-blue-50 rounded-lg flex items-center justify-center text-blue-600 shrink-0">
+                                <div className="w-12 h-12 bg-primary/10 rounded-lg flex items-center justify-center text-primary shrink-0">
                                     <MapPin className="w-6 h-6" />
                                 </div>
                                 <div>
-                                    <h3 className="font-bold text-gray-900">Office</h3>
+                                    <h3 className="font-bold text-brand-dark">Office</h3>
                                     <p className="text-gray-500">
                                         Jl. Jend. Sudirman No. 1<br />
                                         Jakarta Selatan, Indonesia
@@ -100,7 +100,7 @@ export default function ContactPage() {
                             <div className="w-20 h-20 bg-green-100 text-green-600 rounded-full flex items-center justify-center mb-6 animate-in zoom-in">
                                 <CheckCircle className="w-10 h-10" />
                             </div>
-                            <h2 className="text-2xl font-bold text-gray-900 mb-2">Message Sent!</h2>
+                            <h2 className="text-2xl font-bold text-brand-dark mb-2">Message Sent!</h2>
                             <p className="text-gray-500 max-w-md mx-auto mb-8">
                                 Thank you for reaching out. Our team will get back to you as soon as possible via email.
                             </p>
@@ -113,7 +113,7 @@ export default function ContactPage() {
                         </div>
                     ) : (
                         <>
-                            <h2 className="text-2xl font-black text-gray-950 mb-8 uppercase tracking-tight font-heading">Send us a Message</h2>
+                            <h2 className="text-2xl font-black text-brand-dark mb-8 uppercase tracking-tight font-heading">Send us a Message</h2>
                             <form onSubmit={handleSubmit} className="space-y-6">
                                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                                     <div>
@@ -124,7 +124,7 @@ export default function ContactPage() {
                                             required
                                             value={formData.name}
                                             onChange={handleChange}
-                                            className="w-full px-4 py-3 rounded-xl border border-gray-200 focus:ring-4 focus:ring-blue-500/10 focus:border-blue-500 outline-none transition-all"
+                                            className="w-full px-4 py-3 rounded-xl border border-gray-200 focus:ring-4 focus:ring-primary/10 focus:border-primary outline-none transition-all"
                                             placeholder="John Doe"
                                         />
                                     </div>
@@ -136,7 +136,7 @@ export default function ContactPage() {
                                             required
                                             value={formData.email}
                                             onChange={handleChange}
-                                            className="w-full px-4 py-3 rounded-xl border border-gray-200 focus:ring-4 focus:ring-blue-500/10 focus:border-blue-500 outline-none transition-all"
+                                            className="w-full px-4 py-3 rounded-xl border border-gray-200 focus:ring-4 focus:ring-primary/10 focus:border-primary outline-none transition-all"
                                             placeholder="john@example.com"
                                         />
                                     </div>
@@ -149,7 +149,7 @@ export default function ContactPage() {
                                         required
                                         value={formData.subject}
                                         onChange={handleChange}
-                                        className="w-full px-4 py-3 rounded-xl border border-gray-200 focus:ring-4 focus:ring-blue-500/10 focus:border-blue-500 outline-none transition-all"
+                                        className="w-full px-4 py-3 rounded-xl border border-gray-200 focus:ring-4 focus:ring-primary/10 focus:border-primary outline-none transition-all"
                                         placeholder="How can we help?"
                                     />
                                 </div>
@@ -161,7 +161,7 @@ export default function ContactPage() {
                                         rows={5}
                                         value={formData.message}
                                         onChange={handleChange}
-                                        className="w-full px-4 py-3 rounded-xl border border-gray-200 focus:ring-4 focus:ring-blue-500/10 focus:border-blue-500 outline-none transition-all resize-none"
+                                        className="w-full px-4 py-3 rounded-xl border border-gray-200 focus:ring-4 focus:ring-primary/10 focus:border-primary outline-none transition-all resize-none"
                                         placeholder="Tell us more about your inquiry..."
                                     ></textarea>
                                 </div>
@@ -169,7 +169,7 @@ export default function ContactPage() {
                                     <button
                                         type="submit"
                                         disabled={loading}
-                                        className="px-8 py-3 bg-blue-600 text-white font-bold rounded-xl shadow-lg shadow-blue-600/20 hover:bg-blue-700 hover:-translate-y-1 transition-all disabled:opacity-70 disabled:hover:translate-y-0 flex items-center gap-2"
+                                        className="px-8 py-3 bg-primary text-white font-bold rounded-xl shadow-lg shadow-primary/20 hover:bg-primary hover:-translate-y-1 transition-all disabled:opacity-70 disabled:hover:translate-y-0 flex items-center gap-2"
                                     >
                                         {loading ? <Loader2 className="w-5 h-5 animate-spin" /> : <Send className="w-5 h-5" />}
                                         Send Message

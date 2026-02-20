@@ -92,7 +92,7 @@ export default function TransactionDetailContent() {
     if (loading) {
         return (
             <div className="flex flex-col items-center justify-center min-h-[60vh] gap-3">
-                <div className="animate-spin rounded-full h-10 w-10 border-b-2 border-blue-600 shadow-lg shadow-blue-500/20"></div>
+                <div className="animate-spin rounded-full h-10 w-10 border-b-2 border-primary shadow-lg shadow-primary/20"></div>
                 <p className="text-xs font-bold uppercase tracking-widest text-gray-400">Loading Details...</p>
             </div>
         );
@@ -142,7 +142,7 @@ export default function TransactionDetailContent() {
                     {/* Customer Card */}
                     <div className="bg-(--card) rounded-3xl border border-(--card-border) p-6 sm:p-8 shadow-sm space-y-6">
                         <div className="flex items-center gap-3 pb-6 border-b border-(--card-border)">
-                            <div className="w-10 h-10 rounded-full bg-blue-50 text-blue-600 flex items-center justify-center">
+                            <div className="w-10 h-10 rounded-full bg-primary/10 text-primary flex items-center justify-center">
                                 <User className="w-5 h-5" />
                             </div>
                             <h3 className="font-bold text-lg text-(--foreground)">Customer Details</h3>
@@ -232,7 +232,7 @@ export default function TransactionDetailContent() {
                             </div>
                             <div className="text-right">
                                 <p className="text-[10px] font-black uppercase tracking-widest text-gray-400 mb-1">Total Amount</p>
-                                <p className="text-2xl font-black text-blue-600 font-heading">{formatIDR(transaction.total_price)}</p>
+                                <p className="text-2xl font-black text-primary font-heading">{formatIDR(transaction.total_price)}</p>
                             </div>
                         </div>
 

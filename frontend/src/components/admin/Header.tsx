@@ -39,7 +39,7 @@ export default function Header() {
                 {/* Notifications Placeholder */}
                 <button
                     onClick={toggleTheme}
-                    className="p-2.5 rounded-xl bg-(--background) border border-(--card-border) text-gray-500 hover:text-blue-600 transition-all shadow-sm"
+                    className="p-2.5 rounded-xl bg-(--background) border border-(--card-border) text-gray-500 hover:text-primary transition-all shadow-sm"
                     title={theme === 'light' ? 'Switch to Dark Mode' : 'Switch to Light Mode'}
                 >
                     {theme === 'light' ? <Moon className="h-5 w-5" /> : <Sun className="h-5 w-5" />}
@@ -49,10 +49,10 @@ export default function Header() {
 
                 <div className="flex items-center gap-4 pl-2 cursor-pointer group">
                     <div className="text-right hidden sm:block">
-                        <p className="text-sm font-bold text-(--foreground) group-hover:text-blue-600 transition-colors">{user?.name || "Admin"}</p>
+                        <p className="text-sm font-bold text-(--foreground) group-hover:text-primary transition-colors">{user?.name || "Admin"}</p>
                         <p className="text-xs text-gray-500">{user?.email || "admin@event.com"}</p>
                     </div>
-                    <div className="w-11 h-11 rounded-xl bg-linear-to-br from-blue-500 to-blue-700 flex items-center justify-center text-white font-bold shadow-lg shadow-blue-500/30 ring-2 ring-white group-hover:scale-105 transition-transform">
+                    <div className="w-11 h-11 rounded-xl bg-linear-to-br from-primary to-primary flex items-center justify-center text-white font-bold shadow-lg shadow-primary/30 ring-2 ring-white group-hover:scale-105 transition-transform">
                         {user?.name?.[0].toUpperCase() || "A"}
                     </div>
                 </div>

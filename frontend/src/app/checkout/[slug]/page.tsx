@@ -197,23 +197,23 @@ function CheckoutContent({ params }: { params: { slug: string } }) {
         }
     };
 
-    if (loading) return <div className="min-h-screen flex items-center justify-center bg-white"><Loader2 className="w-8 h-8 animate-spin text-blue-600" /></div>;
+    if (loading) return <div className="min-h-screen flex items-center justify-center bg-white"><Loader2 className="w-8 h-8 animate-spin text-primary" /></div>;
 
     if (items.length === 0) return (
         <div className="min-h-screen flex flex-col items-center justify-center gap-4 bg-white">
-            <h1 className="text-2xl font-black text-gray-900 uppercase tracking-tighter font-heading">Cart Empty</h1>
-            <button onClick={() => router.back()} className="px-8 py-3 bg-gray-950 text-white rounded-full font-black uppercase text-[10px] tracking-widest hover:bg-blue-600 transition-all font-heading">Go Back</button>
+            <h1 className="text-2xl font-black text-brand-dark uppercase tracking-tighter font-heading">Cart Empty</h1>
+            <button onClick={() => router.back()} className="px-8 py-3 bg-brand-dark text-white rounded-full font-black uppercase text-[10px] tracking-widest hover:bg-primary transition-all font-heading">Go Back</button>
         </div>
     );
 
     return (
-        <div className="min-h-screen bg-[#FDFDFD] font-body selection:bg-blue-600/10">
+        <div className="min-h-screen bg-[#FDFDFD] font-body selection:bg-primary/10">
             <Navbar />
 
             <main className="max-w-7xl mx-auto px-6 lg:px-10 py-24 sm:py-32 lg:py-48">
                 {/* Header Title */}
                 <div className="mb-12 sm:mb-20">
-                    <h1 className="text-[10px] sm:text-[12px] font-black uppercase tracking-[0.4em] text-blue-600 mb-4 font-heading">Secure Checkout</h1>
+                    <h1 className="text-[10px] sm:text-[12px] font-black uppercase tracking-[0.4em] text-primary mb-4 font-heading">Secure Checkout</h1>
                     <h2 className="text-4xl sm:text-5xl lg:text-7xl font-black text-[#1A1A1A] tracking-[-0.04em] font-heading leading-tight">
                         Complete your <br className="hidden sm:block" /> <span className="text-gray-300">Registration</span>
                     </h2>
@@ -227,7 +227,7 @@ function CheckoutContent({ params }: { params: { slug: string } }) {
                             {/* Identity Group */}
                             <section className="space-y-6 sm:space-y-10">
                                 <div className="flex items-center gap-4 sm:gap-6">
-                                    <span className="w-8 h-8 sm:w-10 sm:h-10 rounded-full bg-blue-600 text-white flex items-center justify-center font-black text-xs sm:text-sm font-heading">01</span>
+                                    <span className="w-8 h-8 sm:w-10 sm:h-10 rounded-full bg-primary text-white flex items-center justify-center font-black text-xs sm:text-sm font-heading">01</span>
                                     <h3 className="text-lg sm:text-xl font-black text-[#1A1A1A] uppercase tracking-tighter font-heading">Identity Verification</h3>
                                 </div>
 
@@ -242,7 +242,7 @@ function CheckoutContent({ params }: { params: { slug: string } }) {
                                             inputMode="numeric"
                                             maxLength={20}
                                             value={form.nik} onChange={handleChange}
-                                            className="w-full px-5 py-4 rounded-xl bg-white border border-slate-200 shadow-sm focus:ring-4 focus:ring-blue-600/5 focus:border-blue-600 outline-none transition-all text-sm font-medium text-gray-900 placeholder:text-gray-300"
+                                            className="w-full px-5 py-4 rounded-xl bg-white border border-slate-200 shadow-sm focus:ring-4 focus:ring-primary/5 focus:border-primary outline-none transition-all text-sm font-medium text-brand-dark placeholder:text-gray-300"
                                             placeholder="NIK / IDENTITY NUMBER (Max 20 digits)"
                                         />
                                     </div>
@@ -259,7 +259,7 @@ function CheckoutContent({ params }: { params: { slug: string } }) {
                                                 { label: "Male", value: "Male" },
                                                 { label: "Female", value: "Female" }
                                             ]}
-                                            className="w-full px-5 py-4 rounded-xl bg-white! border-slate-200! shadow-sm focus:ring-4 focus:ring-blue-600/5 focus:border-blue-600 outline-none transition-all text-sm font-medium text-gray-900 hover:border-slate-300!"
+                                            className="w-full px-5 py-4 rounded-xl bg-white! border-slate-200! shadow-sm focus:ring-4 focus:ring-primary/5 focus:border-primary outline-none transition-all text-sm font-medium text-brand-dark hover:border-slate-300!"
                                             containerClassName="space-y-0!"
                                         />
                                     </div>
@@ -269,7 +269,7 @@ function CheckoutContent({ params }: { params: { slug: string } }) {
                             {/* Personal Information Group */}
                             <section className="space-y-6 sm:space-y-10">
                                 <div className="flex items-center gap-4 sm:gap-6">
-                                    <span className="w-8 h-8 sm:w-10 sm:h-10 rounded-full bg-blue-600 text-white flex items-center justify-center font-black text-xs sm:text-sm font-heading">02</span>
+                                    <span className="w-8 h-8 sm:w-10 sm:h-10 rounded-full bg-primary text-white flex items-center justify-center font-black text-xs sm:text-sm font-heading">02</span>
                                     <h3 className="text-lg sm:text-xl font-black text-[#1A1A1A] uppercase tracking-tighter font-heading">Personal Information</h3>
                                 </div>
 
@@ -282,7 +282,7 @@ function CheckoutContent({ params }: { params: { slug: string } }) {
                                         <input
                                             type="text" name="name" required
                                             value={form.name} onChange={handleChange}
-                                            className="w-full px-5 py-4 rounded-xl bg-white border border-slate-200 shadow-sm focus:ring-4 focus:ring-blue-600/5 focus:border-blue-600 outline-none transition-all text-sm font-medium text-gray-900 placeholder:text-gray-300"
+                                            className="w-full px-5 py-4 rounded-xl bg-white border border-slate-200 shadow-sm focus:ring-4 focus:ring-primary/5 focus:border-primary outline-none transition-all text-sm font-medium text-brand-dark placeholder:text-gray-300"
                                             placeholder="Your full name"
                                         />
                                     </div>
@@ -295,7 +295,7 @@ function CheckoutContent({ params }: { params: { slug: string } }) {
                                         <input
                                             type="email" name="email" required
                                             value={form.email} onChange={handleChange}
-                                            className="w-full px-5 py-4 rounded-xl bg-white border border-slate-200 shadow-sm focus:ring-4 focus:ring-blue-600/5 focus:border-blue-600 outline-none transition-all text-sm font-medium text-gray-900 placeholder:text-gray-300"
+                                            className="w-full px-5 py-4 rounded-xl bg-white border border-slate-200 shadow-sm focus:ring-4 focus:ring-primary/5 focus:border-primary outline-none transition-all text-sm font-medium text-brand-dark placeholder:text-gray-300"
                                             placeholder="your@email.com"
                                         />
                                     </div>
@@ -309,7 +309,7 @@ function CheckoutContent({ params }: { params: { slug: string } }) {
                                             type="tel" name="phone" required
                                             inputMode="numeric"
                                             value={form.phone} onChange={handleChange}
-                                            className="w-full px-5 py-4 rounded-xl bg-white border border-slate-200 shadow-sm focus:ring-4 focus:ring-blue-600/5 focus:border-blue-600 outline-none transition-all text-sm font-medium text-gray-900 placeholder:text-gray-300"
+                                            className="w-full px-5 py-4 rounded-xl bg-white border border-slate-200 shadow-sm focus:ring-4 focus:ring-primary/5 focus:border-primary outline-none transition-all text-sm font-medium text-brand-dark placeholder:text-gray-300"
                                             placeholder="+62"
                                         />
                                     </div>
@@ -322,7 +322,7 @@ function CheckoutContent({ params }: { params: { slug: string } }) {
                                         <input
                                             type="text" name="city" required
                                             value={form.city} onChange={handleChange}
-                                            className="w-full px-5 py-4 rounded-xl bg-white border border-slate-200 shadow-sm focus:ring-4 focus:ring-blue-600/5 focus:border-blue-600 outline-none transition-all text-sm font-medium text-gray-900 placeholder:text-gray-300"
+                                            className="w-full px-5 py-4 rounded-xl bg-white border border-slate-200 shadow-sm focus:ring-4 focus:ring-primary/5 focus:border-primary outline-none transition-all text-sm font-medium text-brand-dark placeholder:text-gray-300"
                                             placeholder="City"
                                         />
                                     </div>
@@ -337,12 +337,12 @@ function CheckoutContent({ params }: { params: { slug: string } }) {
                                             <input
                                                 type="checkbox" name="agreeTerms"
                                                 checked={form.agreeTerms} onChange={handleChange}
-                                                className="peer w-5 h-5 sm:w-6 sm:h-6 rounded-[6px] sm:rounded-[8px] border-2 border-gray-100 text-blue-600 focus:ring-blue-600 transition-all cursor-pointer appearance-none checked:bg-blue-600 checked:border-blue-600"
+                                                className="peer w-5 h-5 sm:w-6 sm:h-6 rounded-[6px] sm:rounded-[8px] border-2 border-gray-100 text-primary focus:ring-primary transition-all cursor-pointer appearance-none checked:bg-primary checked:border-primary"
                                             />
                                             <CheckCircle className="absolute w-3 h-3 sm:w-4 sm:h-4 text-white left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 opacity-0 peer-checked:opacity-100 transition-opacity pointer-events-none" />
                                         </div>
-                                        <p className="text-[12px] sm:text-[13px] font-bold text-gray-500 group-hover:text-gray-900 transition-colors">
-                                            I agree to the <span className="text-blue-600 font-black">Ticket Terms</span> and <span className="text-blue-600 font-black">Privacy Policy</span>.
+                                        <p className="text-[12px] sm:text-[13px] font-bold text-gray-500 group-hover:text-brand-dark transition-colors">
+                                            I agree to the <span className="text-primary font-black">Ticket Terms</span> and <span className="text-primary font-black">Privacy Policy</span>.
                                         </p>
                                     </label>
                                     <label className="flex items-center gap-4 sm:gap-5 cursor-pointer group">
@@ -350,12 +350,12 @@ function CheckoutContent({ params }: { params: { slug: string } }) {
                                             <input
                                                 type="checkbox" name="confirmData"
                                                 checked={form.confirmData} onChange={handleChange}
-                                                className="peer w-5 h-5 sm:w-6 sm:h-6 rounded-[6px] sm:rounded-[8px] border-2 border-gray-100 text-blue-600 focus:ring-blue-600 transition-all cursor-pointer appearance-none checked:bg-blue-600 checked:border-blue-600"
+                                                className="peer w-5 h-5 sm:w-6 sm:h-6 rounded-[6px] sm:rounded-[8px] border-2 border-gray-100 text-primary focus:ring-primary transition-all cursor-pointer appearance-none checked:bg-primary checked:border-primary"
                                             />
                                             <CheckCircle className="absolute w-3 h-3 sm:w-4 sm:h-4 text-white left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 opacity-0 peer-checked:opacity-100 transition-opacity pointer-events-none" />
                                         </div>
-                                        <p className="text-[12px] sm:text-[13px] font-bold text-gray-500 group-hover:text-gray-900 transition-colors">
-                                            I confirm that the details provided above are <span className="text-gray-900 font-black">accurate</span>.
+                                        <p className="text-[12px] sm:text-[13px] font-bold text-gray-500 group-hover:text-brand-dark transition-colors">
+                                            I confirm that the details provided above are <span className="text-brand-dark font-black">accurate</span>.
                                         </p>
                                     </label>
                                 </div>
@@ -365,7 +365,7 @@ function CheckoutContent({ params }: { params: { slug: string } }) {
                                     <button
                                         type="submit"
                                         disabled={processing}
-                                        className="w-full sm:w-fit sm:min-w-[300px] py-5 sm:py-6 px-12 bg-gray-950 text-white font-black rounded-[24px] sm:rounded-[32px] shadow-2xl shadow-gray-950/20 hover:bg-blue-600 hover:scale-[1.02] active:scale-[0.98] transition-all flex items-center justify-center gap-4 text-[14px] sm:text-[15px] group font-heading tracking-widest uppercase"
+                                        className="w-full sm:w-fit sm:min-w-[300px] py-5 sm:py-6 px-12 bg-brand-dark text-white font-black rounded-[24px] sm:rounded-[32px] shadow-2xl shadow-brand-dark/20 hover:bg-primary hover:scale-[1.02] active:scale-[0.98] transition-all flex items-center justify-center gap-4 text-[14px] sm:text-[15px] group font-heading tracking-widest uppercase"
                                     >
                                         {processing ? (
                                             <Loader2 className="w-5 h-5 sm:w-6 sm:h-6 animate-spin" />
@@ -395,14 +395,14 @@ function CheckoutContent({ params }: { params: { slug: string } }) {
                                                 className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
                                             />
                                         ) : (
-                                            <div className="w-full h-full bg-blue-50 flex items-center justify-center text-blue-200 uppercase font-black text-lg">
+                                            <div className="w-full h-full bg-primary/10 flex items-center justify-center text-primary uppercase font-black text-lg">
                                                 {event.name?.[0]}
                                             </div>
                                         )}
                                     </div>
                                     <div className="space-y-2 sm:space-y-3">
                                         <span className="inline-block px-2 sm:px-3 py-1 bg-stone-100 text-stone-500 rounded-full text-[8px] sm:text-[9px] font-black uppercase tracking-widest">{event.category}</span>
-                                        <h4 className="text-lg sm:text-xl font-black text-[#1A1A1A] leading-tight font-heading group-hover:text-blue-600 transition-colors line-clamp-2">{event.name}</h4>
+                                        <h4 className="text-lg sm:text-xl font-black text-[#1A1A1A] leading-tight font-heading group-hover:text-primary transition-colors line-clamp-2">{event.name}</h4>
                                         <div className="flex flex-col gap-0.5 sm:gap-1">
                                             <p className="text-[10px] sm:text-[11px] font-bold text-gray-400 font-body uppercase tracking-wider">{new Date(event.start_date).toLocaleDateString('en-US', { day: '2-digit', month: 'long', year: 'numeric' })}</p>
                                             <p className="text-[10px] sm:text-[11px] font-bold text-gray-400 font-body uppercase tracking-wider line-clamp-1">{event.location}</p>
@@ -468,11 +468,11 @@ function CheckoutContent({ params }: { params: { slug: string } }) {
                                         <p className="text-[9px] sm:text-[10px] font-black uppercase tracking-[0.25em] text-[#D1D1D1] font-heading">Total Amount Due</p>
                                     </div>
                                     <div className="text-center space-y-3 sm:space-y-4">
-                                        <p className="text-[40px] sm:text-[48px] lg:text-[56px] font-black text-blue-600 leading-none tracking-[-0.05em] font-heading">
+                                        <p className="text-[40px] sm:text-[48px] lg:text-[56px] font-black text-primary leading-none tracking-[-0.05em] font-heading">
                                             {formatIDR(total)}
                                         </p>
-                                        <div className="flex items-center justify-center gap-2 py-3 px-6 bg-blue-50/40 rounded-2xl w-fit mx-auto ring-1 ring-blue-50/50">
-                                            <span className="text-[8px] sm:text-[9px] font-black bg-blue-600 text-white px-2 py-0.5 rounded uppercase tracking-wider font-heading">Summary</span>
+                                        <div className="flex items-center justify-center gap-2 py-3 px-6 bg-primary/10/40 rounded-2xl w-fit mx-auto ring-1 ring-primary/10/50">
+                                            <span className="text-[8px] sm:text-[9px] font-black bg-primary text-white px-2 py-0.5 rounded uppercase tracking-wider font-heading">Summary</span>
                                         </div>
                                     </div>
                                 </div>
@@ -492,7 +492,7 @@ export default function CheckoutPage({ params }: { params: Promise<{ slug: strin
     const resolvedParams = typeof (params as any).then === 'function' ? (params as any) : Promise.resolve(params);
 
     return (
-        <Suspense fallback={<div className="min-h-screen flex items-center justify-center bg-white"><Loader2 className="w-8 h-8 animate-spin text-blue-600" /></div>}>
+        <Suspense fallback={<div className="min-h-screen flex items-center justify-center bg-white"><Loader2 className="w-8 h-8 animate-spin text-primary" /></div>}>
             <CheckoutPageInner paramsPromise={resolvedParams} />
         </Suspense>
     );
@@ -505,7 +505,7 @@ function CheckoutPageInner({ paramsPromise }: { paramsPromise: Promise<{ slug: s
         paramsPromise.then(setParams);
     }, [paramsPromise]);
 
-    if (!params) return <div className="min-h-screen flex items-center justify-center bg-white"><Loader2 className="w-8 h-8 animate-spin text-blue-600" /></div>;
+    if (!params) return <div className="min-h-screen flex items-center justify-center bg-white"><Loader2 className="w-8 h-8 animate-spin text-primary" /></div>;
 
     return <CheckoutContent params={params} />;
 }

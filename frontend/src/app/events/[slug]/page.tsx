@@ -113,7 +113,7 @@ export default async function EventDetailPage({ params }: { params: Promise<{ sl
             <div className="fixed top-24 left-6 md:left-10 z-40">
                 <Link
                     href="/events"
-                    className="flex items-center gap-2 px-4 py-2 bg-white/80 backdrop-blur-md border border-gray-100 rounded-full text-xs font-black uppercase tracking-widest text-gray-900 hover:bg-gray-900 hover:text-white transition-all shadow-sm"
+                    className="flex items-center gap-2 px-4 py-2 bg-white/80 backdrop-blur-md border border-gray-100 rounded-full text-xs font-black uppercase tracking-widest text-brand-dark hover:bg-brand-dark hover:text-white transition-all shadow-sm"
                 >
                     <ChevronLeft className="w-4 h-4" />
                     Back
@@ -127,8 +127,8 @@ export default async function EventDetailPage({ params }: { params: Promise<{ sl
 
                         <div className="flex-1 space-y-12 text-center lg:text-left">
                             <div className="space-y-4">
-                                <span className="text-blue-600 text-[10px] font-black uppercase tracking-[0.5em] block">Exclusive Event</span>
-                                <h1 className="text-4xl sm:text-6xl md:text-7xl lg:text-8xl font-black text-gray-950 leading-[0.95] tracking-tighter uppercase font-heading">
+                                <span className="text-primary text-[10px] font-black uppercase tracking-[0.5em] block">Exclusive Event</span>
+                                <h1 className="text-4xl sm:text-6xl md:text-7xl lg:text-8xl font-black text-brand-dark leading-[0.95] tracking-tighter uppercase font-heading">
                                     {event.name}
                                 </h1>
                             </div>
@@ -137,15 +137,15 @@ export default async function EventDetailPage({ params }: { params: Promise<{ sl
                             <div className="inline-grid grid-cols-2 sm:grid-cols-3 gap-px bg-stone-200/50 p-px rounded-[24px] overflow-hidden border border-stone-200/60 shadow-sm max-w-fit mx-auto lg:mx-0 backdrop-blur-sm">
                                 <div className="col-span-2 sm:col-span-1 px-8 py-5 bg-white flex flex-col gap-1 items-center sm:items-start min-w-[180px]">
                                     <span className="text-[10px] font-black uppercase tracking-[0.2em] text-stone-400">Date</span>
-                                    <span className="font-bold text-sm text-gray-950 whitespace-nowrap">{formatDate(event.start_date)}</span>
+                                    <span className="font-bold text-sm text-brand-dark whitespace-nowrap">{formatDate(event.start_date)}</span>
                                 </div>
                                 <div className="px-8 py-5 bg-white flex flex-col gap-1 items-center sm:items-start min-w-[140px]">
                                     <span className="text-[10px] font-black uppercase tracking-[0.2em] text-stone-400">Time</span>
-                                    <span className="font-bold text-sm text-gray-950">{formatTime(event.start_date)} WIB</span>
+                                    <span className="font-bold text-sm text-brand-dark">{formatTime(event.start_date)} WIB</span>
                                 </div>
                                 <div className="px-8 py-5 bg-white flex flex-col gap-1 items-center sm:items-start min-w-[140px]">
                                     <span className="text-[10px] font-black uppercase tracking-[0.2em] text-stone-400">City</span>
-                                    <span className="font-bold text-sm text-gray-950">{event.city || "Jakarta"}</span>
+                                    <span className="font-bold text-sm text-brand-dark">{event.city || "Jakarta"}</span>
                                 </div>
                             </div>
 
@@ -185,12 +185,12 @@ export default async function EventDetailPage({ params }: { params: Promise<{ sl
                         {/* Event Intro Panel */}
                         <div className="space-y-12">
                             <div className="space-y-8">
-                                <span className="text-blue-600 text-[10px] font-black uppercase tracking-[0.4em] block">About Event</span>
-                                <h2 className="text-4xl md:text-5xl font-black text-gray-950 tracking-tighter uppercase leading-none font-heading">
+                                <span className="text-primary text-[10px] font-black uppercase tracking-[0.4em] block">About Event</span>
+                                <h2 className="text-4xl md:text-5xl font-black text-brand-dark tracking-tighter uppercase leading-none font-heading">
                                     Story of <br /> <span className="text-gray-300">the Night</span>
                                 </h2>
                             </div>
-                            <div className="prose prose-xl prose-blue max-w-none text-gray-600 font-medium leading-[1.8] font-body first-letter:text-7xl first-letter:font-black first-letter:text-blue-600 first-letter:mr-4 first-letter:float-left [&_img]:max-w-full [&_img]:h-auto [&_iframe]:max-w-full [&_iframe]:h-auto"
+                            <div className="prose prose-xl prose-gray max-w-none text-gray-600 font-medium leading-[1.8] font-body first-letter:text-7xl first-letter:font-black first-letter:text-primary first-letter:mr-4 first-letter:float-left [&_img]:max-w-full [&_img]:h-auto [&_iframe]:max-w-full [&_iframe]:h-auto"
                                 dangerouslySetInnerHTML={{ __html: event.description }}
                             />
                         </div>
@@ -199,8 +199,8 @@ export default async function EventDetailPage({ params }: { params: Promise<{ sl
                         {event.youtube_link && (
                             <div className="space-y-12 animate-fade-in-up">
                                 <div className="space-y-4">
-                                    <span className="text-blue-600 text-[10px] font-black uppercase tracking-[0.4em] block">Visual Experience</span>
-                                    <h2 className="text-4xl md:text-5xl font-black text-gray-950 tracking-tighter uppercase leading-none font-heading">
+                                    <span className="text-primary text-[10px] font-black uppercase tracking-[0.4em] block">Visual Experience</span>
+                                    <h2 className="text-4xl md:text-5xl font-black text-brand-dark tracking-tighter uppercase leading-none font-heading">
                                         Event <br /> <span className="text-gray-300">Teaser</span>
                                     </h2>
                                 </div>
@@ -235,11 +235,11 @@ export default async function EventDetailPage({ params }: { params: Promise<{ sl
                                 )}
                             </div>
                             <div className="flex-1 text-center md:text-left">
-                                <span className="text-[10px] font-black uppercase tracking-[0.3em] text-blue-600 mb-2 block">Our Trusted Partner</span>
-                                <h3 className="text-3xl font-black text-gray-900 tracking-tight uppercase mb-4">{event.organizer_name || "Official Partner"}</h3>
+                                <span className="text-[10px] font-black uppercase tracking-[0.3em] text-primary mb-2 block">Our Trusted Partner</span>
+                                <h3 className="text-3xl font-black text-brand-dark tracking-tight uppercase mb-4">{event.organizer_name || "Official Partner"}</h3>
                                 <p className="text-gray-500 max-w-md">Experience events crafted with excellence and brought to you by industry legends.</p>
                             </div>
-                            <Link href="/contact" className="px-8 py-4 bg-white text-[11px] font-black uppercase tracking-widest border border-gray-200 rounded-2xl hover:bg-gray-900 hover:text-white transition-all">
+                            <Link href="/contact" className="px-8 py-4 bg-white text-[11px] font-black uppercase tracking-widest border border-gray-200 rounded-2xl hover:bg-brand-dark hover:text-white transition-all">
                                 Contact Organizer
                             </Link>
                         </div>
@@ -252,7 +252,7 @@ export default async function EventDetailPage({ params }: { params: Promise<{ sl
                                         <MapPin className="w-5 h-5 text-red-600" />
                                     </div>
                                     <div>
-                                        <h2 className="text-2xl font-black text-gray-950 uppercase tracking-tighter font-heading">Venue & Location</h2>
+                                        <h2 className="text-2xl font-black text-brand-dark uppercase tracking-tighter font-heading">Venue & Location</h2>
                                         <p className="text-gray-400 text-[10px] font-black uppercase tracking-[0.2em]">{event.city}</p>
                                     </div>
                                 </div>
@@ -265,7 +265,7 @@ export default async function EventDetailPage({ params }: { params: Promise<{ sl
 
                         {/* T&C Section */}
                         {event.terms && (
-                            <div className="p-8 md:p-12 rounded-[32px] md:rounded-[40px] bg-linear-to-br from-gray-900 to-black text-white relative overflow-hidden shadow-2xl animate-fade-in-up">
+                            <div className="p-8 md:p-12 rounded-[32px] md:rounded-[40px] bg-linear-to-br from-brand-dark to-black text-white relative overflow-hidden shadow-2xl animate-fade-in-up">
                                 <div className="absolute top-0 right-0 p-8 md:p-12 opacity-10">
                                     <Info className="w-24 h-24 md:w-32 md:h-32" />
                                 </div>
@@ -291,7 +291,7 @@ export default async function EventDetailPage({ params }: { params: Promise<{ sl
                         <div className="sticky top-32">
                             <div className="relative group">
                                 {/* Subtle Glow Effect */}
-                                <div className="absolute -inset-1 bg-linear-to-r from-blue-600 to-purple-600 rounded-[40px] blur opacity-10 group-hover:opacity-20 transition duration-1000"></div>
+                                <div className="absolute -inset-1 bg-linear-to-r from-primary to-purple-600 rounded-[40px] blur opacity-10 group-hover:opacity-20 transition duration-1000"></div>
 
                                 <TicketSelector tickets={tickets} eventSlug={slug} />
                             </div>

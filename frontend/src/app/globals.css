@@ -5,13 +5,20 @@
   --foreground: #020617;
   --card: #ffffff;
   --card-border: #f1f5f9;
-  --primary: #2563eb;
+  --primary: #bad331;
   --secondary: #64748b;
+  --brand-dark: #143a3c;
   
   /* Bridging Next.js Font Variables to Tailwind-friendly classes */
   --font-body: var(--font-body);
   --font-heading: var(--font-heading);
 }
+
+@theme {
+  --color-primary: var(--primary);
+  --color-brand-dark: var(--brand-dark);
+}
+
 
 .dark {
   --background: #020617;

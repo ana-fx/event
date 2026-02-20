@@ -63,7 +63,7 @@ export default function EditUserForm() {
         }
     };
 
-    if (fetching) return <div className="flex center h-64 justify-center items-center"><Loader2 className="animate-spin text-blue-600" /></div>;
+    if (fetching) return <div className="flex center h-64 justify-center items-center"><Loader2 className="animate-spin text-primary" /></div>;
 
     return (
         <div className="max-w-2xl mx-auto">
@@ -72,7 +72,7 @@ export default function EditUserForm() {
                     <ChevronLeft className="w-5 h-5" />
                 </Link>
                 <div>
-                    <h2 className="text-2xl font-bold text-gray-900">Edit User</h2>
+                    <h2 className="text-2xl font-bold text-brand-dark">Edit User</h2>
                     <p className="text-gray-500 text-sm">Update user details.</p>
                 </div>
             </div>
@@ -80,15 +80,15 @@ export default function EditUserForm() {
             <form onSubmit={handleSubmit} className="bg-white p-6 rounded-2xl border border-gray-100 shadow-sm space-y-6">
                 <div>
                     <label className="block text-sm font-bold text-gray-700 mb-2">Full Name</label>
-                    <input type="text" required className="w-full px-4 py-2.5 rounded-lg border border-gray-200 focus:border-blue-500 focus:ring-2 focus:ring-blue-100 outline-none transition-all bg-white" value={formData.name} onChange={e => setFormData({ ...formData, name: e.target.value })} />
+                    <input type="text" required className="w-full px-4 py-2.5 rounded-lg border border-gray-200 focus:border-primary focus:ring-2 focus:ring-primary/20 outline-none transition-all bg-white" value={formData.name} onChange={e => setFormData({ ...formData, name: e.target.value })} />
                 </div>
                 <div>
                     <label className="block text-sm font-bold text-gray-700 mb-2">Email Address</label>
-                    <input type="email" required className="w-full px-4 py-2.5 rounded-lg border border-gray-200 focus:border-blue-500 focus:ring-2 focus:ring-blue-100 outline-none transition-all bg-white" value={formData.email} onChange={e => setFormData({ ...formData, email: e.target.value })} />
+                    <input type="email" required className="w-full px-4 py-2.5 rounded-lg border border-gray-200 focus:border-primary focus:ring-2 focus:ring-primary/20 outline-none transition-all bg-white" value={formData.email} onChange={e => setFormData({ ...formData, email: e.target.value })} />
                 </div>
                 <div>
                     <label className="block text-sm font-bold text-gray-700 mb-2">Password (Leave blank to keep current)</label>
-                    <input type="text" className="w-full px-4 py-2.5 rounded-lg border border-gray-200 focus:border-blue-500 focus:ring-2 focus:ring-blue-100 outline-none transition-all bg-white" placeholder="New Password" value={formData.password} onChange={e => setFormData({ ...formData, password: e.target.value })} />
+                    <input type="text" className="w-full px-4 py-2.5 rounded-lg border border-gray-200 focus:border-primary focus:ring-2 focus:ring-primary/20 outline-none transition-all bg-white" placeholder="New Password" value={formData.password} onChange={e => setFormData({ ...formData, password: e.target.value })} />
                 </div>
                 <div className="grid grid-cols-2 gap-6">
                     <div>
@@ -117,7 +117,7 @@ export default function EditUserForm() {
                 </div>
 
                 <div className="flex justify-end pt-4">
-                    <button type="submit" disabled={loading} className="px-4 py-2.5 bg-blue-600 text-white font-bold rounded-lg hover:bg-blue-700 transition-colors shadow-sm shadow-blue-600/20 disabled:opacity-70 flex items-center justify-center">
+                    <button type="submit" disabled={loading} className="px-4 py-2.5 bg-primary text-white font-bold rounded-lg hover:bg-primary transition-colors shadow-sm shadow-primary/20 disabled:opacity-70 flex items-center justify-center">
                         {loading ? <Loader2 className="w-5 h-5 animate-spin" /> : <Save className="w-5 h-5" />}
                         Save Changes
                     </button>

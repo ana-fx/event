@@ -8,8 +8,8 @@ export default function AboutPage() {
             <Navbar />
             <main className="flex-1 w-full">
                 {/* Hero Section */}
-                <div className="relative py-24 bg-gray-900 text-center text-white overflow-hidden">
-                    <div className="absolute inset-0 bg-linear-to-b from-gray-800 to-gray-900 opacity-90"></div>
+                <div className="relative py-24 bg-brand-dark text-center text-white overflow-hidden">
+                    <div className="absolute inset-0 bg-linear-to-b from-gray-800 to-brand-dark opacity-90"></div>
                     <div className="relative max-w-4xl mx-auto px-6">
                         <h1 className="text-5xl md:text-7xl lg:text-8xl font-black mb-8 tracking-tighter uppercase font-heading">About Ingate</h1>
                         <p className="text-xl text-gray-300 max-w-2xl mx-auto font-medium font-body leading-relaxed">
@@ -20,7 +20,7 @@ export default function AboutPage() {
 
                 {/* Content */}
                 <div className="max-w-4xl mx-auto px-6 py-16">
-                    <div className="prose prose-xl prose-blue max-w-none text-gray-600 font-body">
+                    <div className="prose prose-xl prose-gray max-w-none text-gray-600 font-body">
                         <h3 className="font-heading uppercase tracking-tighter font-black text-2xl">Our Mission</h3>
                         <p>
                             To simplify the event experience for both organizers and attendees through cutting-edge technology and seamless service.

@@ -28,10 +28,10 @@ export default function RichTextEditor({ value, onChange, label, placeholder }: 
     return (
         <div className="space-y-2">
             {label && <label className="text-sm font-bold text-(--foreground)">{label}</label>}
-            <div className="bg-(--card) text-(--foreground) border border-(--card-border) rounded-xl overflow-hidden focus-within:ring-4 focus-within:ring-blue-500/10 focus-within:border-blue-500 transition-all
+            <div className="bg-(--card) text-(--foreground) border border-(--card-border) rounded-xl overflow-hidden focus-within:ring-4 focus-within:ring-primary/10 focus-within:border-primary transition-all
                 [&_.ql-editor]:min-h-[150px] [&_.ql-editor]:text-base
                 [&_.ql-snow_.ql-stroke]:stroke-current [&_.ql-snow_.ql-fill]:fill-current [&_.ql-snow_.ql-picker]:text-current
-                [&_.ql-snow.ql-toolbar_button:hover]:text-blue-500 [&_.ql-snow.ql-toolbar_button:hover_.ql-stroke]:stroke-blue-500
+                [&_.ql-snow.ql-toolbar_button:hover]:text-primary [&_.ql-snow.ql-toolbar_button:hover_.ql-stroke]:stroke-primary
                 dark:[&_.ql-toolbar]:bg-gray-800/50">
                 <ReactQuill
                     theme="snow"

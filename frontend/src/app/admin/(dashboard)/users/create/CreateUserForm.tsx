@@ -41,7 +41,7 @@ export default function CreateUserForm() {
                     <ChevronLeft className="w-5 h-5" />
                 </Link>
                 <div>
-                    <h2 className="text-2xl font-bold text-gray-900">Create User</h2>
+                    <h2 className="text-2xl font-bold text-brand-dark">Create User</h2>
                     <p className="text-gray-500 text-sm">Add a new admin, reseller, or scanner.</p>
                 </div>
             </div>
@@ -49,15 +49,15 @@ export default function CreateUserForm() {
             <form onSubmit={handleSubmit} className="bg-white p-6 rounded-2xl border border-gray-100 shadow-sm space-y-6">
                 <div>
                     <label className="block text-sm font-bold text-gray-700 mb-2">Full Name</label>
-                    <input type="text" required className="w-full px-4 py-2.5 rounded-lg border border-gray-200 focus:border-blue-500 focus:ring-2 focus:ring-blue-100 outline-none transition-all bg-white" value={formData.name} onChange={e => setFormData({ ...formData, name: e.target.value })} />
+                    <input type="text" required className="w-full px-4 py-2.5 rounded-lg border border-gray-200 focus:border-primary focus:ring-2 focus:ring-primary/20 outline-none transition-all bg-white" value={formData.name} onChange={e => setFormData({ ...formData, name: e.target.value })} />
                 </div>
                 <div>
                     <label className="block text-sm font-bold text-gray-700 mb-2">Email Address</label>
-                    <input type="email" required className="w-full px-4 py-2.5 rounded-lg border border-gray-200 focus:border-blue-500 focus:ring-2 focus:ring-blue-100 outline-none transition-all bg-white" value={formData.email} onChange={e => setFormData({ ...formData, email: e.target.value })} />
+                    <input type="email" required className="w-full px-4 py-2.5 rounded-lg border border-gray-200 focus:border-primary focus:ring-2 focus:ring-primary/20 outline-none transition-all bg-white" value={formData.email} onChange={e => setFormData({ ...formData, email: e.target.value })} />
                 </div>
                 <div>
                     <label className="block text-sm font-bold text-gray-700 mb-2">Password</label>
-                    <input type="text" required className="w-full px-4 py-2.5 rounded-lg border border-gray-200 focus:border-blue-500 focus:ring-2 focus:ring-blue-100 outline-none transition-all bg-white" value={formData.password} onChange={e => setFormData({ ...formData, password: e.target.value })} />
+                    <input type="text" required className="w-full px-4 py-2.5 rounded-lg border border-gray-200 focus:border-primary focus:ring-2 focus:ring-primary/20 outline-none transition-all bg-white" value={formData.password} onChange={e => setFormData({ ...formData, password: e.target.value })} />
                 </div>
                 <div className="grid grid-cols-2 gap-6">
                     <div>
@@ -86,7 +86,7 @@ export default function CreateUserForm() {
                 </div>
 
                 <div className="flex justify-end pt-4">
-                    <button type="submit" disabled={loading} className="px-4 py-2.5 bg-blue-600 text-white font-bold rounded-lg hover:bg-blue-700 transition-colors shadow-sm shadow-blue-600/20 disabled:opacity-70 flex items-center justify-center">
+                    <button type="submit" disabled={loading} className="px-4 py-2.5 bg-primary text-white font-bold rounded-lg hover:bg-primary transition-colors shadow-sm shadow-primary/20 disabled:opacity-70 flex items-center justify-center">
                         {loading ? <Loader2 className="w-5 h-5 animate-spin" /> : <Save className="w-5 h-5" />}
                         Create User
                     </button>

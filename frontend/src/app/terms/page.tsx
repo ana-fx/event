@@ -6,8 +6,8 @@ export default function TermsPage() {
         <div className="min-h-screen bg-white flex flex-col">
             <Navbar />
             <main className="flex-1 w-full max-w-4xl mx-auto px-6 py-24">
-                <h1 className="text-4xl font-black text-gray-900 mb-8">Terms of Service</h1>
-                <div className="prose prose-lg prose-blue max-w-none text-gray-600">
+                <h1 className="text-4xl font-black text-brand-dark mb-8">Terms of Service</h1>
+                <div className="prose prose-lg prose-gray max-w-none text-gray-600">
                     <p>Welcome to Ingate. By using our website and services, you agree to the following terms and conditions.</p>
 
                     <h3>1. Acceptance of Terms</h3>

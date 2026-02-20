@@ -56,7 +56,7 @@ export default function SuccessPage({ params }: { params: Promise<{ code: string
         }).format(price);
     };
 
-    if (loading) return <div className="min-h-screen flex items-center justify-center bg-white"><Loader2 className="w-8 h-8 animate-spin text-blue-600" /></div>;
+    if (loading) return <div className="min-h-screen flex items-center justify-center bg-white"><Loader2 className="w-8 h-8 animate-spin text-primary" /></div>;
 
     if (!transaction) return null;
 
@@ -91,18 +91,18 @@ export default function SuccessPage({ params }: { params: Promise<{ code: string
     const { subtotal, serviceFee, handlingFee, ppn } = calculateBreakdown();
 
     return (
-        <div className="min-h-screen bg-[#FDFDFD] font-body selection:bg-blue-600/10">
+        <div className="min-h-screen bg-[#FDFDFD] font-body selection:bg-primary/10">
             <Navbar />
 
             <main className="max-w-7xl mx-auto px-6 lg:px-10 py-24 sm:py-32 lg:py-48">
                 {/* Status-based Header Area */}
                 <div className="mb-12 sm:mb-20 space-y-8">
                     <div className="flex items-center gap-4">
-                        <div className={`w-16 h-16 rounded-[24px] flex items-center justify-center shadow-2xl ${status === 'paid' ? 'bg-blue-600 shadow-blue-600/20' : 'bg-amber-500 shadow-amber-500/20'}`}>
+                        <div className={`w-16 h-16 rounded-[24px] flex items-center justify-center shadow-2xl ${status === 'paid' ? 'bg-primary shadow-primary/20' : 'bg-amber-500 shadow-amber-500/20'}`}>
                             {status === 'paid' ? <CheckCircle className="w-8 h-8 text-white" /> : <Clock className="w-8 h-8 text-white" />}
                         </div>
                         <div>
-                            <h1 className={`text-[10px] sm:text-[12px] font-black uppercase tracking-[0.4em] mb-1 font-heading ${status === 'paid' ? 'text-blue-600' : 'text-amber-500'}`}>
+                            <h1 className={`text-[10px] sm:text-[12px] font-black uppercase tracking-[0.4em] mb-1 font-heading ${status === 'paid' ? 'text-primary' : 'text-amber-500'}`}>
                                 {status === 'paid' ? 'Payment Successful' : 'Awaiting Confirmation'}
                             </h1>
                             <p className="text-sm font-bold text-gray-400 font-body">Order #{transaction.code}</p>
@@ -121,7 +121,7 @@ export default function SuccessPage({ params }: { params: Promise<{ code: string
                         <div className="flex items-center gap-3 pt-4">
                             <button
                                 onClick={() => { setLoading(true); fetchTransaction(true); }}
-                                className="px-6 py-3 bg-gray-950 text-white text-[10px] font-black uppercase tracking-widest rounded-xl hover:bg-blue-600 transition-colors"
+                                className="px-6 py-3 bg-brand-dark text-white text-[10px] font-black uppercase tracking-widest rounded-xl hover:bg-primary transition-colors"
                             >
                                 Refresh Payment Status
                             </button>
@@ -165,7 +165,7 @@ export default function SuccessPage({ params }: { params: Promise<{ code: string
                         {/* Chapter 01: Proof of Payment (Details) */}
                         <section className="space-y-8 sm:space-y-10">
                             <div className="flex items-center gap-4 sm:gap-6">
-                                <span className="w-8 h-8 sm:w-10 sm:h-10 rounded-full bg-blue-600 text-white flex items-center justify-center font-black text-xs sm:text-sm font-heading">01</span>
+                                <span className="w-8 h-8 sm:w-10 sm:h-10 rounded-full bg-primary text-white flex items-center justify-center font-black text-xs sm:text-sm font-heading">01</span>
                                 <h3 className="text-lg sm:text-xl font-black text-[#1A1A1A] uppercase tracking-tighter font-heading">Proof of Payment</h3>
                             </div>
 
@@ -177,17 +177,17 @@ export default function SuccessPage({ params }: { params: Promise<{ code: string
                                     </div>
                                     <div className="space-y-1 grow">
                                         <p className="text-[10px] font-black uppercase tracking-[0.2em] text-gray-400 font-heading">Event Details</p>
-                                        <h4 className="text-2xl font-black text-gray-950 font-heading uppercase tracking-tight leading-tight">{transaction.event_name}</h4>
+                                        <h4 className="text-2xl font-black text-brand-dark font-heading uppercase tracking-tight leading-tight">{transaction.event_name}</h4>
                                         <div className="flex flex-wrap items-center gap-x-3 gap-y-1">
                                             {transaction.items?.length > 0 ? (
                                                 transaction.items.map((it: any, idx: number) => (
                                                     <React.Fragment key={it.id}>
-                                                        <span className="text-[11px] font-bold text-blue-600 bg-blue-50 px-2 py-0.5 rounded-md font-body">{it.name} ({it.quantity})</span>
+                                                        <span className="text-[11px] font-bold text-primary bg-primary/10 px-2 py-0.5 rounded-md font-body">{it.name} ({it.quantity})</span>
                                                         {idx < transaction.items.length - 1 && <span className="text-gray-200 font-body self-center">&bull;</span>}
                                                     </React.Fragment>
                                                 ))
                                             ) : (
-                                                <span className="text-[11px] font-bold text-blue-600 bg-blue-50 px-2 py-0.5 rounded-md font-body">{transaction.ticket_name} ({(transaction.quantity?.Int64 ?? transaction.quantity)})</span>
+                                                <span className="text-[11px] font-bold text-primary bg-primary/10 px-2 py-0.5 rounded-md font-body">{transaction.ticket_name} ({(transaction.quantity?.Int64 ?? transaction.quantity)})</span>
                                             )}
                                         </div>
                                     </div>
@@ -205,44 +205,44 @@ export default function SuccessPage({ params }: { params: Promise<{ code: string
                                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-x-10 gap-y-8">
                                     <div className="space-y-1">
                                         <p className="text-[9px] font-black uppercase tracking-widest text-gray-400 font-heading">Billing Name</p>
-                                        <p className="text-sm font-bold text-gray-950 font-body uppercase">{transaction.name}</p>
+                                        <p className="text-sm font-bold text-brand-dark font-body uppercase">{transaction.name}</p>
                                     </div>
                                     <div className="space-y-1">
                                         <p className="text-[9px] font-black uppercase tracking-widest text-gray-400 font-heading">Transaction Date</p>
-                                        <p className="text-sm font-bold text-gray-950 font-body uppercase">{new Date(transaction.created_at).toLocaleDateString('en-US', { day: '2-digit', month: 'long', year: 'numeric' })}</p>
+                                        <p className="text-sm font-bold text-brand-dark font-body uppercase">{new Date(transaction.created_at).toLocaleDateString('en-US', { day: '2-digit', month: 'long', year: 'numeric' })}</p>
                                     </div>
                                     <div className="space-y-1">
                                         <p className="text-[9px] font-black uppercase tracking-widest text-gray-400 font-heading">Identity (NIK)</p>
-                                        <p className="text-sm font-bold text-gray-950 font-body">{transaction.nik}</p>
+                                        <p className="text-sm font-bold text-brand-dark font-body">{transaction.nik}</p>
                                     </div>
                                     <div className="space-y-1 flex items-center gap-2 pt-2">
-                                        <ShieldCheck className="w-4 h-4 text-blue-600" />
-                                        <span className="text-[10px] font-black uppercase tracking-widest text-blue-600 font-heading">Payment Verified</span>
+                                        <ShieldCheck className="w-4 h-4 text-primary" />
+                                        <span className="text-[10px] font-black uppercase tracking-widest text-primary font-heading">Payment Verified</span>
                                     </div>
                                 </div>
 
                                 {/* Integrated Next Steps */}
                                 <div className="pt-10 border-t border-gray-50">
                                     <div className="flex items-center gap-4 mb-6">
-                                        <span className="w-6 h-6 rounded-full bg-blue-50 text-blue-600 flex items-center justify-center font-black text-[10px] font-heading">02</span>
+                                        <span className="w-6 h-6 rounded-full bg-primary/10 text-primary flex items-center justify-center font-black text-[10px] font-heading">02</span>
                                         <h4 className="text-[10px] font-black uppercase tracking-[0.2em] text-gray-400 font-heading">Next Steps</h4>
                                     </div>
                                     <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                                        <div className="flex items-center gap-4 p-4 rounded-2xl bg-blue-50/30 border border-blue-100/50 group hover:border-blue-500/30 transition-colors">
+                                        <div className="flex items-center gap-4 p-4 rounded-2xl bg-primary/10/30 border border-primary/20/50 group hover:border-primary/30 transition-colors">
                                             <div className="w-10 h-10 rounded-xl bg-white shadow-sm flex items-center justify-center shrink-0">
-                                                <Download className="w-5 h-5 text-blue-600" />
+                                                <Download className="w-5 h-5 text-primary" />
                                             </div>
                                             <div>
-                                                <h4 className="text-[11px] font-black uppercase tracking-tight text-gray-900 font-heading">Ticket Ready</h4>
+                                                <h4 className="text-[11px] font-black uppercase tracking-tight text-brand-dark font-heading">Ticket Ready</h4>
                                                 <p className="text-[9px] text-gray-400 font-bold uppercase tracking-widest font-body">Check your email</p>
                                             </div>
                                         </div>
-                                        <div className="flex items-center gap-4 p-4 rounded-2xl bg-blue-50/30 border border-blue-100/50 group hover:border-blue-500/30 transition-colors">
+                                        <div className="flex items-center gap-4 p-4 rounded-2xl bg-primary/10/30 border border-primary/20/50 group hover:border-primary/30 transition-colors">
                                             <div className="w-10 h-10 rounded-xl bg-white shadow-sm flex items-center justify-center shrink-0">
-                                                <Calendar className="w-5 h-5 text-blue-600" />
+                                                <Calendar className="w-5 h-5 text-primary" />
                                             </div>
                                             <div>
-                                                <h4 className="text-[11px] font-black uppercase tracking-tight text-gray-900 font-heading">Set Calendar</h4>
+                                                <h4 className="text-[11px] font-black uppercase tracking-tight text-brand-dark font-heading">Set Calendar</h4>
                                                 <p className="text-[9px] text-gray-400 font-bold uppercase tracking-widest font-body">Mark the schedule</p>
                                             </div>
                                         </div>
@@ -255,7 +255,7 @@ export default function SuccessPage({ params }: { params: Promise<{ code: string
                         <div className="pt-8">
                             <Link
                                 href="/events"
-                                className="inline-flex items-center gap-4 px-12 py-6 bg-gray-950 text-white text-xs font-black uppercase tracking-[0.2em] rounded-[28px] hover:bg-blue-600 transition-all shadow-2xl shadow-gray-950/20 group font-heading"
+                                className="inline-flex items-center gap-4 px-12 py-6 bg-brand-dark text-white text-xs font-black uppercase tracking-[0.2em] rounded-[28px] hover:bg-primary transition-all shadow-2xl shadow-brand-dark/20 group font-heading"
                             >
                                 Browse More Events
                                 <ArrowRight className="w-5 h-5 group-hover:translate-x-1.5 transition-transform" />
@@ -267,7 +267,7 @@ export default function SuccessPage({ params }: { params: Promise<{ code: string
                     <div className="lg:col-span-5 space-y-8 lg:sticky lg:top-36">
                         <div className="bg-white p-8 sm:p-10 lg:p-12 rounded-[32px] sm:rounded-[48px] border border-gray-100 shadow-2xl shadow-gray-200/40 space-y-8 relative overflow-hidden">
                             {/* Success Accent Bar */}
-                            <div className="absolute top-0 left-0 right-0 h-1.5 bg-blue-600" />
+                            <div className="absolute top-0 left-0 right-0 h-1.5 bg-primary" />
 
                             <h3 className="text-[9px] sm:text-[10px] font-black uppercase tracking-[0.3em] text-[#B1B1B1] mb-8 font-heading text-center">
                                 Payment Proof Summary
@@ -321,12 +321,12 @@ export default function SuccessPage({ params }: { params: Promise<{ code: string
                                     <p className="text-[9px] sm:text-[10px] font-black uppercase tracking-[0.25em] text-[#D1D1D1] font-heading">Total Amount Paid</p>
                                 </div>
                                 <div className="text-center space-y-4">
-                                    <p className="text-[40px] sm:text-[48px] lg:text-[56px] font-black text-blue-600 leading-none tracking-[-0.05em] font-heading">
+                                    <p className="text-[40px] sm:text-[48px] lg:text-[56px] font-black text-primary leading-none tracking-[-0.05em] font-heading">
                                         {formatIDR(transaction.total_price)}
                                     </p>
-                                    <div className="flex items-center justify-center gap-2 py-3 px-6 bg-blue-50/40 rounded-2xl w-fit mx-auto ring-1 ring-blue-50/50">
-                                        <CheckCircle className="w-4 h-4 text-blue-600" />
-                                        <p className="text-[10px] sm:text-[11px] font-bold text-blue-600 font-body uppercase tracking-widest">Transaction Success</p>
+                                    <div className="flex items-center justify-center gap-2 py-3 px-6 bg-primary/10/40 rounded-2xl w-fit mx-auto ring-1 ring-primary/10/50">
+                                        <CheckCircle className="w-4 h-4 text-primary" />
+                                        <p className="text-[10px] sm:text-[11px] font-bold text-primary font-body uppercase tracking-widest">Transaction Success</p>
                                     </div>
                                 </div>
                             </div>

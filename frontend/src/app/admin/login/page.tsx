@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import Cookies from "js-cookie";
+import Image from "next/image";
 import { useRouter } from "next/navigation";
 import api from "@/lib/axios";
 import { toast } from "react-hot-toast";
@@ -46,8 +47,17 @@ export default function AdminLogin() {
         <div className="min-h-screen bg-gray-50 flex items-center justify-center p-4">
             <div className="bg-white p-8 rounded-3xl shadow-xl w-full max-w-md space-y-8 border border-gray-100">
                 <div className="text-center">
-                    <h1 className="text-3xl font-bold text-gray-900 tracking-tight">Admin<span className="text-blue-600">Portal</span></h1>
-                    <p className="text-gray-500 mt-2">Sign in to manage your events</p>
+                    <div className="mb-6 flex justify-center">
+                        <Image 
+                            src="/logo-ingate.png" 
+                            alt="Ingate Logo" 
+                            width={160} 
+                            height={48} 
+                            className="h-12 w-auto object-contain"
+                            priority
+                        />
+                    </div>
+                    <p className="text-gray-500 mt-2 font-medium">Admin Portal — Sign in to manage your events</p>
                 </div>
 
                 <form onSubmit={handleLogin} className="space-y-6">
@@ -57,7 +67,7 @@ export default function AdminLogin() {
                             type="email"
                             value={email}
                             onChange={(e) => setEmail(e.target.value)}
-                            className="w-full px-4 py-3 rounded-xl border border-gray-200 focus:border-blue-600 focus:ring-2 focus:ring-blue-100 outline-none transition-all"
+                            className="w-full px-4 py-3 rounded-xl border border-gray-200 focus:border-primary focus:ring-2 focus:ring-primary/20 outline-none transition-all"
                             placeholder="admin@example.com"
                             required
                         />
@@ -69,7 +79,7 @@ export default function AdminLogin() {
                             type="password"
                             value={password}
                             onChange={(e) => setPassword(e.target.value)}
-                            className="w-full px-4 py-3 rounded-xl border border-gray-200 focus:border-blue-600 focus:ring-2 focus:ring-blue-100 outline-none transition-all"
+                            className="w-full px-4 py-3 rounded-xl border border-gray-200 focus:border-primary focus:ring-2 focus:ring-primary/20 outline-none transition-all"
                             placeholder="••••••••"
                             required
                         />
@@ -78,7 +88,7 @@ export default function AdminLogin() {
                     <button
                         type="submit"
                         disabled={loading}
-                        className="w-full py-3.5 bg-blue-600 text-white font-bold rounded-xl hover:bg-blue-700 transition-colors shadow-lg shadow-blue-600/20 disabled:opacity-70 disabled:cursor-not-allowed"
+                        className="w-full py-3.5 bg-primary text-white font-bold rounded-xl hover:bg-primary transition-colors shadow-lg shadow-primary/20 disabled:opacity-70 disabled:cursor-not-allowed"
                     >
                         {loading ? "Signing in..." : "Sign In"}
                     </button>

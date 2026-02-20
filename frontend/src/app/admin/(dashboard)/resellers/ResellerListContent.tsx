@@ -79,7 +79,7 @@ export default function ResellerListContent() {
                         placeholder="Search resellers..."
                         value={search}
                         onChange={(e) => setSearch(e.target.value)}
-                        className="w-full pl-10 pr-4 py-2 rounded-lg border border-(--card-border) bg-(--background) text-(--foreground) focus:border-blue-500 outline-none transition-all placeholder:opacity-50"
+                        className="w-full pl-10 pr-4 py-2 rounded-lg border border-(--card-border) bg-(--background) text-(--foreground) focus:border-primary outline-none transition-all placeholder:opacity-50"
                     />
                 </div>
             </div>
@@ -95,9 +95,9 @@ export default function ResellerListContent() {
                     </thead>
                     <tbody className="divide-y divide-(--card-border)">
                         {filtered.map(user => (
-                            <tr key={user.id} className="hover:bg-blue-600/5 transition-colors group">
+                            <tr key={user.id} className="hover:bg-primary/5 transition-colors group">
                                 <td className="px-6 py-4">
-                                    <p className="font-bold text-(--foreground) group-hover:text-blue-600 dark:group-hover:text-blue-400 transition-colors">{user.name}</p>
+                                    <p className="font-bold text-(--foreground) group-hover:text-primary dark:group-hover:text-primary transition-colors">{user.name}</p>
                                     <p className="text-xs text-gray-500">{user.email}</p>
                                 </td>
                                 <td className="px-6 py-4 font-mono font-bold text-green-600 dark:text-green-400">
@@ -109,7 +109,7 @@ export default function ResellerListContent() {
                                     <div className="flex justify-end gap-2">
                                         <button
                                             onClick={() => setHistoryModalUser(user)}
-                                            className="p-2 text-gray-500 hover:text-blue-600 hover:bg-blue-600/10 rounded-lg text-xs font-bold flex items-center gap-1 transition-all"
+                                            className="p-2 text-gray-500 hover:text-primary hover:bg-primary/10 rounded-lg text-xs font-bold flex items-center gap-1 transition-all"
                                         >
                                             <History className="w-4 h-4" /> History
                                         </button>
@@ -182,17 +182,17 @@ function DepositModal({ user, onClose, onSuccess }: { user: User, onClose: () =>
                     <h3 className="text-lg font-bold text-(--foreground)">Add Deposit</h3>
                     <button onClick={onClose}><X className="w-5 h-5 text-gray-400 hover:text-(--foreground) transition-colors" /></button>
                 </div>
-                <div className="mb-6 p-3 bg-blue-500/10 rounded-lg text-sm text-blue-600 dark:text-blue-400 font-medium">
+                <div className="mb-6 p-3 bg-primary/10 rounded-lg text-sm text-primary dark:text-primary font-medium">
                     Adding funds to <strong className="font-bold">{user.name}</strong>
                 </div>
                 <form onSubmit={handleSubmit} className="space-y-4">
                     <div>
                         <label className="block text-sm font-bold text-(--foreground) opacity-70 mb-2">Amount (IDR)</label>
-                        <input type="number" required min="1" className="w-full px-4 py-2.5 rounded-lg border border-(--card-border) bg-(--background) text-(--foreground) focus:border-blue-500 focus:ring-2 focus:ring-blue-100 dark:focus:ring-blue-900/30 outline-none transition-all" value={amount} onChange={e => setAmount(e.target.value)} placeholder="0" />
+                        <input type="number" required min="1" className="w-full px-4 py-2.5 rounded-lg border border-(--card-border) bg-(--background) text-(--foreground) focus:border-primary focus:ring-2 focus:ring-primary/20 dark:focus:ring-primary/20 outline-none transition-all" value={amount} onChange={e => setAmount(e.target.value)} placeholder="0" />
                     </div>
                     <div>
                         <label className="block text-sm font-bold text-(--foreground) opacity-70 mb-2">Note (Optional)</label>
-                        <input type="text" className="w-full px-4 py-2.5 rounded-lg border border-(--card-border) bg-(--background) text-(--foreground) focus:border-blue-500 focus:ring-2 focus:ring-blue-100 dark:focus:ring-blue-900/30 outline-none transition-all" value={note} onChange={e => setNote(e.target.value)} placeholder="e.g. Bank Transfer Ref..." />
+                        <input type="text" className="w-full px-4 py-2.5 rounded-lg border border-(--card-border) bg-(--background) text-(--foreground) focus:border-primary focus:ring-2 focus:ring-primary/20 dark:focus:ring-primary/20 outline-none transition-all" value={note} onChange={e => setNote(e.target.value)} placeholder="e.g. Bank Transfer Ref..." />
                     </div>
                     <div className="flex gap-3 pt-2">
                         <button type="button" onClick={onClose} className="flex-1 py-2.5 rounded-lg border border-(--card-border) font-bold text-(--foreground) hover:bg-(--background) transition-all">Cancel</button>
@@ -237,7 +237,7 @@ function HistoryModal({ user, onClose }: { user: User, onClose: () => void }) {
                             ) : deposits.length === 0 ? (
                                 <tr><td colSpan={3} className="p-8 text-center text-gray-400">No deposits found.</td></tr>
                             ) : deposits.map(d => (
-                                <tr key={d.id} className="hover:bg-blue-600/5 transition-colors">
+                                <tr key={d.id} className="hover:bg-primary/5 transition-colors">
                                     <td className="p-3 text-gray-500 font-medium">{new Date(d.created_at).toLocaleDateString()}</td>
                                     <td className="p-3 text-(--foreground)">{d.note || '-'}</td>
                                     <td className="p-3 text-right font-bold text-green-600 dark:text-green-400">+{new Intl.NumberFormat('id-ID').format(d.amount)}</td>

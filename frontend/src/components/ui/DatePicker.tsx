@@ -101,7 +101,7 @@ export function DatePicker({
                     onClick={toggleOpen}
                     className={cn(
                         "w-full text-left px-4 py-2.5 rounded-lg border border-(--card-border) bg-(--card) text-(--foreground) font-medium transition-all flex items-center gap-2 outline-none",
-                        "hover:border-blue-400 focus:ring-2 focus:ring-blue-100 dark:focus:ring-blue-900/30",
+                        "hover:border-primary focus:ring-2 focus:ring-primary/20 dark:focus:ring-primary/20",
                         error ? "border-red-500 focus:ring-red-100" : ""
                     )}
                 >
@@ -139,7 +139,7 @@ export function DatePicker({
                                         className={cn(
                                             "h-9 w-9 rounded-lg flex items-center justify-center text-sm transition-colors",
                                             !isCurrentMonth && "text-gray-300 dark:text-gray-600",
-                                            isSelected ? "bg-blue-600 text-white font-bold shadow-md shadow-blue-200 dark:shadow-blue-900/20" : "hover:bg-blue-600/10 text-(--foreground)",
+                                            isSelected ? "bg-primary text-white font-bold shadow-md shadow-primary dark:shadow-primary/20" : "hover:bg-primary/10 text-(--foreground)",
                                             !isSelected && isCurrentMonth && "font-medium"
                                         )}
                                     >
@@ -158,7 +158,7 @@ export function DatePicker({
                                 <input
                                     type="number"
                                     min="0" max="23"
-                                    className="w-12 p-1 text-center border border-(--card-border) bg-(--background) rounded-md focus:border-blue-500 outline-none text-sm font-bold text-(--foreground)"
+                                    className="w-12 p-1 text-center border border-(--card-border) bg-(--background) rounded-md focus:border-primary outline-none text-sm font-bold text-(--foreground)"
                                     value={format(selectedDate, "HH")}
                                     onChange={(e) => handleTimeChange('hours', e.target.value)}
                                 />
@@ -166,7 +166,7 @@ export function DatePicker({
                                 <input
                                     type="number"
                                     min="0" max="59"
-                                    className="w-12 p-1 text-center border border-(--card-border) bg-(--background) rounded-md focus:border-blue-500 outline-none text-sm font-bold text-(--foreground)"
+                                    className="w-12 p-1 text-center border border-(--card-border) bg-(--background) rounded-md focus:border-primary outline-none text-sm font-bold text-(--foreground)"
                                     value={format(selectedDate, "mm")}
                                     onChange={(e) => handleTimeChange('minutes', e.target.value)}
                                 />

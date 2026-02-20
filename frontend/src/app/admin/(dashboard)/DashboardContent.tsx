@@ -33,7 +33,7 @@ export default function DashboardContent() {
     if (loading) {
         return (
             <div className="flex items-center justify-center h-64">
-                <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600"></div>
+                <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary"></div>
             </div>
         );
     }
@@ -49,7 +49,7 @@ export default function DashboardContent() {
                 {/* Total Revenue */}
                 <div className="bg-(--card) p-6 rounded-2xl border border-(--card-border) shadow-sm group hover:scale-[1.02] transition-transform duration-300">
                     <div className="flex justify-between items-start mb-4">
-                        <div className="p-3 bg-blue-500/10 rounded-xl text-blue-600 group-hover:bg-blue-600 group-hover:text-white transition-colors">
+                        <div className="p-3 bg-primary/10 rounded-xl text-primary group-hover:bg-primary group-hover:text-white transition-colors">
                             <CreditCard className="w-6 h-6" />
                         </div>
                     </div>
@@ -96,7 +96,7 @@ export default function DashboardContent() {
                 <div className="bg-(--card) p-8 rounded-2xl border border-(--card-border) shadow-xl relative overflow-hidden group">
                     <div className="absolute top-0 right-0 w-32 h-32 bg-linear-to-bl from-(--background) to-transparent opacity-10 group-hover:scale-150 transition-transform duration-700"></div>
                     <h3 className="text-xl font-bold mb-6 flex items-center gap-3 text-gray-800 dark:text-gray-100">
-                        <Activity className="w-5 h-5 text-blue-600" />
+                        <Activity className="w-5 h-5 text-primary" />
                         Sales Activity
                     </h3>
                     <p className="text-xs">Coming to Phase 5</p>

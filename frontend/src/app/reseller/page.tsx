@@ -64,24 +64,24 @@ export default function ResellerDashboard() {
         router.push("/admin/login");
     };
 
-    if (loading) return <div className="min-h-screen flex items-center justify-center bg-gray-50"><Loader2 className="w-8 h-8 animate-spin text-blue-600" /></div>;
+    if (loading) return <div className="min-h-screen flex items-center justify-center bg-gray-50"><Loader2 className="w-8 h-8 animate-spin text-primary" /></div>;
 
     return (
         <div className="min-h-screen bg-gray-50">
             {/* Header */}
             <div className="bg-white border-b border-gray-200 px-6 py-4 flex justify-between items-center sticky top-0 z-10">
                 <div className="flex items-center gap-3">
-                    <div className="bg-blue-600 text-white p-2 rounded-lg"><Wallet className="w-5 h-5" /></div>
-                    <h1 className="font-bold text-xl text-gray-900">Reseller<span className="text-blue-600">Portal</span></h1>
+                    <div className="bg-primary text-white p-2 rounded-lg"><Wallet className="w-5 h-5" /></div>
+                    <h1 className="font-bold text-xl text-brand-dark">Reseller<span className="text-primary">Portal</span></h1>
                 </div>
                 <button onClick={handleLogout} className="text-gray-500 hover:text-red-600 transition-colors"><LogOut className="w-5 h-5" /></button>
             </div>
 
             <div className="max-w-4xl mx-auto p-6 space-y-8">
                 {/* Balance Card */}
-                <div className="bg-linear-to-br from-blue-600 to-blue-800 rounded-3xl p-8 text-white shadow-xl shadow-blue-600/20 relative overflow-hidden">
+                <div className="bg-linear-to-br from-primary to-primary rounded-3xl p-8 text-white shadow-xl shadow-primary/20 relative overflow-hidden">
                     <div className="relative z-10">
-                        <p className="text-blue-100 font-medium mb-1">Current Balance</p>
+                        <p className="text-primary/20 font-medium mb-1">Current Balance</p>
                         <h2 className="text-5xl font-bold">
                             {new Intl.NumberFormat('id-ID', { style: 'currency', currency: 'IDR' }).format(balance || 0)}
                         </h2>
@@ -91,15 +91,15 @@ export default function ResellerDashboard() {
 
                 {/* Quick Actions (Future) */}
                 {/* <div className="grid grid-cols-2 gap-4">
-                    <button className="bg-white p-4 rounded-xl shadow-sm border border-gray-100 hover:border-blue-200 transition-all flex flex-col items-center justify-center gap-2 font-bold text-gray-700">
-                        <CreditCard className="w-6 h-6 text-blue-600" /> Top Up
+                    <button className="bg-white p-4 rounded-xl shadow-sm border border-gray-100 hover:border-primary transition-all flex flex-col items-center justify-center gap-2 font-bold text-gray-700">
+                        <CreditCard className="w-6 h-6 text-primary" /> Top Up
                     </button>
                     ...
                 </div> */}
 
                 {/* History */}
                 <div>
-                    <h3 className="font-bold text-lg text-gray-900 mb-4 flex items-center gap-2">
+                    <h3 className="font-bold text-lg text-brand-dark mb-4 flex items-center gap-2">
                         <History className="w-5 h-5 text-gray-500" /> Transaction History
                     </h3>
                     <div className="bg-white rounded-2xl border border-gray-100 shadow-sm overflow-hidden">
@@ -118,7 +118,7 @@ export default function ResellerDashboard() {
                                     {transactions.map((tx) => (
                                         <tr key={tx.id} className="hover:bg-gray-50/50 transition-colors">
                                             <td className="p-4 text-gray-500">{new Date(tx.created_at).toLocaleDateString()}</td>
-                                            <td className="p-4 font-medium text-gray-900">{tx.description || tx.type || "Deposit"}</td>
+                                            <td className="p-4 font-medium text-brand-dark">{tx.description || tx.type || "Deposit"}</td>
                                             <td className="p-4 text-right font-bold text-green-600">
                                                 +{new Intl.NumberFormat('id-ID').format(tx.amount)}
                                             </td>

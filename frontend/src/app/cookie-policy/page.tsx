@@ -6,8 +6,8 @@ export default function CookiePolicyPage() {
         <div className="min-h-screen bg-white flex flex-col">
             <Navbar />
             <main className="flex-1 w-full max-w-4xl mx-auto px-6 py-24 mt-[80px]">
-                <h1 className="text-4xl font-black text-gray-900 mb-8">Cookie Policy</h1>
-                <div className="prose prose-lg prose-blue max-w-none text-gray-600">
+                <h1 className="text-4xl font-black text-brand-dark mb-8">Cookie Policy</h1>
+                <div className="prose prose-lg prose-gray max-w-none text-gray-600">
                     <p>This Cookie Policy explains how Ingate uses cookies and similar technologies to recognize you when you visit our website.</p>
 
                     <h3>1. What are cookies?</h3>

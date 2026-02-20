@@ -47,7 +47,7 @@ export default function Hero() {
     }, [banners.length]);
 
     if (loading) {
-        return <div className="h-[600px] w-full bg-gray-900 animate-pulse" />;
+        return <div className="h-[600px] w-full bg-brand-dark animate-pulse" />;
     }
 
     if (banners.length === 0) {
@@ -90,13 +90,13 @@ export default function Hero() {
                         <>
                             <button
                                 onClick={prevSlide}
-                                className="absolute left-3 md:left-5 top-1/2 -translate-y-1/2 w-8 h-8 md:w-12 md:h-12 bg-white/80 backdrop-blur-md rounded-full flex items-center justify-center hover:bg-white transition-all text-gray-900 shadow-lg z-20 group"
+                                className="absolute left-3 md:left-5 top-1/2 -translate-y-1/2 w-8 h-8 md:w-12 md:h-12 bg-white/80 backdrop-blur-md rounded-full flex items-center justify-center hover:bg-white transition-all text-brand-dark shadow-lg z-20 group"
                             >
                                 <ChevronLeft className="w-4 h-4 md:w-5 md:h-5" />
                             </button>
                             <button
                                 onClick={nextSlide}
-                                className="absolute right-3 md:right-5 top-1/2 -translate-y-1/2 w-8 h-8 md:w-12 md:h-12 bg-white/80 backdrop-blur-md rounded-full flex items-center justify-center hover:bg-white transition-all text-gray-900 shadow-lg z-20 group"
+                                className="absolute right-3 md:right-5 top-1/2 -translate-y-1/2 w-8 h-8 md:w-12 md:h-12 bg-white/80 backdrop-blur-md rounded-full flex items-center justify-center hover:bg-white transition-all text-brand-dark shadow-lg z-20 group"
                             >
                                 <ChevronRight className="w-4 h-4 md:w-5 md:h-5" />
                             </button>

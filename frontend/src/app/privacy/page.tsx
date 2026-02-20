@@ -6,8 +6,8 @@ export default function PrivacyPage() {
         <div className="min-h-screen bg-white flex flex-col">
             <Navbar />
             <main className="flex-1 w-full max-w-4xl mx-auto px-6 py-24">
-                <h1 className="text-4xl font-black text-gray-900 mb-8">Privacy Policy</h1>
-                <div className="prose prose-lg prose-blue max-w-none text-gray-600">
+                <h1 className="text-4xl font-black text-brand-dark mb-8">Privacy Policy</h1>
+                <div className="prose prose-lg prose-gray max-w-none text-gray-600">
                     <p>Your privacy is important to us. This Privacy Policy explains how we collect, use, and protect your personal information.</p>
 
                     <h3>1. Information We Collect</h3>

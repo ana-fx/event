@@ -137,11 +137,11 @@ function EventDetailsTab({ id, initialData, refresh }: { id: string, initialData
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                     <div className="md:col-span-2">
                         <label className="block text-sm font-bold text-(--foreground) opacity-70 mb-2">Event Name</label>
-                        <input type="text" required className="w-full px-4 py-2.5 rounded-lg border border-(--card-border) focus:border-blue-500 focus:ring-2 focus:ring-blue-100 dark:focus:ring-blue-900/30 outline-none transition-all bg-(--background) text-(--foreground) placeholder:opacity-50" value={formData.name} onChange={(e) => setFormData({ ...formData, name: e.target.value })} />
+                        <input type="text" required className="w-full px-4 py-2.5 rounded-lg border border-(--card-border) focus:border-primary focus:ring-2 focus:ring-primary/20 dark:focus:ring-primary/20 outline-none transition-all bg-(--background) text-(--foreground) placeholder:opacity-50" value={formData.name} onChange={(e) => setFormData({ ...formData, name: e.target.value })} />
                     </div>
                     <div>
                         <label className="block text-sm font-bold text-(--foreground) opacity-70 mb-2">Category</label>
-                        <input type="text" required className="w-full px-4 py-2.5 rounded-lg border border-(--card-border) focus:border-blue-500 focus:ring-2 focus:ring-blue-100 dark:focus:ring-blue-900/30 outline-none transition-all bg-(--background) text-(--foreground) placeholder:opacity-50" value={formData.category} onChange={(e) => setFormData({ ...formData, category: e.target.value })} />
+                        <input type="text" required className="w-full px-4 py-2.5 rounded-lg border border-(--card-border) focus:border-primary focus:ring-2 focus:ring-primary/20 dark:focus:ring-primary/20 outline-none transition-all bg-(--background) text-(--foreground) placeholder:opacity-50" value={formData.category} onChange={(e) => setFormData({ ...formData, category: e.target.value })} />
                     </div>
                     <div>
                         <Select
@@ -166,7 +166,7 @@ function EventDetailsTab({ id, initialData, refresh }: { id: string, initialData
                         <label className="block text-sm font-bold text-(--foreground) opacity-70 mb-2">Maps Embed (HTML)</label>
                         <textarea
                             rows={3}
-                            className="w-full px-4 py-2.5 rounded-lg border border-(--card-border) bg-(--background) text-(--foreground) focus:border-blue-500 focus:ring-2 focus:ring-blue-100 dark:focus:ring-blue-900/30 outline-none transition-all font-mono text-xs"
+                            className="w-full px-4 py-2.5 rounded-lg border border-(--card-border) bg-(--background) text-(--foreground) focus:border-primary focus:ring-2 focus:ring-primary/20 dark:focus:ring-primary/20 outline-none transition-all font-mono text-xs"
                             value={formData.google_map_embed || ''}
                             onChange={(e) => setFormData({ ...formData, google_map_embed: e.target.value })}
                             placeholder='<iframe src="..."></iframe>'
@@ -182,7 +182,7 @@ function EventDetailsTab({ id, initialData, refresh }: { id: string, initialData
                         <label className="block text-sm font-bold text-(--foreground) opacity-70 mb-2">YouTube Trailer (URL)</label>
                         <input
                             type="text"
-                            className="w-full px-4 py-2.5 rounded-lg border border-(--card-border) bg-(--background) text-(--foreground) focus:border-blue-500 focus:ring-2 focus:ring-blue-100 dark:focus:ring-blue-900/30 outline-none transition-all placeholder:opacity-50"
+                            className="w-full px-4 py-2.5 rounded-lg border border-(--card-border) bg-(--background) text-(--foreground) focus:border-primary focus:ring-2 focus:ring-primary/20 dark:focus:ring-primary/20 outline-none transition-all placeholder:opacity-50"
                             value={formData.youtube_link || ''}
                             onChange={(e) => setFormData({ ...formData, youtube_link: e.target.value })}
                             placeholder="https://www.youtube.com/watch?v=..."
@@ -226,7 +226,7 @@ function EventDetailsTab({ id, initialData, refresh }: { id: string, initialData
 
                     <div>
                         <label className="block text-sm font-bold text-(--foreground) opacity-70 mb-2">Organizer Logo</label>
-                        <div className="border-2 border-dashed border-(--card-border) rounded-xl aspect-square w-48 relative flex items-center justify-center bg-(--background) hover:border-blue-500 transition-colors cursor-pointer overflow-hidden">
+                        <div className="border-2 border-dashed border-(--card-border) rounded-xl aspect-square w-48 relative flex items-center justify-center bg-(--background) hover:border-primary transition-colors cursor-pointer overflow-hidden">
                             {previews.organizerLogo ? (
                                 <img src={previews.organizerLogo} alt="Preview" className="w-full h-full object-cover" />
                             ) : (
@@ -248,7 +248,7 @@ function EventDetailsTab({ id, initialData, refresh }: { id: string, initialData
                         <label className="block text-sm font-bold text-(--foreground) opacity-70 mb-2">Organizer Name</label>
                         <input
                             type="text"
-                            className="w-full px-4 py-2.5 rounded-lg border border-(--card-border) bg-(--background) text-(--foreground) focus:border-blue-500 focus:ring-2 focus:ring-blue-100 dark:focus:ring-blue-900/30 outline-none transition-all"
+                            className="w-full px-4 py-2.5 rounded-lg border border-(--card-border) bg-(--background) text-(--foreground) focus:border-primary focus:ring-2 focus:ring-primary/20 dark:focus:ring-primary/20 outline-none transition-all"
                             value={formData.organizer_name || ''}
                             onChange={(e) => setFormData({ ...formData, organizer_name: e.target.value })}
                         />
@@ -262,14 +262,14 @@ function EventDetailsTab({ id, initialData, refresh }: { id: string, initialData
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                     <div><DatePicker label="Start Date" value={formData.start_date} onChange={(val) => setFormData({ ...formData, start_date: val })} /></div>
                     <div><DatePicker label="End Date" value={formData.end_date} onChange={(val) => setFormData({ ...formData, end_date: val })} /></div>
-                    <div className="md:col-span-2"><label className="block text-sm font-bold text-(--foreground) opacity-70 mb-2">Location</label><input type="text" className="w-full px-4 py-2.5 rounded-lg border border-(--card-border) focus:border-blue-500 focus:ring-2 focus:ring-blue-100 dark:focus:ring-blue-900/30 outline-none transition-all bg-(--background) text-(--foreground)" value={formData.location} onChange={(e) => setFormData({ ...formData, location: e.target.value })} /></div>
-                    <div><label className="block text-sm font-bold text-(--foreground) opacity-70 mb-2">City</label><input type="text" className="w-full px-4 py-2.5 rounded-lg border border-(--card-border) focus:border-blue-500 focus:ring-2 focus:ring-blue-100 dark:focus:ring-blue-900/30 outline-none transition-all bg-(--background) text-(--foreground)" value={formData.city} onChange={(e) => setFormData({ ...formData, city: e.target.value })} /></div>
+                    <div className="md:col-span-2"><label className="block text-sm font-bold text-(--foreground) opacity-70 mb-2">Location</label><input type="text" className="w-full px-4 py-2.5 rounded-lg border border-(--card-border) focus:border-primary focus:ring-2 focus:ring-primary/20 dark:focus:ring-primary/20 outline-none transition-all bg-(--background) text-(--foreground)" value={formData.location} onChange={(e) => setFormData({ ...formData, location: e.target.value })} /></div>
+                    <div><label className="block text-sm font-bold text-(--foreground) opacity-70 mb-2">City</label><input type="text" className="w-full px-4 py-2.5 rounded-lg border border-(--card-border) focus:border-primary focus:ring-2 focus:ring-primary/20 dark:focus:ring-primary/20 outline-none transition-all bg-(--background) text-(--foreground)" value={formData.city} onChange={(e) => setFormData({ ...formData, city: e.target.value })} /></div>
 
                     <div>
                         <label className="block text-sm font-bold text-(--foreground) opacity-70 mb-2">Province</label>
                         <input
                             type="text"
-                            className="w-full px-4 py-2.5 rounded-lg border border-(--card-border) bg-(--background) text-(--foreground) focus:border-blue-500 focus:ring-2 focus:ring-blue-100 dark:focus:ring-blue-900/30 outline-none transition-all"
+                            className="w-full px-4 py-2.5 rounded-lg border border-(--card-border) bg-(--background) text-(--foreground) focus:border-primary focus:ring-2 focus:ring-primary/20 dark:focus:ring-primary/20 outline-none transition-all"
                             value={formData.province || ''}
                             onChange={(e) => setFormData({ ...formData, province: e.target.value })}
                         />
@@ -278,7 +278,7 @@ function EventDetailsTab({ id, initialData, refresh }: { id: string, initialData
                         <label className="block text-sm font-bold text-(--foreground) opacity-70 mb-2">ZIP Code</label>
                         <input
                             type="text"
-                            className="w-full px-4 py-2.5 rounded-lg border border-(--card-border) bg-(--background) text-(--foreground) focus:border-blue-500 focus:ring-2 focus:ring-blue-100 dark:focus:ring-blue-900/30 outline-none transition-all"
+                            className="w-full px-4 py-2.5 rounded-lg border border-(--card-border) bg-(--background) text-(--foreground) focus:border-primary focus:ring-2 focus:ring-primary/20 dark:focus:ring-primary/20 outline-none transition-all"
                             value={formData.zip || ''}
                             onChange={(e) => setFormData({ ...formData, zip: e.target.value })}
                         />
@@ -294,7 +294,7 @@ function EventDetailsTab({ id, initialData, refresh }: { id: string, initialData
                         <label className="block text-sm font-bold text-(--foreground) opacity-70 mb-2">Meta Title</label>
                         <input
                             type="text"
-                            className="w-full px-4 py-2.5 rounded-lg border border-(--card-border) bg-(--background) text-(--foreground) focus:border-blue-500 focus:ring-2 focus:ring-blue-100 dark:focus:ring-blue-900/30 outline-none transition-all"
+                            className="w-full px-4 py-2.5 rounded-lg border border-(--card-border) bg-(--background) text-(--foreground) focus:border-primary focus:ring-2 focus:ring-primary/20 dark:focus:ring-primary/20 outline-none transition-all"
                             value={formData.seo_title || ''}
                             onChange={(e) => setFormData({ ...formData, seo_title: e.target.value })}
                         />
@@ -303,7 +303,7 @@ function EventDetailsTab({ id, initialData, refresh }: { id: string, initialData
                         <label className="block text-sm font-bold text-(--foreground) opacity-70 mb-2">Meta Description</label>
                         <textarea
                             rows={2}
-                            className="w-full px-4 py-2.5 rounded-lg border border-(--card-border) bg-(--background) text-(--foreground) focus:border-blue-500 focus:ring-2 focus:ring-blue-100 dark:focus:ring-blue-900/30 outline-none transition-all"
+                            className="w-full px-4 py-2.5 rounded-lg border border-(--card-border) bg-(--background) text-(--foreground) focus:border-primary focus:ring-2 focus:ring-primary/20 dark:focus:ring-primary/20 outline-none transition-all"
                             value={formData.seo_description || ''}
                             onChange={(e) => setFormData({ ...formData, seo_description: e.target.value })}
                         ></textarea>
@@ -312,7 +312,7 @@ function EventDetailsTab({ id, initialData, refresh }: { id: string, initialData
             </div>
 
             <div className="flex justify-end pt-4">
-                <button type="submit" disabled={loading} className="px-4 py-2.5 bg-blue-600 text-white font-bold rounded-lg hover:bg-blue-700 transition-colors shadow-sm shadow-blue-600/20 disabled:opacity-70 flex items-center justify-center">
+                <button type="submit" disabled={loading} className="px-4 py-2.5 bg-primary text-white font-bold rounded-lg hover:bg-primary transition-colors shadow-sm shadow-primary/20 disabled:opacity-70 flex items-center justify-center">
                     {loading ? <Loader2 className="w-5 h-5 animate-spin" /> : <Save className="w-5 h-5" />}
                     Save Changes
                 </button>
@@ -400,14 +400,14 @@ function AssignmentsTab({ eventId }: { eventId: string }) {
         <div className="space-y-8 mt-8 animate-in fade-in slide-in-from-bottom-4 duration-500">
             {/* Scanners Section */}
             <div className="relative group">
-                <div className="absolute -inset-0.5 bg-linear-to-r from-blue-600 to-indigo-600 rounded-2xl opacity-20 group-hover:opacity-30 transition duration-500 blur-sm"></div>
+                <div className="absolute -inset-0.5 bg-linear-to-r from-primary to-indigo-600 rounded-2xl opacity-20 group-hover:opacity-30 transition duration-500 blur-sm"></div>
                 <div className="relative bg-(--card) p-8 rounded-2xl border border-(--card-border) shadow-xl">
                     <div className="flex justify-between items-center mb-6 border-b border-(--card-border) pb-4">
                         <div>
                             <h3 className="text-xl font-bold text-(--foreground)">Assigned Scanners</h3>
                             <p className="text-sm text-gray-500 mt-1">Manage personnel who can scan tickets for this event.</p>
                         </div>
-                        <div className="w-10 h-10 bg-blue-500/10 rounded-full flex items-center justify-center text-blue-500">
+                        <div className="w-10 h-10 bg-primary/10 rounded-full flex items-center justify-center text-primary">
                             <ScanBarcode className="w-5 h-5" />
                         </div>
                     </div>
@@ -417,7 +417,7 @@ function AssignmentsTab({ eventId }: { eventId: string }) {
                             <Select
                                 value={selectedScanner}
                                 onChange={(val) => setSelectedScanner(val)}
-                                className="py-3 rounded-xl border-blue-200 focus:border-blue-500"
+                                className="py-3 rounded-xl border-primary focus:border-primary"
                                 containerClassName="mb-1"
                                 placeholder="Select a scanner to assign..."
                                 options={availableScannersList.map(u => ({ label: `${u.name} — ${u.email}`, value: String(u.id) }))}
@@ -425,7 +425,7 @@ function AssignmentsTab({ eventId }: { eventId: string }) {
                         </div>
                         <button
                             onClick={handleAssignScanner}
-                            className="px-6 py-3 bg-blue-600 text-white font-bold rounded-xl hover:bg-blue-700 transition-all shadow-lg shadow-blue-600/30 disabled:opacity-70 disabled:shadow-none flex items-center justify-center gap-2 whitespace-nowrap active:scale-95"
+                            className="px-6 py-3 bg-primary text-white font-bold rounded-xl hover:bg-primary transition-all shadow-lg shadow-primary/30 disabled:opacity-70 disabled:shadow-none flex items-center justify-center gap-2 whitespace-nowrap active:scale-95"
                             disabled={!selectedScanner}
                         >
                             <Plus className="w-5 h-5" /> Assign Scanner
@@ -434,13 +434,13 @@ function AssignmentsTab({ eventId }: { eventId: string }) {
 
                     <div className="space-y-3">
                         {scanners.map(s => (
-                            <div key={s.id} className="flex items-center justify-between p-4 bg-(--card) border border-(--card-border) rounded-xl hover:border-blue-200 dark:hover:border-blue-800 hover:shadow-md transition-all group/item">
+                            <div key={s.id} className="flex items-center justify-between p-4 bg-(--card) border border-(--card-border) rounded-xl hover:border-primary dark:hover:border-primary hover:shadow-md transition-all group/item">
                                 <div className="flex items-center gap-4">
-                                    <div className="w-10 h-10 rounded-full bg-linear-to-br from-blue-500 to-indigo-600 flex items-center justify-center text-white font-bold shadow-md">
+                                    <div className="w-10 h-10 rounded-full bg-linear-to-br from-primary to-indigo-600 flex items-center justify-center text-white font-bold shadow-md">
                                         {s.name.charAt(0)}
                                     </div>
                                     <div>
-                                        <p className="font-bold text-(--foreground) group-hover/item:text-blue-600 dark:group-hover/item:text-blue-400 transition-colors">{s.name}</p>
+                                        <p className="font-bold text-(--foreground) group-hover/item:text-primary dark:group-hover/item:text-primary transition-colors">{s.name}</p>
                                         <p className="text-sm text-gray-500">{s.email}</p>
                                     </div>
                                 </div>
@@ -551,7 +551,7 @@ function TicketsTab({ eventId }: { eventId: string }) {
         <div className="space-y-6 mt-8">
             <div className="flex justify-between items-center">
                 <h3 className="text-xl font-bold text-(--foreground)">Ticket Configuration</h3>
-                <button onClick={() => handleOpenModal()} className="px-4 py-2 bg-blue-600 text-white font-bold rounded-lg hover:bg-blue-700 flex items-center gap-2">
+                <button onClick={() => handleOpenModal()} className="px-4 py-2 bg-primary text-white font-bold rounded-lg hover:bg-primary flex items-center gap-2">
                     <Plus className="w-5 h-5" /> Add Ticket
                 </button>
             </div>
@@ -568,7 +568,7 @@ function TicketsTab({ eventId }: { eventId: string }) {
                                     </span>
                                 </div>
                                 <div className="flex gap-2 opacity-0 group-hover:opacity-100 transition-opacity">
-                                    <button onClick={() => handleOpenModal(t)} className="p-2 text-blue-600 hover:bg-blue-500/10 rounded-lg">Edit</button>
+                                    <button onClick={() => handleOpenModal(t)} className="p-2 text-primary hover:bg-primary/10 rounded-lg">Edit</button>
                                     <button onClick={() => handleDelete(t.id)} className="p-2 text-red-600 hover:bg-red-500/10 rounded-lg"><Trash className="w-4 h-4" /></button>
                                 </div>
                             </div>
@@ -594,15 +594,15 @@ function TicketsTab({ eventId }: { eventId: string }) {
                             <button onClick={() => setIsModalOpen(false)} className="text-gray-400 hover:text-(--foreground) transition-colors">Close</button>
                         </div>
                         <form onSubmit={handleSubmit} className="p-6 space-y-4">
-                            <div><label className="block text-sm font-bold text-(--foreground) opacity-70 mb-1">Name</label><input required className="w-full border border-(--card-border) rounded-lg px-4 py-2 bg-(--background) text-(--foreground) outline-none focus:border-blue-500" value={formData.name} onChange={e => setFormData({ ...formData, name: e.target.value })} /></div>
+                            <div><label className="block text-sm font-bold text-(--foreground) opacity-70 mb-1">Name</label><input required className="w-full border border-(--card-border) rounded-lg px-4 py-2 bg-(--background) text-(--foreground) outline-none focus:border-primary" value={formData.name} onChange={e => setFormData({ ...formData, name: e.target.value })} /></div>
                             <div className="grid grid-cols-2 gap-4">
-                                <div><label className="block text-sm font-bold text-(--foreground) opacity-70 mb-1">Price (Rp)</label><input type="number" required className="w-full border border-(--card-border) rounded-lg px-4 py-2 bg-(--background) text-(--foreground) outline-none focus:border-blue-500" value={formData.price} onChange={e => setFormData({ ...formData, price: Number(e.target.value) })} /></div>
-                                <div><label className="block text-sm font-bold text-(--foreground) opacity-70 mb-1">Quota</label><input type="number" required className="w-full border border-(--card-border) rounded-lg px-4 py-2 bg-(--background) text-(--foreground) outline-none focus:border-blue-500" value={formData.quota} onChange={e => setFormData({ ...formData, quota: Number(e.target.value) })} /></div>
+                                <div><label className="block text-sm font-bold text-(--foreground) opacity-70 mb-1">Price (Rp)</label><input type="number" required className="w-full border border-(--card-border) rounded-lg px-4 py-2 bg-(--background) text-(--foreground) outline-none focus:border-primary" value={formData.price} onChange={e => setFormData({ ...formData, price: Number(e.target.value) })} /></div>
+                                <div><label className="block text-sm font-bold text-(--foreground) opacity-70 mb-1">Quota</label><input type="number" required className="w-full border border-(--card-border) rounded-lg px-4 py-2 bg-(--background) text-(--foreground) outline-none focus:border-primary" value={formData.quota} onChange={e => setFormData({ ...formData, quota: Number(e.target.value) })} /></div>
                             </div>
                             <div className="grid grid-cols-2 gap-4">
-                                <div><label className="block text-sm font-bold text-(--foreground) opacity-70 mb-1">Max Per User</label><input type="number" required className="w-full border border-(--card-border) rounded-lg px-4 py-2 bg-(--background) text-(--foreground) outline-none focus:border-blue-500" value={formData.max_purchase_per_user} onChange={e => setFormData({ ...formData, max_purchase_per_user: Number(e.target.value) })} /></div>
+                                <div><label className="block text-sm font-bold text-(--foreground) opacity-70 mb-1">Max Per User</label><input type="number" required className="w-full border border-(--card-border) rounded-lg px-4 py-2 bg-(--background) text-(--foreground) outline-none focus:border-primary" value={formData.max_purchase_per_user} onChange={e => setFormData({ ...formData, max_purchase_per_user: Number(e.target.value) })} /></div>
                                 <div className="flex items-center gap-2 pt-6">
-                                    <input type="checkbox" checked={formData.is_active} onChange={e => setFormData({ ...formData, is_active: e.target.checked })} className="w-5 h-5 rounded border-(--card-border) text-blue-600 focus:ring-blue-500 bg-(--background)" />
+                                    <input type="checkbox" checked={formData.is_active} onChange={e => setFormData({ ...formData, is_active: e.target.checked })} className="w-5 h-5 rounded border-(--card-border) text-primary focus:ring-primary bg-(--background)" />
                                     <label className="font-bold text-(--foreground) opacity-70">Active</label>
                                 </div>
                             </div>
@@ -615,7 +615,7 @@ function TicketsTab({ eventId }: { eventId: string }) {
                             </div>
                             <div className="pt-4 flex justify-end gap-2">
                                 <button type="button" onClick={() => setIsModalOpen(false)} className="px-4 py-2 text-gray-600 font-bold hover:bg-gray-100 rounded-lg">Cancel</button>
-                                <button type="submit" className="px-6 py-2 bg-blue-600 text-white font-bold rounded-lg hover:bg-blue-700">Save Ticket</button>
+                                <button type="submit" className="px-6 py-2 bg-primary text-white font-bold rounded-lg hover:bg-primary">Save Ticket</button>
                             </div>
                         </form>
                     </div>
@@ -690,7 +690,7 @@ function FinanceTab({ id, initialData, refresh }: { id: string, initialData: any
         <form onSubmit={handleSubmit} className="space-y-8 mt-8 animate-in fade-in slide-in-from-bottom-4 duration-500">
             <div className="bg-(--card) p-6 rounded-2xl border border-(--card-border) shadow-sm space-y-6">
                 <h3 className="text-lg font-bold text-(--foreground) border-b border-(--card-border) pb-4 flex items-center gap-2">
-                    <Banknote className="w-5 h-5 text-blue-500" /> Fees & Taxes Configuration
+                    <Banknote className="w-5 h-5 text-primary" /> Fees & Taxes Configuration
                 </h3>
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                     <div className="space-y-4">
@@ -699,12 +699,12 @@ function FinanceTab({ id, initialData, refresh }: { id: string, initialData: any
                             <div className="flex gap-2">
                                 <input
                                     type="number"
-                                    className="flex-1 px-4 py-2.5 rounded-lg border border-(--card-border) bg-(--background) text-(--foreground) focus:border-blue-500 focus:ring-2 focus:ring-blue-100 dark:focus:ring-blue-900/30 outline-none transition-all"
+                                    className="flex-1 px-4 py-2.5 rounded-lg border border-(--card-border) bg-(--background) text-(--foreground) focus:border-primary focus:ring-2 focus:ring-primary/20 dark:focus:ring-primary/20 outline-none transition-all"
                                     value={formData.organizer_tax}
                                     onChange={(e) => setFormData({ ...formData, organizer_tax: Number(e.target.value) })}
                                 />
                                 <select
-                                    className="w-24 px-2 py-2.5 rounded-lg border border-(--card-border) bg-(--background) text-(--foreground) focus:border-blue-500 outline-none transition-all text-sm font-bold"
+                                    className="w-24 px-2 py-2.5 rounded-lg border border-(--card-border) bg-(--background) text-(--foreground) focus:border-primary outline-none transition-all text-sm font-bold"
                                     value={formData.organizer_tax_type}
                                     onChange={(e) => setFormData({ ...formData, organizer_tax_type: e.target.value })}
                                 >
@@ -720,12 +720,12 @@ function FinanceTab({ id, initialData, refresh }: { id: string, initialData: any
                             <div className="flex gap-2">
                                 <input
                                     type="number"
-                                    className="flex-1 px-4 py-2.5 rounded-lg border border-(--card-border) bg-(--background) text-(--foreground) focus:border-blue-500 focus:ring-2 focus:ring-blue-100 dark:focus:ring-blue-900/30 outline-none transition-all"
+                                    className="flex-1 px-4 py-2.5 rounded-lg border border-(--card-border) bg-(--background) text-(--foreground) focus:border-primary focus:ring-2 focus:ring-primary/20 dark:focus:ring-primary/20 outline-none transition-all"
                                     value={formData.admin_fee}
                                     onChange={(e) => setFormData({ ...formData, admin_fee: Number(e.target.value) })}
                                 />
                                 <select
-                                    className="w-24 px-2 py-2.5 rounded-lg border border-(--card-border) bg-(--background) text-(--foreground) focus:border-blue-500 outline-none transition-all text-sm font-bold"
+                                    className="w-24 px-2 py-2.5 rounded-lg border border-(--card-border) bg-(--background) text-(--foreground) focus:border-primary outline-none transition-all text-sm font-bold"
                                     value={formData.admin_fee_type}
                                     onChange={(e) => setFormData({ ...formData, admin_fee_type: e.target.value })}
                                 >
@@ -741,12 +741,12 @@ function FinanceTab({ id, initialData, refresh }: { id: string, initialData: any
                             <div className="flex gap-2">
                                 <input
                                     type="number"
-                                    className="flex-1 px-4 py-2.5 rounded-lg border border-(--card-border) bg-(--background) text-(--foreground) focus:border-blue-500 focus:ring-2 focus:ring-blue-100 dark:focus:ring-blue-900/30 outline-none transition-all"
+                                    className="flex-1 px-4 py-2.5 rounded-lg border border-(--card-border) bg-(--background) text-(--foreground) focus:border-primary focus:ring-2 focus:ring-primary/20 dark:focus:ring-primary/20 outline-none transition-all"
                                     value={formData.ppn}
                                     onChange={(e) => setFormData({ ...formData, ppn: Number(e.target.value) })}
                                 />
                                 <select
-                                    className="w-24 px-2 py-2.5 rounded-lg border border-(--card-border) bg-(--background) text-(--foreground) focus:border-blue-500 outline-none transition-all text-sm font-bold"
+                                    className="w-24 px-2 py-2.5 rounded-lg border border-(--card-border) bg-(--background) text-(--foreground) focus:border-primary outline-none transition-all text-sm font-bold"
                                     value={formData.ppn_type}
                                     onChange={(e) => setFormData({ ...formData, ppn_type: e.target.value })}
                                 >
@@ -763,12 +763,12 @@ function FinanceTab({ id, initialData, refresh }: { id: string, initialData: any
                             <div className="flex gap-2">
                                 <input
                                     type="number"
-                                    className="flex-1 px-4 py-2.5 rounded-lg border border-(--card-border) bg-(--background) text-(--foreground) focus:border-blue-500 focus:ring-2 focus:ring-blue-100 dark:focus:ring-blue-900/30 outline-none transition-all"
+                                    className="flex-1 px-4 py-2.5 rounded-lg border border-(--card-border) bg-(--background) text-(--foreground) focus:border-primary focus:ring-2 focus:ring-primary/20 dark:focus:ring-primary/20 outline-none transition-all"
                                     value={formData.organizer_fee_online}
                                     onChange={(e) => setFormData({ ...formData, organizer_fee_online: Number(e.target.value) })}
                                 />
                                 <select
-                                    className="w-24 px-2 py-2.5 rounded-lg border border-(--card-border) bg-(--background) text-(--foreground) focus:border-blue-500 outline-none transition-all text-sm font-bold"
+                                    className="w-24 px-2 py-2.5 rounded-lg border border-(--card-border) bg-(--background) text-(--foreground) focus:border-primary outline-none transition-all text-sm font-bold"
                                     value={formData.organizer_fee_online_type}
                                     onChange={(e) => setFormData({ ...formData, organizer_fee_online_type: e.target.value })}
                                 >
@@ -785,12 +785,12 @@ function FinanceTab({ id, initialData, refresh }: { id: string, initialData: any
                             <div className="flex gap-2">
                                 <input
                                     type="number"
-                                    className="flex-1 px-4 py-2.5 rounded-lg border border-(--card-border) bg-(--background) text-(--foreground) focus:border-blue-500 focus:ring-2 focus:ring-blue-100 dark:focus:ring-blue-900/30 outline-none transition-all"
+                                    className="flex-1 px-4 py-2.5 rounded-lg border border-(--card-border) bg-(--background) text-(--foreground) focus:border-primary focus:ring-2 focus:ring-primary/20 dark:focus:ring-primary/20 outline-none transition-all"
                                     value={formData.pg_fee}
                                     onChange={(e) => setFormData({ ...formData, pg_fee: Number(e.target.value) })}
                                 />
                                 <select
-                                    className="w-24 px-2 py-2.5 rounded-lg border border-(--card-border) bg-(--background) text-(--foreground) focus:border-blue-500 outline-none transition-all text-sm font-bold"
+                                    className="w-24 px-2 py-2.5 rounded-lg border border-(--card-border) bg-(--background) text-(--foreground) focus:border-primary outline-none transition-all text-sm font-bold"
                                     value={formData.pg_fee_type}
                                     onChange={(e) => setFormData({ ...formData, pg_fee_type: e.target.value })}
                                 >
@@ -804,7 +804,7 @@ function FinanceTab({ id, initialData, refresh }: { id: string, initialData: any
             </div>
 
             <div className="flex justify-end pt-4">
-                <button type="submit" disabled={loading} className="px-6 py-2.5 bg-blue-600 text-white font-bold rounded-lg hover:bg-blue-700 transition-colors shadow-sm shadow-blue-600/20 disabled:opacity-70 flex items-center justify-center gap-2">
+                <button type="submit" disabled={loading} className="px-6 py-2.5 bg-primary text-white font-bold rounded-lg hover:bg-primary transition-colors shadow-sm shadow-primary/20 disabled:opacity-70 flex items-center justify-center gap-2">
                     {loading ? <Loader2 className="w-5 h-5 animate-spin" /> : <Save className="w-5 h-5" />}
                     Update Finance Settings
                 </button>

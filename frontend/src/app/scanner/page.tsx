@@ -55,11 +55,11 @@ export default function ScannerPortal() {
     };
 
     return (
-        <div className="min-h-screen bg-gray-900 text-white flex flex-col">
+        <div className="min-h-screen bg-brand-dark text-white flex flex-col">
             {/* Header */}
             <div className="p-4 flex justify-between items-center bg-gray-800 shadow-md">
                 <h1 className="font-bold text-lg flex items-center gap-2">
-                    <QrCode className="text-blue-400" /> Scanner Portal
+                    <QrCode className="text-primary" /> Scanner Portal
                 </h1>
                 <button onClick={handleLogout} className="text-gray-400 hover:text-white"><LogOut className="w-5 h-5" /></button>
             </div>
@@ -74,13 +74,13 @@ export default function ScannerPortal() {
                             value={code}
                             onChange={(e) => setCode(e.target.value)}
                             placeholder="Enter Ticket Code"
-                            className="w-full bg-gray-800 border border-gray-700 rounded-2xl py-4 pl-6 pr-14 text-lg focus:ring-2 focus:ring-blue-500 outline-none transition-all placeholder:text-gray-500"
+                            className="w-full bg-gray-800 border border-gray-700 rounded-2xl py-4 pl-6 pr-14 text-lg focus:ring-2 focus:ring-primary outline-none transition-all placeholder:text-gray-500"
                             autoFocus
                         />
                         <button
                             type="submit"
                             disabled={loading || !code}
-                            className="absolute right-2 top-2 bottom-2 bg-blue-600 hover:bg-blue-500 text-white p-3 rounded-xl transition-colors disabled:opacity-50"
+                            className="absolute right-2 top-2 bottom-2 bg-primary hover:bg-primary text-white p-3 rounded-xl transition-colors disabled:opacity-50"
                         >
                             {loading ? <div className="w-5 h-5 border-2 border-white/30 border-t-white rounded-full animate-spin" /> : <Search className="w-5 h-5" />}
                         </button>
@@ -104,7 +104,7 @@ export default function ScannerPortal() {
                                 {result.ticket.holder_name && <p className="mt-1 font-bold">{result.ticket.holder_name}</p>}
                             </div>
                         )}
-                        <button onClick={() => { setResult(null); setCode(""); }} className="mt-6 bg-white text-gray-900 px-6 py-3 rounded-xl font-bold hover:bg-gray-100 transition-colors w-full">
+                        <button onClick={() => { setResult(null); setCode(""); }} className="mt-6 bg-white text-brand-dark px-6 py-3 rounded-xl font-bold hover:bg-gray-100 transition-colors w-full">
                             Scan Next
                         </button>
                     </div>

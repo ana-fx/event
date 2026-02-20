@@ -51,7 +51,7 @@ type TransactionItem struct {
 func GetAllTransactions(eventID int) ([]Transaction, error) {
 	query := `
 		SELECT t.id, t.code, t.event_id, t.ticket_id, t.name, t.email, t.phone, t.quantity, t.total_price, t.status, t.created_at,
-		       e.name as event_name, tk.name as ticket_name
+		       COALESCE(e.name, '') as event_name, COALESCE(tk.name, '') as ticket_name
 		FROM transactions t
 		LEFT JOIN events e ON t.event_id = e.id
 		LEFT JOIN tickets tk ON t.ticket_id = tk.id
@@ -172,7 +172,7 @@ func GetTransactionByCode(code string) (*Transaction, error) {
 	query := `
 		SELECT t.id, t.code, t.event_id, t.ticket_id, t.name, t.email, t.phone, t.city, t.nik, t.gender, t.quantity, t.total_price, t.status, t.created_at,
 		       t.snap_token, t.redirect_url, t.payment_type, t.midtrans_transaction_id,
-		       e.name as event_name, tk.name as ticket_name
+		       COALESCE(e.name, '') as event_name, COALESCE(tk.name, '') as ticket_name
 		FROM transactions t
 		LEFT JOIN events e ON t.event_id = e.id
 		LEFT JOIN tickets tk ON t.ticket_id = tk.id

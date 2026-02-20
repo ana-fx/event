@@ -80,7 +80,7 @@ export default function PaymentPage({ params }: { params: Promise<{ code: string
         });
     };
 
-    if (loading) return <div className="min-h-screen flex items-center justify-center bg-white"><Loader2 className="w-8 h-8 animate-spin text-blue-600" /></div>;
+    if (loading) return <div className="min-h-screen flex items-center justify-center bg-white"><Loader2 className="w-8 h-8 animate-spin text-primary" /></div>;
 
     if (!transaction) return null;
 
@@ -121,7 +121,7 @@ export default function PaymentPage({ params }: { params: Promise<{ code: string
         : "https://app.sandbox.midtrans.com/snap/snap.js";
 
     return (
-        <div className="min-h-screen bg-[#FDFDFD] font-body selection:bg-blue-600/10">
+        <div className="min-h-screen bg-[#FDFDFD] font-body selection:bg-primary/10">
             <Script
                 src={snapUrl}
                 data-client-key={clientKey}
@@ -132,7 +132,7 @@ export default function PaymentPage({ params }: { params: Promise<{ code: string
             <main className="max-w-7xl mx-auto px-6 lg:px-10 py-24 sm:py-32 lg:py-48">
                 {/* Header Title */}
                 <div className="mb-12 sm:mb-20">
-                    <h1 className="text-[10px] sm:text-[12px] font-black uppercase tracking-[0.4em] text-blue-600 mb-4 font-heading">Direct Payment</h1>
+                    <h1 className="text-[10px] sm:text-[12px] font-black uppercase tracking-[0.4em] text-primary mb-4 font-heading">Direct Payment</h1>
                     <h2 className="text-4xl sm:text-5xl lg:text-7xl font-black text-[#1A1A1A] tracking-[-0.04em] font-heading leading-tight uppercase">
                         Review & <br className="hidden sm:block" /> <span className="text-gray-300">Complete Payment</span>
                     </h2>
@@ -146,25 +146,25 @@ export default function PaymentPage({ params }: { params: Promise<{ code: string
                         {/* Chapter 01: Order Details */}
                         <section className="space-y-8 sm:space-y-10">
                             <div className="flex items-center gap-4 sm:gap-6">
-                                <span className="w-8 h-8 sm:w-10 sm:h-10 rounded-full bg-blue-600 text-white flex items-center justify-center font-black text-xs sm:text-sm font-heading">01</span>
+                                <span className="w-8 h-8 sm:w-10 sm:h-10 rounded-full bg-primary text-white flex items-center justify-center font-black text-xs sm:text-sm font-heading">01</span>
                                 <h3 className="text-lg sm:text-xl font-black text-[#1A1A1A] uppercase tracking-tighter font-heading">Order Details</h3>
                             </div>
 
                             <div className="bg-white p-8 sm:p-10 rounded-[32px] sm:rounded-[40px] border border-gray-100 shadow-sm space-y-8">
                                 <div className="flex items-start gap-6 pb-8 border-b border-gray-50">
-                                    <div className="w-12 h-12 rounded-2xl bg-blue-600 flex items-center justify-center shrink-0">
+                                    <div className="w-12 h-12 rounded-2xl bg-primary flex items-center justify-center shrink-0">
                                         <Receipt className="w-6 h-6 text-white" />
                                     </div>
                                     <div className="space-y-1">
                                         <p className="text-[9px] font-black uppercase tracking-widest text-gray-400 font-heading">Event Name</p>
-                                        <h4 className="text-xl font-black text-gray-950 font-heading uppercase tracking-tight leading-tight">{transaction.event_name}</h4>
+                                        <h4 className="text-xl font-black text-brand-dark font-heading uppercase tracking-tight leading-tight">{transaction.event_name}</h4>
                                     </div>
                                 </div>
 
                                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-8">
                                     <div className="space-y-1">
                                         <p className="text-[9px] font-black uppercase tracking-widest text-gray-400 font-heading">Ticket Categories</p>
-                                        <p className="text-sm font-bold text-gray-900 font-body">
+                                        <p className="text-sm font-bold text-brand-dark font-body">
                                             {transaction.items?.length > 0
                                                 ? transaction.items.map((it: any) => `${it.name} (${it.quantity})`).join(", ")
                                                 : transaction.ticket_name}
@@ -172,13 +172,13 @@ export default function PaymentPage({ params }: { params: Promise<{ code: string
                                     </div>
                                     <div className="space-y-1">
                                         <p className="text-[9px] font-black uppercase tracking-widest text-gray-400 font-heading">Total Quantity</p>
-                                        <p className="text-sm font-bold text-gray-900 font-body">
+                                        <p className="text-sm font-bold text-brand-dark font-body">
                                             {transaction.items?.reduce((acc: number, it: any) => acc + it.quantity, 0) || (transaction.quantity?.Int64 || transaction.quantity)} Ticket(s)
                                         </p>
                                     </div>
                                     <div className="space-y-1">
                                         <p className="text-[9px] font-black uppercase tracking-widest text-gray-400 font-heading">Order ID</p>
-                                        <p className="text-sm font-bold text-blue-600 font-body">#{transaction.code}</p>
+                                        <p className="text-sm font-bold text-primary font-body">#{transaction.code}</p>
                                     </div>
                                 </div>
                             </div>
@@ -187,7 +187,7 @@ export default function PaymentPage({ params }: { params: Promise<{ code: string
                         {/* Chapter 02: Billing Information */}
                         <section className="space-y-8 sm:space-y-10">
                             <div className="flex items-center gap-4 sm:gap-6">
-                                <span className="w-8 h-8 sm:w-10 sm:h-10 rounded-full bg-blue-600 text-white flex items-center justify-center font-black text-xs sm:text-sm font-heading">02</span>
+                                <span className="w-8 h-8 sm:w-10 sm:h-10 rounded-full bg-primary text-white flex items-center justify-center font-black text-xs sm:text-sm font-heading">02</span>
                                 <h3 className="text-lg sm:text-xl font-black text-[#1A1A1A] uppercase tracking-tighter font-heading">Billing Information</h3>
                             </div>
 
@@ -198,30 +198,30 @@ export default function PaymentPage({ params }: { params: Promise<{ code: string
                                     </div>
                                     <div className="space-y-1">
                                         <p className="text-[9px] font-black uppercase tracking-widest text-gray-400 font-heading">Customer Name</p>
-                                        <h4 className="text-xl font-black text-gray-950 font-heading uppercase tracking-tight leading-tight">{transaction.name}</h4>
+                                        <h4 className="text-xl font-black text-brand-dark font-heading uppercase tracking-tight leading-tight">{transaction.name}</h4>
                                     </div>
                                 </div>
 
                                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-8">
                                     <div className="space-y-1">
                                         <p className="text-[9px] font-black uppercase tracking-widest text-gray-400 font-heading">Email Address</p>
-                                        <p className="text-sm font-bold text-gray-900 font-body">{transaction.email}</p>
+                                        <p className="text-sm font-bold text-brand-dark font-body">{transaction.email}</p>
                                     </div>
                                     <div className="space-y-1">
                                         <p className="text-[9px] font-black uppercase tracking-widest text-gray-400 font-heading">Phone Number</p>
-                                        <p className="text-sm font-bold text-gray-900 font-body">{transaction.phone || '-'}</p>
+                                        <p className="text-sm font-bold text-brand-dark font-body">{transaction.phone || '-'}</p>
                                     </div>
                                     <div className="space-y-1">
                                         <p className="text-[9px] font-black uppercase tracking-widest text-gray-400 font-heading">NIK / Passport</p>
-                                        <p className="text-sm font-bold text-gray-900 font-body">{transaction.nik || '-'}</p>
+                                        <p className="text-sm font-bold text-brand-dark font-body">{transaction.nik || '-'}</p>
                                     </div>
                                     <div className="space-y-1">
                                         <p className="text-[9px] font-black uppercase tracking-widest text-gray-400 font-heading">Gender</p>
-                                        <p className="text-sm font-bold text-gray-900 font-body">{transaction.gender || '-'}</p>
+                                        <p className="text-sm font-bold text-brand-dark font-body">{transaction.gender || '-'}</p>
                                     </div>
                                     <div className="space-y-1">
                                         <p className="text-[9px] font-black uppercase tracking-widest text-gray-400 font-heading">City</p>
-                                        <p className="text-sm font-bold text-gray-900 font-body">{transaction.city || '-'}</p>
+                                        <p className="text-sm font-bold text-brand-dark font-body">{transaction.city || '-'}</p>
                                     </div>
                                 </div>
                             </div>
@@ -231,9 +231,9 @@ export default function PaymentPage({ params }: { params: Promise<{ code: string
                         <div className="pt-4">
                             <button
                                 onClick={() => router.back()}
-                                className="text-[10px] font-black uppercase tracking-widest text-gray-300 hover:text-blue-600 transition-colors font-heading flex items-center gap-2 group"
+                                className="text-[10px] font-black uppercase tracking-widest text-gray-300 hover:text-primary transition-colors font-heading flex items-center gap-2 group"
                             >
-                                <span className="w-5 h-5 rounded-full border border-gray-200 flex items-center justify-center group-hover:border-blue-600 transition-colors">&larr;</span>
+                                <span className="w-5 h-5 rounded-full border border-gray-200 flex items-center justify-center group-hover:border-primary transition-colors">&larr;</span>
                                 Wait, I want to change my details
                             </button>
                         </div>
@@ -295,11 +295,11 @@ export default function PaymentPage({ params }: { params: Promise<{ code: string
                                         <p className="text-[9px] sm:text-[10px] font-black uppercase tracking-[0.25em] text-[#D1D1D1] font-heading">Total Amount Due</p>
                                     </div>
                                     <div className="text-center space-y-4">
-                                        <p className="text-[40px] sm:text-[48px] lg:text-[56px] font-black text-blue-600 leading-none tracking-[-0.05em] font-heading">
+                                        <p className="text-[40px] sm:text-[48px] lg:text-[56px] font-black text-primary leading-none tracking-[-0.05em] font-heading">
                                             {formatIDR(transaction.total_price)}
                                         </p>
-                                        <div className="flex items-center justify-center gap-2 py-3 px-6 bg-blue-50/40 rounded-2xl w-fit mx-auto ring-1 ring-blue-50/50">
-                                            <span className="text-[8px] sm:text-[9px] font-black bg-blue-600 text-white px-2 py-0.5 rounded uppercase tracking-wider font-heading">Summary</span>
+                                        <div className="flex items-center justify-center gap-2 py-3 px-6 bg-primary/10/40 rounded-2xl w-fit mx-auto ring-1 ring-primary/10/50">
+                                            <span className="text-[8px] sm:text-[9px] font-black bg-primary text-white px-2 py-0.5 rounded uppercase tracking-wider font-heading">Summary</span>
                                         </div>
                                     </div>
                                 </div>
@@ -307,7 +307,7 @@ export default function PaymentPage({ params }: { params: Promise<{ code: string
                                 <button
                                     onClick={handlePayNow}
                                     disabled={processing}
-                                    className="w-full py-6 px-12 bg-gray-950 text-white font-black rounded-[28px] sm:rounded-[36px] shadow-2xl shadow-gray-950/20 hover:bg-blue-600 hover:scale-[1.02] active:scale-[0.98] transition-all flex items-center justify-center gap-4 text-xs group font-heading tracking-[0.2em] uppercase"
+                                    className="w-full py-6 px-12 bg-brand-dark text-white font-black rounded-[28px] sm:rounded-[36px] shadow-2xl shadow-brand-dark/20 hover:bg-primary hover:scale-[1.02] active:scale-[0.98] transition-all flex items-center justify-center gap-4 text-xs group font-heading tracking-[0.2em] uppercase"
                                 >
                                     {processing ? (
                                         <Loader2 className="w-5 h-5 animate-spin" />
