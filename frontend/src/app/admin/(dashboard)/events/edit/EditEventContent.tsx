@@ -40,7 +40,8 @@ interface Ticket {
 
 // --- TAB 1: DETAILS ---
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
-function EventDetailsTab({ id, initialData, refresh }: { id: string, initialData: any, refresh: () => void }) {
+function EventDetailsTab({ id, initialData, refresh, isOrganizer }: { id: string, initialData: any, refresh: () => void, isOrganizer: boolean }) {
+    const router = useRouter();
     const [loading, setLoading] = useState(false);
     const [formData, setFormData] = useState({
         name: initialData?.name || "",
@@ -65,6 +66,7 @@ function EventDetailsTab({ id, initialData, refresh }: { id: string, initialData
 
     useEffect(() => {
         const fetchOrganizers = async () => {
+            if (isOrganizer) return;
             try {
                 const res = await axiosInstance.get("/admin/organizers");
                 const options = res.data.map((org: any) => ({
@@ -77,7 +79,7 @@ function EventDetailsTab({ id, initialData, refresh }: { id: string, initialData
             }
         };
         fetchOrganizers();
-    }, []);
+    }, [isOrganizer]);
 
     const [previews, setPreviews] = useState({
         banner: getImageUrl(initialData?.banner_path),
@@ -134,9 +136,13 @@ function EventDetailsTab({ id, initialData, refresh }: { id: string, initialData
             if (files.thumbnail) data.append("thumbnail", files.thumbnail);
 
 
-            await axiosInstance.put(`/admin/events?id=${id}`, data);
+            const endpoint = isOrganizer ? `/organizer/events?id=${id}` : `/admin/events?id=${id}`;
+            await axiosInstance.put(endpoint, data, {
+                headers: { "Content-Type": "multipart/form-data" },
+            });
+
             toast.success("Event updated successfully!");
-            refresh();
+            router.push(isOrganizer ? "/organizer/events" : "/admin/events");
         } catch (error) {
             // eslint-disable-next-line @typescript-eslint/no-explicit-any
             toast.error((error as any).response?.data?.error || "Failed to update event");
@@ -239,15 +245,17 @@ function EventDetailsTab({ id, initialData, refresh }: { id: string, initialData
                         </div>
                     </div>
 
-                    <div className="md:col-span-2">
-                        <Select
-                            label="Select Organizer"
-                            value={formData.organizer_id}
-                            onChange={(val) => setFormData({ ...formData, organizer_id: val })}
-                            options={organizers}
-                            placeholder="Choose an existing organizer"
-                        />
-                    </div>
+                    {!isOrganizer && (
+                        <div className="md:col-span-2">
+                            <Select
+                                label="Select Organizer"
+                                value={formData.organizer_id}
+                                onChange={(val) => setFormData({ ...formData, organizer_id: val })}
+                                options={organizers}
+                                placeholder="Choose an existing organizer"
+                            />
+                        </div>
+                    )}
                 </div>
             </div>
 
@@ -306,7 +314,13 @@ function EventDetailsTab({ id, initialData, refresh }: { id: string, initialData
                 </div>
             </div>
 
-            <div className="flex justify-end pt-4">
+            <div className="flex justify-end pt-4 gap-2">
+                <Link
+                    href={isOrganizer ? "/organizer/events" : "/admin/events"}
+                    className="px-6 py-2.5 rounded-lg border border-(--card-border) text-(--foreground) font-bold hover:bg-(--card-hover) transition-colors"
+                >
+                    Cancel
+                </Link>
                 <button type="submit" disabled={loading} className="px-4 py-2.5 bg-primary text-white font-bold rounded-lg hover:bg-primary transition-colors shadow-sm shadow-primary/20 disabled:opacity-70 flex items-center justify-center">
                     {loading ? <Loader2 className="w-5 h-5 animate-spin" /> : <Save className="w-5 h-5" />}
                     Save Changes
@@ -809,7 +823,7 @@ function FinanceTab({ id, initialData, refresh }: { id: string, initialData: any
 }
 
 // --- MAIN PAGE ---
-export default function EditEventContent() {
+export default function EditEventContent({ isOrganizer = false }: { isOrganizer?: boolean }) {
     const searchParams = useSearchParams();
     const id = searchParams.get("id");
     const [activeTab, setActiveTab] = useState("details");
@@ -820,43 +834,66 @@ export default function EditEventContent() {
     const fetchEvent = async () => {
         if (!id) return;
         try {
-            const res = await axiosInstance.get(`/admin/events?id=${id}`);
+            const endpoint = isOrganizer ? `/organizer/events?id=${id}` : `/admin/events?id=${id}`;
+            const res = await axiosInstance.get(endpoint);
             setEventData(Array.isArray(res.data) ? res.data[0] : res.data);
         } catch (e) { toast.error("Failed to load event"); }
         finally { setLoading(false); }
     };
 
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-    useEffect(() => { fetchEvent(); }, [id]);
+    useEffect(() => {
+        fetchEvent();
+    }, [id, isOrganizer]);
 
-    if (!id) return null;
-    if (loading) return <div className="flex h-64 justify-center items-center"><Loader2 className="animate-spin" /></div>;
+    if (!id) return <div className="p-8 text-center text-rose-500 font-bold">Invalid Event ID</div>;
 
     return (
         <div className="max-w-5xl mx-auto pb-20">
             <div className="flex items-center gap-4 mb-6">
-                <Link href="/admin/events" className="p-2 hover:bg-(--card) border border-transparent hover:border-(--card-border) rounded-lg text-gray-500 transition-all"><ChevronLeft className="w-5 h-5" /></Link>
+                <Link
+                    href={isOrganizer ? "/organizer/events" : "/admin/events"}
+                    className="p-2 hover:bg-(--card) border border-transparent hover:border-(--card-border) rounded-lg text-gray-500 transition-all"
+                >
+                    <ChevronLeft className="w-5 h-5" />
+                </Link>
                 <div>
                     <h2 className="text-2xl font-bold text-(--foreground)">Edit Event: {eventData?.name}</h2>
                     <p className="text-gray-500 text-sm">Manage details and assignments.</p>
                 </div>
             </div>
 
-            <Tabs
-                activeKey={activeTab}
-                onChange={setActiveTab}
-                items={[
-                    { key: "details", label: "Event Details" },
-                    { key: "tickets", label: "Tickets" },
-                    { key: "finance", label: "Finance" },
-                    { key: "assignments", label: "Assignments" },
-                ]}
-            />
+            <div className="mb-6">
+                <Tabs
+                    activeKey={activeTab}
+                    onChange={setActiveTab}
+                    items={[
+                        { key: "details", label: "Event Details" },
+                        { key: "tickets", label: "Tickets" },
+                        { key: "finance", label: "Finance" },
+                        { key: "assignments", label: "Assignments" },
+                    ].filter(tab => !isOrganizer || (tab.key === "details" || tab.key === "tickets"))}
+                />
+            </div>
 
-            {activeTab === "details" && <EventDetailsTab id={id} initialData={eventData} refresh={fetchEvent} />}
-            {activeTab === "tickets" && <TicketsTab eventId={id} />}
-            {activeTab === "finance" && <FinanceTab id={id} initialData={eventData} refresh={fetchEvent} />}
-            {activeTab === "assignments" && <AssignmentsTab eventId={id} />}
+            {loading ? (
+                <div className="flex flex-col items-center justify-center p-20 bg-(--card) rounded-3xl border border-(--card-border) border-dashed">
+                    <Loader2 className="w-10 h-10 animate-spin text-primary mb-4" />
+                    <p className="text-gray-500 font-bold uppercase tracking-widest text-xs">Loading Event Data...</p>
+                </div>
+            ) : (
+                <>
+                    {activeTab === "details" && (
+                        <EventDetailsTab id={id!} initialData={eventData} refresh={fetchEvent} isOrganizer={isOrganizer} />
+                    )}
+                    {activeTab === "tickets" && <TicketsTab eventId={id!} />}
+                    {!isOrganizer && activeTab === "finance" && (
+                        <FinanceTab id={id!} initialData={eventData} refresh={fetchEvent} />
+                    )}
+                    {!isOrganizer && activeTab === "assignments" && (
+                        <AssignmentsTab eventId={id!} />
+                    )}
+                </>
+            )}
         </div>
     );
 }

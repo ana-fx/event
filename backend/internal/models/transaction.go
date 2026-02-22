@@ -48,7 +48,7 @@ type TransactionItem struct {
 	UpdatedAt     time.Time `json:"updated_at"`
 }
 
-func GetAllTransactions(eventID int) ([]Transaction, error) {
+func GetAllTransactions(eventID int, organizerID *int) ([]Transaction, error) {
 	query := `
 		SELECT t.id, t.code, t.event_id, t.ticket_id, t.name, t.email, t.phone, t.quantity, t.total_price, t.status, t.created_at,
 		       COALESCE(e.name, '') as event_name, COALESCE(tk.name, '') as ticket_name
@@ -58,9 +58,16 @@ func GetAllTransactions(eventID int) ([]Transaction, error) {
 		WHERE t.deleted_at IS NULL`
 
 	var args []interface{}
+	argCount := 1
 	if eventID > 0 {
-		query += ` AND t.event_id = $1`
+		query += fmt.Sprintf(" AND t.event_id = $%d", argCount)
 		args = append(args, eventID)
+		argCount++
+	}
+	if organizerID != nil {
+		query += fmt.Sprintf(" AND e.organizer_id = $%d", argCount)
+		args = append(args, *organizerID)
+		argCount++
 	}
 	query += ` ORDER BY t.created_at DESC`
 
@@ -152,15 +159,6 @@ func CreateTransaction(t *Transaction) error {
 	}
 
 	return nil
-}
-
-func SumPaidRevenue() (float64, error) {
-	var total sql.NullFloat64
-	err := database.DB.QueryRow(`SELECT SUM(total_price) FROM transactions WHERE status = 'paid' AND deleted_at IS NULL`).Scan(&total)
-	if err != nil {
-		return 0, err
-	}
-	return total.Float64, nil
 }
 
 func UpdateTransactionSnapToken(id int, token string, redirectURL string) error {

@@ -51,7 +51,54 @@ func AuthMiddleware(next http.HandlerFunc) http.HandlerFunc {
 		}
 		userID := int(userIDStr)
 
+		// Get User to get their role
+		user, err := models.GetUserByID(userID)
+		if err != nil {
+			http.Error(w, "User not found", http.StatusUnauthorized)
+			return
+		}
+
 		ctx := context.WithValue(r.Context(), models.UserIDKey, userID)
+		ctx = context.WithValue(ctx, "userRole", user.Role)
 		next(w, r.WithContext(ctx))
 	}
+}
+
+func RoleMiddleware(allowedRoles ...string) func(http.HandlerFunc) http.HandlerFunc {
+	return func(next http.HandlerFunc) http.HandlerFunc {
+		return func(w http.ResponseWriter, r *http.Request) {
+			role, ok := r.Context().Value("userRole").(string)
+			if !ok {
+				http.Error(w, "Forbidden: No role found", http.StatusForbidden)
+				return
+			}
+
+			isAllowed := false
+			for _, allowed := range allowedRoles {
+				if role == allowed {
+					isAllowed = true
+					break
+				}
+			}
+
+			if !isAllowed {
+				http.Error(w, "Forbidden: You do not have permission to access this resource", http.StatusForbidden)
+				return
+			}
+
+			next(w, r)
+		}
+	}
+}
+
+func RecoveryMiddleware(next http.Handler) http.Handler {
+	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		defer func() {
+			if err := recover(); err != nil {
+				fmt.Printf("[RECOVERY] Panic caught: %v\n", err)
+				http.Error(w, "Internal Server Error", http.StatusInternalServerError)
+			}
+		}()
+		next.ServeHTTP(w, r)
+	})
 }

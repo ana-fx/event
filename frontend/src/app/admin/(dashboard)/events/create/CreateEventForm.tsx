@@ -10,7 +10,7 @@ import { Select } from "@/components/ui/Select";
 import { DatePicker } from "@/components/ui/DatePicker";
 import RichTextEditor from "@/components/ui/RichTextEditor";
 
-export default function CreateEventForm() {
+export default function CreateEventForm({ isOrganizer = false }: { isOrganizer?: boolean }) {
     const router = useRouter();
     const [loading, setLoading] = useState(false);
 
@@ -55,6 +55,7 @@ export default function CreateEventForm() {
 
     useEffect(() => {
         const fetchOrganizers = async () => {
+            if (isOrganizer) return; // Don't fetch if organizer
             try {
                 const res = await axiosInstance.get("/admin/organizers");
                 const options = res.data.map((org: any) => ({
@@ -67,7 +68,7 @@ export default function CreateEventForm() {
             }
         };
         fetchOrganizers();
-    }, []);
+    }, [isOrganizer]);
 
     const [previews, setPreviews] = useState({
         banner: "",
@@ -103,12 +104,13 @@ export default function CreateEventForm() {
             if (thumbnail) data.append("thumbnail", thumbnail);
 
 
-            await axiosInstance.post("/admin/events", data, {
+            const endpoint = isOrganizer ? "/organizer/events" : "/admin/events";
+            await axiosInstance.post(endpoint, data, {
                 headers: { "Content-Type": "multipart/form-data" },
             });
 
             toast.success("Event created successfully!");
-            router.push("/admin/events");
+            router.push(isOrganizer ? "/organizer/events" : "/admin/events");
         } catch (error) {
             console.error(error);
             // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -122,7 +124,7 @@ export default function CreateEventForm() {
         <div className="max-w-4xl mx-auto pb-20">
             <div className="flex items-center gap-4 mb-8">
                 <Link
-                    href="/admin/events"
+                    href={isOrganizer ? "/organizer/events" : "/admin/events"}
                     className="p-2 hover:bg-(--card) border border-transparent hover:border-(--card-border) rounded-lg text-gray-500 transition-all"
                 >
                     <ChevronLeft className="w-5 h-5" />
@@ -255,15 +257,17 @@ export default function CreateEventForm() {
                             </div>
                         </div>
 
-                        <div className="md:col-span-2">
-                            <Select
-                                label="Select Organizer"
-                                value={formData.organizer_id}
-                                onChange={(val) => setFormData({ ...formData, organizer_id: val })}
-                                options={organizers}
-                                placeholder="Choose an existing organizer"
-                            />
-                        </div>
+                        {!isOrganizer && (
+                            <div className="md:col-span-2">
+                                <Select
+                                    label="Select Organizer"
+                                    value={formData.organizer_id}
+                                    onChange={(val) => setFormData({ ...formData, organizer_id: val })}
+                                    options={organizers}
+                                    placeholder="Choose an existing organizer"
+                                />
+                            </div>
+                        )}
                     </div>
                 </div>
 
@@ -468,7 +472,7 @@ export default function CreateEventForm() {
                         {/* Submit Actions */}
                         <div className="flex justify-end gap-4 pt-4">
                             <Link
-                                href="/admin/events"
+                                href={isOrganizer ? "/organizer/events" : "/admin/events"}
                                 className="px-6 py-3 rounded-xl border border-gray-200 text-gray-600 font-bold hover:bg-gray-50 transition-colors"
                             >
                                 Cancel

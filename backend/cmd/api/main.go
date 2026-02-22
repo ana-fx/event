@@ -223,15 +223,36 @@ func main() {
 	}))
 	http.HandleFunc("/api/admin/finance/balance", middleware.AuthMiddleware(admin.GetResellerBalance))
 
+	// Organizer Routes
+	organizerOnly := middleware.RoleMiddleware("organizer", "admin")
+	http.HandleFunc("/api/organizer/dashboard", middleware.AuthMiddleware(organizerOnly(admin.DashboardStats)))
+	http.HandleFunc("/api/organizer/events", middleware.AuthMiddleware(organizerOnly(func(w http.ResponseWriter, r *http.Request) {
+		switch r.Method {
+		case http.MethodGet:
+			admin.ListEvents(w, r)
+		case http.MethodPost:
+			admin.CreateEvent(w, r)
+		case http.MethodPut:
+			admin.UpdateEvent(w, r)
+		case http.MethodDelete:
+			admin.DeleteEvent(w, r)
+		default:
+			http.Error(w, "Method not allowed", http.StatusMethodNotAllowed)
+		}
+	})))
+	http.HandleFunc("/api/organizer/reports/transactions", middleware.AuthMiddleware(organizerOnly(admin.TransactionReport)))
+	http.HandleFunc("/api/organizer/reports/tickets", middleware.AuthMiddleware(organizerOnly(admin.GetEventTicketReport)))
+	http.HandleFunc("/api/organizer/profile", middleware.AuthMiddleware(organizerOnly(handlers.GetOrganizerProfile)))
+	http.HandleFunc("/api/organizer/profile/update", middleware.AuthMiddleware(organizerOnly(handlers.UpdateOrganizerProfile)))
+
 	// Static Files
 	http.Handle("/uploads/", http.StripPrefix("/uploads/", http.FileServer(http.Dir("storage/uploads"))))
 
 	// 3. Start Server
 	port := ":8080"
-	fmt.Printf("Server starting on port %s...\n", port)
-
-	// Wrap the default ServeMux with CORS Middleware
-	if err := http.ListenAndServe(port, middleware.CORSMiddleware(http.DefaultServeMux)); err != nil {
+	// Wrap the default ServeMux with Recovery and CORS Middleware
+	handler := middleware.RecoveryMiddleware(middleware.CORSMiddleware(http.DefaultServeMux))
+	if err := http.ListenAndServe(port, handler); err != nil {
 		fmt.Printf("Error starting server: %s\n", err)
 	}
 }

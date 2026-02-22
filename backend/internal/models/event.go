@@ -2,6 +2,7 @@ package models
 
 import (
 	"event-backend/internal/database"
+	"fmt"
 	"time"
 )
 
@@ -47,17 +48,25 @@ type Event struct {
 	UpdatedAt                time.Time `json:"updated_at"`
 }
 
-func GetAllEvents() ([]Event, error) {
-	rows, err := database.DB.Query(`
+func GetAllEvents(organizerID *int) ([]Event, error) {
+	query := `
 		SELECT e.id, e.name, e.slug, e.category, e.status, e.banner_path, e.thumbnail_path, e.start_date, e.end_date, e.description, e.location, e.city, 
 		       COALESCE(u.organizer_name, e.organizer_name) as organizer_name, 
 		       e.youtube_link, e.organizer_tax, e.organizer_tax_type, e.admin_fee, e.admin_fee_type, e.ppn, e.ppn_type, e.created_at,
 		       e.organizer_id
 		FROM events e
 		LEFT JOIN users u ON e.organizer_id = u.id
-		WHERE e.deleted_at IS NULL 
-		ORDER BY e.created_at DESC
-	`)
+		WHERE e.deleted_at IS NULL`
+
+	var args []interface{}
+	if organizerID != nil {
+		query += ` AND e.organizer_id = $1`
+		args = append(args, *organizerID)
+	}
+
+	query += ` ORDER BY e.created_at DESC`
+
+	rows, err := database.DB.Query(query, args...)
 	if err != nil {
 		return nil, err
 	}
@@ -291,9 +300,60 @@ func GetEventBySlug(slug string) (*Event, error) {
 	return &e, nil
 }
 
-func CountActiveEvents() (int, error) {
+func CountActiveEvents(organizerID *int) (int, error) {
 	var count int
-	err := database.DB.QueryRow(`SELECT count(*) FROM events WHERE deleted_at IS NULL`).Scan(&count)
+	query := `SELECT count(*) FROM events WHERE deleted_at IS NULL`
+	var err error
+	if organizerID != nil {
+		query += ` AND organizer_id = $1`
+		err = database.DB.QueryRow(query, *organizerID).Scan(&count)
+	} else {
+		err = database.DB.QueryRow(query).Scan(&count)
+	}
+	if err != nil {
+		fmt.Printf("[models.CountActiveEvents] Error: %v\n", err)
+	}
+	return count, err
+}
+
+func SumPaidRevenue(organizerID *int) (float64, error) {
+	var sum float64
+	query := `SELECT COALESCE(SUM(total_price), 0)::FLOAT8 FROM transactions WHERE status = 'paid'`
+	var err error
+	if organizerID != nil {
+		// This requires transactions to be linked to events which are linked to organizers
+		query = `
+			SELECT COALESCE(SUM(t.total_price), 0)::FLOAT8 
+			FROM transactions t
+			JOIN events e ON t.event_id = e.id
+			WHERE t.status = 'paid' AND e.organizer_id = $1`
+		err = database.DB.QueryRow(query, *organizerID).Scan(&sum)
+	} else {
+		err = database.DB.QueryRow(query).Scan(&sum)
+	}
+	if err != nil {
+		fmt.Printf("[models.SumPaidRevenue] Error: %v\n", err)
+	}
+	return sum, err
+}
+
+func CountPaidTickets(organizerID *int) (int, error) {
+	var count int
+	query := `SELECT COALESCE(SUM(quantity), 0)::BIGINT FROM transactions WHERE status = 'paid'`
+	var err error
+	if organizerID != nil {
+		query = `
+			SELECT COALESCE(SUM(t.quantity), 0)::BIGINT 
+			FROM transactions t
+			JOIN events e ON t.event_id = e.id
+			WHERE t.status = 'paid' AND e.organizer_id = $1`
+		err = database.DB.QueryRow(query, *organizerID).Scan(&count)
+	} else {
+		err = database.DB.QueryRow(query).Scan(&count)
+	}
+	if err != nil {
+		fmt.Printf("[models.CountPaidTickets] Error: %v\n", err)
+	}
 	return count, err
 }
 

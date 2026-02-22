@@ -29,7 +29,15 @@ func ListEvents(w http.ResponseWriter, r *http.Request) {
 		}
 	}
 
-	events, err := models.GetAllEvents()
+	// Check if we should filter by organizer
+	var organizerID *int
+	if role, ok := r.Context().Value("userRole").(string); ok && role == "organizer" {
+		if uid, ok := r.Context().Value(models.UserIDKey).(int); ok {
+			organizerID = &uid
+		}
+	}
+
+	events, err := models.GetAllEvents(organizerID)
 	if err != nil {
 		http.Error(w, "Failed to fetch events: "+err.Error(), http.StatusInternalServerError)
 		return
@@ -114,9 +122,17 @@ func CreateEvent(w http.ResponseWriter, r *http.Request) {
 		req.YoutubeLink = &ytLink
 	}
 
-	if orgIDStr := r.FormValue("organizer_id"); orgIDStr != "" {
-		if id, err := strconv.Atoi(orgIDStr); err == nil {
-			req.OrganizerID = &id
+	// Organizer security: if role is organizer, force their own ID
+	if role, ok := r.Context().Value("userRole").(string); ok && role == "organizer" {
+		if uid, ok := r.Context().Value(models.UserIDKey).(int); ok {
+			req.OrganizerID = &uid
+		}
+	} else {
+		// Admin can still set any organizer_id
+		if orgIDStr := r.FormValue("organizer_id"); orgIDStr != "" {
+			if id, err := strconv.Atoi(orgIDStr); err == nil {
+				req.OrganizerID = &id
+			}
 		}
 	}
 
@@ -560,6 +576,21 @@ func DeleteEvent(w http.ResponseWriter, r *http.Request) {
 	if err != nil {
 		http.Error(w, "Invalid ID format", http.StatusBadRequest)
 		return
+	}
+
+	event, err := models.GetEventByID(id)
+	if err != nil {
+		http.Error(w, "Event not found", http.StatusNotFound)
+		return
+	}
+
+	// Security check for organizers
+	if role, ok := r.Context().Value("userRole").(string); ok && role == "organizer" {
+		uid, _ := r.Context().Value(models.UserIDKey).(int)
+		if event.OrganizerID == nil || *event.OrganizerID != uid {
+			http.Error(w, "Forbidden: You can only delete your own events", http.StatusForbidden)
+			return
+		}
 	}
 
 	if err := models.DeleteEvent(id); err != nil {

@@ -40,7 +40,15 @@ func TransactionReport(w http.ResponseWriter, r *http.Request) {
 		}
 	}
 
-	transactions, err := models.GetAllTransactions(eventID)
+	// Check if we should filter by organizer
+	var organizerID *int
+	if role, ok := r.Context().Value("userRole").(string); ok && role == "organizer" {
+		if uid, ok := r.Context().Value(models.UserIDKey).(int); ok {
+			organizerID = &uid
+		}
+	}
+
+	transactions, err := models.GetAllTransactions(eventID, organizerID)
 	if err != nil {
 		http.Error(w, "Failed to fetch report: "+err.Error(), http.StatusInternalServerError)
 		return
@@ -90,10 +98,24 @@ func GetEventTicketReport(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
+	// Check if we should filter by organizer
+	var organizerID *int
+	if role, ok := r.Context().Value("userRole").(string); ok && role == "organizer" {
+		if uid, ok := r.Context().Value(models.UserIDKey).(int); ok {
+			organizerID = &uid
+		}
+	}
+
 	// 1. Fetch Event for Finance Settings
 	event, err := models.GetEventByID(eventID)
 	if err != nil {
 		http.Error(w, "Failed to fetch event: "+err.Error(), http.StatusInternalServerError)
+		return
+	}
+
+	// Security check for organizer
+	if organizerID != nil && (event.OrganizerID == nil || *event.OrganizerID != *organizerID) {
+		http.Error(w, "Forbidden: You do not have access to this event report", http.StatusForbidden)
 		return
 	}
 
@@ -105,7 +127,7 @@ func GetEventTicketReport(w http.ResponseWriter, r *http.Request) {
 	}
 
 	// 3. Fetch Paid Transactions for the event
-	transactions, err := models.GetAllTransactions(eventID)
+	transactions, err := models.GetAllTransactions(eventID, organizerID)
 	if err != nil {
 		http.Error(w, "Failed to fetch transactions: "+err.Error(), http.StatusInternalServerError)
 		return

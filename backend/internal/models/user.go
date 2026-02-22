@@ -4,6 +4,7 @@ import (
 	"database/sql"
 	"errors"
 	"event-backend/internal/database"
+	"fmt"
 	"time"
 )
 
@@ -121,5 +122,8 @@ func DeleteUser(id int) error {
 func CountUsers() (int, error) {
 	var count int
 	err := database.DB.QueryRow(`SELECT count(*) FROM users`).Scan(&count)
+	if err != nil {
+		fmt.Printf("[models.CountUsers] Error: %v\n", err)
+	}
 	return count, err
 }

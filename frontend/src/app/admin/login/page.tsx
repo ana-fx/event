@@ -30,6 +30,7 @@ export default function AdminLogin() {
 
             // Redirect based on role
             if (user.role === 'admin') router.push("/admin");
+            else if (user.role === 'organizer') router.push("/organizer");
             else if (user.role === 'scanner') router.push("/scanner");
             else if (user.role === 'reseller') router.push("/reseller");
             else {
@@ -48,11 +49,11 @@ export default function AdminLogin() {
             <div className="bg-white p-8 rounded-3xl shadow-xl w-full max-w-md space-y-8 border border-gray-100">
                 <div className="text-center">
                     <div className="mb-6 flex justify-center">
-                        <Image 
-                            src="/logo-ingate.png" 
-                            alt="Ingate Logo" 
-                            width={160} 
-                            height={48} 
+                        <Image
+                            src="/logo-ingate.png"
+                            alt="Ingate Logo"
+                            width={160}
+                            height={48}
                             className="h-12 w-auto object-contain"
                             priority
                         />
