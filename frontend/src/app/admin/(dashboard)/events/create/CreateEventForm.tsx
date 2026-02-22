@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
 import axiosInstance from "@/lib/axios";
@@ -28,7 +28,7 @@ export default function CreateEventForm() {
         description: "",
         terms: "",
         status: "draft",
-        organizer_name: "",
+        organizer_id: "",
         seo_title: "",
         seo_description: "",
         organizer_tax: "0",
@@ -51,21 +51,34 @@ export default function CreateEventForm() {
     // Files
     const [banner, setBanner] = useState<File | null>(null);
     const [thumbnail, setThumbnail] = useState<File | null>(null);
-    const [organizerLogo, setOrganizerLogo] = useState<File | null>(null);
+    const [organizers, setOrganizers] = useState<{ label: string; value: string }[]>([]);
 
-    // Previews
+    useEffect(() => {
+        const fetchOrganizers = async () => {
+            try {
+                const res = await axiosInstance.get("/admin/organizers");
+                const options = res.data.map((org: any) => ({
+                    label: org.organizer_name?.String || org.name,
+                    value: String(org.id)
+                }));
+                setOrganizers(options);
+            } catch (error) {
+                console.error("Failed to fetch organizers", error);
+            }
+        };
+        fetchOrganizers();
+    }, []);
+
     const [previews, setPreviews] = useState({
         banner: "",
         thumbnail: "",
-        organizerLogo: "",
     });
 
-    const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>, field: "banner" | "thumbnail" | "organizerLogo") => {
+    const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>, field: "banner" | "thumbnail") => {
         const file = e.target.files?.[0];
         if (file) {
             if (field === "banner") setBanner(file);
             if (field === "thumbnail") setThumbnail(file);
-            if (field === "organizerLogo") setOrganizerLogo(file);
 
             const url = URL.createObjectURL(file);
             setPreviews(prev => ({ ...prev, [field]: url }));
@@ -88,7 +101,6 @@ export default function CreateEventForm() {
             // Append files if they exist
             if (banner) data.append("banner", banner);
             if (thumbnail) data.append("thumbnail", thumbnail);
-            if (organizerLogo) data.append("organizer_logo", organizerLogo);
 
 
             await axiosInstance.post("/admin/events", data, {
@@ -243,34 +255,13 @@ export default function CreateEventForm() {
                             </div>
                         </div>
 
-                        {/* Organizer Logo */}
-                        <div>
-                            <label className="block text-sm font-bold text-gray-700 mb-2">Organizer Logo</label>
-                            <div className="border-2 border-dashed border-gray-300 rounded-xl aspect-square w-48 relative flex items-center justify-center bg-gray-50 hover:border-primary transition-colors cursor-pointer overflow-hidden">
-                                {previews.organizerLogo ? (
-                                    <img src={previews.organizerLogo} alt="Preview" className="w-full h-full object-cover" />
-                                ) : (
-                                    <div className="text-center p-4">
-                                        <Upload className="w-8 h-8 text-gray-400 mx-auto mb-2" />
-                                        <p className="text-sm text-gray-500">Upload logo</p>
-                                    </div>
-                                )}
-                                <input
-                                    type="file"
-                                    accept="image/*"
-                                    className="absolute inset-0 opacity-0 cursor-pointer"
-                                    onChange={(e) => handleFileChange(e, "organizerLogo")}
-                                />
-                            </div>
-                        </div>
-
                         <div className="md:col-span-2">
-                            <label className="block text-sm font-bold text-(--foreground) opacity-70 mb-2">Organizer Name</label>
-                            <input
-                                type="text"
-                                className="w-full px-4 py-2.5 rounded-lg border border-(--card-border) bg-(--background) text-(--foreground) focus:border-primary focus:ring-4 focus:ring-primary/10 outline-none transition-all"
-                                value={formData.organizer_name}
-                                onChange={(e) => setFormData({ ...formData, organizer_name: e.target.value })}
+                            <Select
+                                label="Select Organizer"
+                                value={formData.organizer_id}
+                                onChange={(val) => setFormData({ ...formData, organizer_id: val })}
+                                options={organizers}
+                                placeholder="Choose an existing organizer"
                             />
                         </div>
                     </div>

@@ -258,7 +258,12 @@ func Checkout(w http.ResponseWriter, r *http.Request) {
 
 	if resp.StatusCode >= 400 {
 		fmt.Printf("[ERROR] Midtrans API Error: %s\n", string(bodyBytes))
-		http.Error(w, "Payment gateway returned error: "+string(bodyBytes), http.StatusBadGateway)
+		w.Header().Set("Content-Type", "application/json")
+		w.WriteHeader(http.StatusBadGateway)
+		json.NewEncoder(w).Encode(map[string]interface{}{
+			"error":  "Payment gateway error",
+			"detail": string(bodyBytes),
+		})
 		return
 	}
 

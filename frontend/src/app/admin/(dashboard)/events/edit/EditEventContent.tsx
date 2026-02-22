@@ -55,19 +55,36 @@ function EventDetailsTab({ id, initialData, refresh }: { id: string, initialData
         description: initialData?.description || "",
         terms: initialData?.terms || "",
         status: initialData?.status || "draft",
-        organizer_name: initialData?.organizer_name || "",
+        organizer_id: initialData?.organizer_id ? String(initialData.organizer_id) : "",
         seo_title: initialData?.seo_title || "",
         seo_description: initialData?.seo_description || "",
         youtube_link: initialData?.youtube_link || "",
     });
 
+    const [organizers, setOrganizers] = useState<{ label: string; value: string }[]>([]);
+
+    useEffect(() => {
+        const fetchOrganizers = async () => {
+            try {
+                const res = await axiosInstance.get("/admin/organizers");
+                const options = res.data.map((org: any) => ({
+                    label: org.organizer_name?.String || org.name,
+                    value: String(org.id)
+                }));
+                setOrganizers(options);
+            } catch (error) {
+                console.error("Failed to fetch organizers", error);
+            }
+        };
+        fetchOrganizers();
+    }, []);
+
     const [previews, setPreviews] = useState({
         banner: getImageUrl(initialData?.banner_path),
         thumbnail: getImageUrl(initialData?.thumbnail_path),
-        organizerLogo: getImageUrl(initialData?.organizer_logo_path),
     });
 
-    const [files, setFiles] = useState<{ banner?: File, thumbnail?: File, organizerLogo?: File }>({});
+    const [files, setFiles] = useState<{ banner?: File, thumbnail?: File }>({});
 
     useEffect(() => {
         if (initialData) {
@@ -84,7 +101,7 @@ function EventDetailsTab({ id, initialData, refresh }: { id: string, initialData
                 description: initialData.description || "",
                 terms: initialData.terms || "",
                 status: initialData.status || "draft",
-                organizer_name: initialData.organizer_name || "",
+                organizer_id: initialData.organizer_id ? String(initialData.organizer_id) : "",
                 seo_title: initialData.seo_title || "",
                 seo_description: initialData.seo_description || "",
                 youtube_link: initialData.youtube_link || "",
@@ -92,13 +109,12 @@ function EventDetailsTab({ id, initialData, refresh }: { id: string, initialData
             setPreviews({
                 banner: getImageUrl(initialData.banner_path),
                 thumbnail: getImageUrl(initialData.thumbnail_path),
-                organizerLogo: getImageUrl(initialData.organizer_logo_path),
             });
         }
     }, [initialData]);
 
 
-    const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>, field: "banner" | "thumbnail" | "organizerLogo") => {
+    const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>, field: "banner" | "thumbnail") => {
         const file = e.target.files?.[0];
         if (file) {
             setFiles(prev => ({ ...prev, [field]: file }));
@@ -116,7 +132,6 @@ function EventDetailsTab({ id, initialData, refresh }: { id: string, initialData
             });
             if (files.banner) data.append("banner", files.banner);
             if (files.thumbnail) data.append("thumbnail", files.thumbnail);
-            if (files.organizerLogo) data.append("organizer_logo", files.organizerLogo);
 
 
             await axiosInstance.put(`/admin/events?id=${id}`, data);
@@ -224,33 +239,13 @@ function EventDetailsTab({ id, initialData, refresh }: { id: string, initialData
                         </div>
                     </div>
 
-                    <div>
-                        <label className="block text-sm font-bold text-(--foreground) opacity-70 mb-2">Organizer Logo</label>
-                        <div className="border-2 border-dashed border-(--card-border) rounded-xl aspect-square w-48 relative flex items-center justify-center bg-(--background) hover:border-primary transition-colors cursor-pointer overflow-hidden">
-                            {previews.organizerLogo ? (
-                                <img src={previews.organizerLogo} alt="Preview" className="w-full h-full object-cover" />
-                            ) : (
-                                <div className="text-center p-4">
-                                    <Upload className="w-8 h-8 text-gray-400 mx-auto mb-2" />
-                                    <p className="text-sm text-gray-500 opacity-60">Upload logo</p>
-                                </div>
-                            )}
-                            <input
-                                type="file"
-                                accept="image/*"
-                                className="absolute inset-0 opacity-0 cursor-pointer"
-                                onChange={(e) => handleFileChange(e, "organizerLogo")}
-                            />
-                        </div>
-                    </div>
-
                     <div className="md:col-span-2">
-                        <label className="block text-sm font-bold text-(--foreground) opacity-70 mb-2">Organizer Name</label>
-                        <input
-                            type="text"
-                            className="w-full px-4 py-2.5 rounded-lg border border-(--card-border) bg-(--background) text-(--foreground) focus:border-primary focus:ring-2 focus:ring-primary/20 dark:focus:ring-primary/20 outline-none transition-all"
-                            value={formData.organizer_name || ''}
-                            onChange={(e) => setFormData({ ...formData, organizer_name: e.target.value })}
+                        <Select
+                            label="Select Organizer"
+                            value={formData.organizer_id}
+                            onChange={(val) => setFormData({ ...formData, organizer_id: val })}
+                            options={organizers}
+                            placeholder="Choose an existing organizer"
                         />
                     </div>
                 </div>

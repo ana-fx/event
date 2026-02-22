@@ -26,6 +26,7 @@ type Event struct {
 	SeoDescription           *string   `json:"seo_description"`
 	OrganizerName            *string   `json:"organizer_name"`
 	OrganizerLogoPath        *string   `json:"organizer_logo_path"`
+	OrganizerID              *int      `json:"organizer_id"`
 	ResellerFeeType          string    `json:"reseller_fee_type"`
 	ResellerFeeValue         float64   `json:"reseller_fee_value"`
 	OrganizerFeeOnlineType   string    `json:"organizer_fee_online_type"`
@@ -48,10 +49,14 @@ type Event struct {
 
 func GetAllEvents() ([]Event, error) {
 	rows, err := database.DB.Query(`
-		SELECT id, name, slug, category, status, banner_path, thumbnail_path, start_date, end_date, description, location, city, organizer_name, youtube_link, organizer_tax, organizer_tax_type, admin_fee, admin_fee_type, ppn, ppn_type, created_at 
-		FROM events 
-		WHERE deleted_at IS NULL 
-		ORDER BY created_at DESC
+		SELECT e.id, e.name, e.slug, e.category, e.status, e.banner_path, e.thumbnail_path, e.start_date, e.end_date, e.description, e.location, e.city, 
+		       COALESCE(u.organizer_name, e.organizer_name) as organizer_name, 
+		       e.youtube_link, e.organizer_tax, e.organizer_tax_type, e.admin_fee, e.admin_fee_type, e.ppn, e.ppn_type, e.created_at,
+		       e.organizer_id
+		FROM events e
+		LEFT JOIN users u ON e.organizer_id = u.id
+		WHERE e.deleted_at IS NULL 
+		ORDER BY e.created_at DESC
 	`)
 	if err != nil {
 		return nil, err
@@ -61,7 +66,6 @@ func GetAllEvents() ([]Event, error) {
 	events := []Event{}
 	for rows.Next() {
 		var e Event
-		// Scanning subset for list view
 		err := rows.Scan(
 			&e.ID, &e.Name, &e.Slug, &e.Category, &e.Status,
 			&e.BannerPath, &e.ThumbnailPath,
@@ -70,6 +74,7 @@ func GetAllEvents() ([]Event, error) {
 			&e.YoutubeLink,
 			&e.OrganizerTax, &e.OrganizerTaxType, &e.AdminFee, &e.AdminFeeType, &e.PPN, &e.PPNType,
 			&e.CreatedAt,
+			&e.OrganizerID,
 		)
 		if err != nil {
 			return nil, err
@@ -92,6 +97,7 @@ func CreateEvent(e *Event) error {
 			organizer_fee_online_type, organizer_fee_online,
 			organizer_fee_reseller_type, organizer_fee_reseller,
 			pg_fee, pg_fee_type,
+			organizer_id,
 			created_at, updated_at
 		) VALUES (
 			$1, $2, $3, $4, $5, $6, $7, $8, 
@@ -101,7 +107,7 @@ func CreateEvent(e *Event) error {
 			$20,
 			$21, $22, $23, $24, $25, $26,
 			$27, $28, $29, $30, $31, $32,
-			$33, $34, $35, $36
+			$33, $34, $35, $36, $37
 		)
 		RETURNING id`
 
@@ -115,6 +121,7 @@ func CreateEvent(e *Event) error {
 		e.ResellerFeeType, e.ResellerFeeValue, e.OrganizerFeeOnlineType, e.OrganizerFeeOnline,
 		e.OrganizerFeeResellerType, e.OrganizerFeeReseller,
 		e.PgFee, e.PgFeeType,
+		e.OrganizerID,
 		time.Now(), time.Now(),
 	).Scan(&e.ID)
 
@@ -133,8 +140,9 @@ func UpdateEvent(e *Event) error {
 			reseller_fee_type=$27, reseller_fee_value=$28, organizer_fee_online_type=$29, organizer_fee_online=$30,
 			organizer_fee_reseller_type=$31, organizer_fee_reseller=$32,
 			pg_fee=$33, pg_fee_type=$34,
-			updated_at=$35
-		WHERE id=$36`
+			organizer_id=$35,
+			updated_at=$36
+		WHERE id=$37`
 
 	_, err := database.DB.Exec(query,
 		e.Name, e.Slug, e.Category, e.Status, e.StartDate, e.EndDate, e.Description, e.Terms,
@@ -146,6 +154,7 @@ func UpdateEvent(e *Event) error {
 		e.ResellerFeeType, e.ResellerFeeValue, e.OrganizerFeeOnlineType, e.OrganizerFeeOnline,
 		e.OrganizerFeeResellerType, e.OrganizerFeeReseller,
 		e.PgFee, e.PgFeeType,
+		e.OrganizerID,
 		time.Now(), e.ID,
 	)
 	return err
@@ -161,18 +170,22 @@ func DeleteEvent(id int) error {
 func GetEventByID(id int) (*Event, error) {
 	query := `
 		SELECT 
-			id, name, slug, category, status, start_date, end_date, description, terms,
-			location, province, city, zip, google_map_embed,
-			seo_title, seo_description,
-			organizer_name, banner_path, thumbnail_path, organizer_logo_path,
-			youtube_link,
-			organizer_tax, organizer_tax_type, admin_fee, admin_fee_type, ppn, ppn_type,
-			reseller_fee_type, reseller_fee_value, organizer_fee_online_type, organizer_fee_online,
-			organizer_fee_reseller_type, organizer_fee_reseller,
-			pg_fee, pg_fee_type,
-			created_at 
-		FROM events 
-		WHERE id=$1 AND deleted_at IS NULL`
+			e.id, e.name, e.slug, e.category, e.status, e.start_date, e.end_date, e.description, e.terms,
+			e.location, e.province, e.city, e.zip, e.google_map_embed,
+			e.seo_title, e.seo_description,
+			COALESCE(u.organizer_name, e.organizer_name) as organizer_name, 
+			e.banner_path, e.thumbnail_path, 
+			COALESCE(u.profile_photo_path, e.organizer_logo_path) as organizer_logo_path,
+			e.youtube_link,
+			e.organizer_tax, e.organizer_tax_type, e.admin_fee, e.admin_fee_type, e.ppn, e.ppn_type,
+			e.reseller_fee_type, e.reseller_fee_value, e.organizer_fee_online_type, e.organizer_fee_online,
+			e.organizer_fee_reseller_type, e.organizer_fee_reseller,
+			e.pg_fee, e.pg_fee_type,
+			e.created_at,
+			e.organizer_id
+		FROM events e
+		LEFT JOIN users u ON e.organizer_id = u.id
+		WHERE e.id=$1 AND e.deleted_at IS NULL`
 
 	var e Event
 	err := database.DB.QueryRow(query, id).Scan(
@@ -187,6 +200,7 @@ func GetEventByID(id int) (*Event, error) {
 		&e.OrganizerFeeResellerType, &e.OrganizerFeeReseller,
 		&e.PgFee, &e.PgFeeType,
 		&e.CreatedAt,
+		&e.OrganizerID,
 	)
 	if err != nil {
 		return nil, err
@@ -197,11 +211,14 @@ func GetEventByID(id int) (*Event, error) {
 func GetPublishedEvents() ([]Event, error) {
 	rows, err := database.DB.Query(`
 		SELECT e.id, e.name, e.slug, e.category, e.status, e.banner_path, e.thumbnail_path, e.start_date, e.end_date, e.description, e.location, e.city, e.youtube_link, e.organizer_tax, e.organizer_tax_type, e.admin_fee, e.admin_fee_type, e.ppn, e.ppn_type, e.reseller_fee_type, e.reseller_fee_value, e.organizer_fee_online_type, e.organizer_fee_online, e.organizer_fee_reseller_type, e.organizer_fee_reseller, e.created_at,
-		       COALESCE(MIN(t.price), 0) as min_price
+		       COALESCE(MIN(t.price), 0) as min_price,
+		       COALESCE(u.organizer_name, e.organizer_name) as organizer_name,
+		       COALESCE(u.profile_photo_path, e.organizer_logo_path) as organizer_logo_path
 		FROM events e
 		LEFT JOIN tickets t ON e.id = t.event_id AND t.deleted_at IS NULL
+		LEFT JOIN users u ON e.organizer_id = u.id
 		WHERE (e.status = 'published' OR e.status = 'active') AND e.deleted_at IS NULL 
-		GROUP BY e.id
+		GROUP BY e.id, u.id
 		ORDER BY e.created_at DESC
 	`)
 	if err != nil {
@@ -223,6 +240,8 @@ func GetPublishedEvents() ([]Event, error) {
 			&e.OrganizerFeeResellerType, &e.OrganizerFeeReseller,
 			&e.CreatedAt,
 			&e.MinPrice,
+			&e.OrganizerName,
+			&e.OrganizerLogoPath,
 		)
 		if err != nil {
 			return nil, err
@@ -235,18 +254,22 @@ func GetPublishedEvents() ([]Event, error) {
 func GetEventBySlug(slug string) (*Event, error) {
 	query := `
 		SELECT 
-			id, name, slug, category, status, start_date, end_date, description, terms,
-			location, province, city, zip, google_map_embed,
-			seo_title, seo_description,
-			organizer_name, banner_path, thumbnail_path, organizer_logo_path,
-			youtube_link,
-			organizer_tax, organizer_tax_type, admin_fee, admin_fee_type, ppn, ppn_type,
-			reseller_fee_type, reseller_fee_value, organizer_fee_online_type, organizer_fee_online,
-			organizer_fee_reseller_type, organizer_fee_reseller,
-			pg_fee, pg_fee_type,
-			created_at 
-		FROM events 
-		WHERE slug=$1 AND deleted_at IS NULL`
+			e.id, e.name, e.slug, e.category, e.status, e.start_date, e.end_date, e.description, e.terms,
+			e.location, e.province, e.city, e.zip, e.google_map_embed,
+			e.seo_title, e.seo_description,
+			COALESCE(u.organizer_name, e.organizer_name) as organizer_name, 
+			e.banner_path, e.thumbnail_path, 
+			COALESCE(u.profile_photo_path, e.organizer_logo_path) as organizer_logo_path,
+			e.youtube_link,
+			e.organizer_tax, e.organizer_tax_type, e.admin_fee, e.admin_fee_type, e.ppn, e.ppn_type,
+			e.reseller_fee_type, e.reseller_fee_value, e.organizer_fee_online_type, e.organizer_fee_online,
+			e.organizer_fee_reseller_type, e.organizer_fee_reseller,
+			e.pg_fee, e.pg_fee_type,
+			e.created_at,
+			e.organizer_id
+		FROM events e
+		LEFT JOIN users u ON e.organizer_id = u.id
+		WHERE e.slug=$1 AND e.deleted_at IS NULL`
 	var e Event
 	err := database.DB.QueryRow(query, slug).Scan(
 		&e.ID, &e.Name, &e.Slug, &e.Category, &e.Status,
@@ -260,6 +283,7 @@ func GetEventBySlug(slug string) (*Event, error) {
 		&e.OrganizerFeeResellerType, &e.OrganizerFeeReseller,
 		&e.PgFee, &e.PgFeeType,
 		&e.CreatedAt,
+		&e.OrganizerID,
 	)
 	if err != nil {
 		return nil, err

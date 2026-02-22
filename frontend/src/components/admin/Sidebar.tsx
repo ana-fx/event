@@ -37,13 +37,13 @@ const menuItems: MenuItem[] = [
     { name: "Dashboard", href: "/admin", icon: LayoutDashboard },
     { name: "Events", href: "/admin/events", icon: Calendar },
     {
-        name: "User Management",
+        name: "Management Role",
         href: "#",
         icon: Users,
         children: [
             { name: "Admins", href: "/admin/users?role=admin", icon: Shield },
+            { name: "Organizers", href: "/admin/organizers", icon: Store },
             { name: "Scanners", href: "/admin/users?role=scanner", icon: ScanBarcode },
-            // { name: "Resellers", href: "/admin/resellers", icon: Store }, // Pointing to specialized page
         ]
     },
     { name: "Banners", href: "/admin/banners", icon: ImageIcon },
@@ -56,7 +56,7 @@ export default function Sidebar() {
     const pathname = usePathname();
     const searchParams = useSearchParams();
     const router = useRouter();
-    const [openMenus, setOpenMenus] = useState<string[]>(["User Management"]); // specific menu open by default
+    const [openMenus, setOpenMenus] = useState<string[]>(["Management Role"]); // updated default
     const { isOpen, close } = useSidebar(); // Consume context
 
     // Close sidebar when route changes on mobile
@@ -88,11 +88,11 @@ export default function Sidebar() {
                 {/* Logo Section */}
                 <div className="p-8 pb-4 flex justify-between items-center">
                     <Link href="/admin" className="flex items-center gap-3">
-                        <Image 
-                            src="/logo-ingate.png" 
-                            alt="Ingate Logo" 
-                            width={120} 
-                            height={36} 
+                        <Image
+                            src="/logo-ingate.png"
+                            alt="Ingate Logo"
+                            width={120}
+                            height={36}
                             className="h-8 w-auto object-contain"
                             priority
                         />

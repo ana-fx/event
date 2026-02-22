@@ -107,6 +107,25 @@ func main() {
 		}
 	}))
 
+	// Admin Organizer Routes
+	http.HandleFunc("/api/admin/organizers", middleware.AuthMiddleware(func(w http.ResponseWriter, r *http.Request) {
+		switch r.Method {
+		case http.MethodGet:
+			admin.ListOrganizers(w, r)
+		case http.MethodPost:
+			// Using POST for both create and update because of multipart form difficulties with PUT in standard Go http
+			if r.URL.Query().Get("id") != "" {
+				admin.UpdateOrganizer(w, r)
+			} else {
+				admin.CreateOrganizer(w, r)
+			}
+		case http.MethodDelete:
+			admin.DeleteOrganizer(w, r)
+		default:
+			http.Error(w, "Method not allowed", http.StatusMethodNotAllowed)
+		}
+	}))
+
 	// Admin Report Routes
 	http.HandleFunc("/api/admin/reports/transactions", middleware.AuthMiddleware(admin.TransactionReport))
 	http.HandleFunc("/api/admin/reports/event-tickets", middleware.AuthMiddleware(admin.GetEventTicketReport))

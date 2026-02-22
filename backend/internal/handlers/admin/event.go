@@ -114,6 +114,12 @@ func CreateEvent(w http.ResponseWriter, r *http.Request) {
 		req.YoutubeLink = &ytLink
 	}
 
+	if orgIDStr := r.FormValue("organizer_id"); orgIDStr != "" {
+		if id, err := strconv.Atoi(orgIDStr); err == nil {
+			req.OrganizerID = &id
+		}
+	}
+
 	req.Status = r.FormValue("status")
 
 	// Finance Fields
@@ -371,6 +377,11 @@ func UpdateEvent(w http.ResponseWriter, r *http.Request) {
 			}
 		}
 
+		if val := r.FormValue("organizer_id"); val != "" {
+			oid, _ := strconv.Atoi(val)
+			req.OrganizerID = &oid
+		}
+
 		// Handle File Uploads (Optional updates)
 		if file, header, err := r.FormFile("banner"); err == nil {
 			defer file.Close()
@@ -518,6 +529,10 @@ func UpdateEvent(w http.ResponseWriter, r *http.Request) {
 	}
 	if req.YoutubeLink != nil {
 		current.YoutubeLink = req.YoutubeLink
+	}
+
+	if req.OrganizerID != nil {
+		current.OrganizerID = req.OrganizerID
 	}
 
 	if err := models.UpdateEvent(current); err != nil {
