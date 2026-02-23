@@ -6,6 +6,7 @@ import Image from "next/image";
 import axiosInstance from "@/lib/axios";
 import { Plus, Search, Edit2, Trash2, Store, MapPin, Phone, Mail } from "lucide-react";
 import { toast } from "react-hot-toast";
+import { getImageUrl } from "@/lib/utils";
 
 interface Organizer {
     id: number;
@@ -103,7 +104,7 @@ export default function OrganizerListContent() {
                                 <div className="w-24 h-24 rounded-2xl bg-gray-100 dark:bg-gray-800 overflow-hidden border-2 border-white shadow-sm">
                                     {org.profile_photo_path.Valid ? (
                                         <Image
-                                            src={`${process.env.NEXT_PUBLIC_API_URL?.replace('/api', '')}${org.profile_photo_path.String}`}
+                                            src={getImageUrl(org.profile_photo_path.String)}
                                             alt={org.name}
                                             width={96}
                                             height={96}

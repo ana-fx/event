@@ -9,6 +9,7 @@ import { ArrowLeft, Save, Upload, Loader2, Store } from "lucide-react";
 import Link from "next/link";
 import { Input } from "@/components/ui/Input";
 import { Textarea } from "@/components/ui/Textarea";
+import { getImageUrl } from "@/lib/utils";
 
 interface Props {
     id?: string;
@@ -64,7 +65,7 @@ export default function OrganizerForm({ id }: Props) {
                     is_active: org.is_active
                 });
                 if (org.profile_photo_path?.Valid) {
-                    setPreview(`${process.env.NEXT_PUBLIC_API_URL?.replace('/api', '')}${org.profile_photo_path.String}`);
+                    setPreview(getImageUrl(org.profile_photo_path.String));
                 }
             } else {
                 toast.error("Organizer not found");

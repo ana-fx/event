@@ -230,8 +230,6 @@ func main() {
 		switch r.Method {
 		case http.MethodGet:
 			admin.ListEvents(w, r)
-		case http.MethodPost:
-			admin.CreateEvent(w, r)
 		case http.MethodPut:
 			admin.UpdateEvent(w, r)
 		case http.MethodDelete:
@@ -250,6 +248,7 @@ func main() {
 
 	// 3. Start Server
 	port := ":8080"
+	fmt.Printf("Server starting on port %s...\n", port)
 	// Wrap the default ServeMux with Recovery and CORS Middleware
 	handler := middleware.RecoveryMiddleware(middleware.CORSMiddleware(http.DefaultServeMux))
 	if err := http.ListenAndServe(port, handler); err != nil {

@@ -84,7 +84,11 @@ export default function TicketSelector({ tickets, eventSlug }: { tickets: Ticket
                                         <div className="pr-4">
                                             <h4 className="font-black text-brand-dark uppercase tracking-tight text-sm mb-1">{ticket.name}</h4>
                                             {ticket.description.Valid && (
-                                                <p className="text-[10px] text-gray-400 font-medium leading-relaxed">{ticket.description.String}</p>
+                                                <div
+                                                    className="text-[10px] text-gray-400 font-medium leading-relaxed prose prose-sm prose-slate max-w-none 
+                                                               [&_p]:mb-1 [&_p]:mt-0 [&_ul]:list-disc [&_ul]:pl-4 [&_ol]:list-decimal [&_ol]:pl-4"
+                                                    dangerouslySetInnerHTML={{ __html: ticket.description.String }}
+                                                />
                                             )}
                                         </div>
                                         <div className="text-right shrink-0">

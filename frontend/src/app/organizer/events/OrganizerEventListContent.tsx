@@ -58,17 +58,6 @@ export default function OrganizerEventListContent() {
                     <h1 className="text-2xl font-bold text-(--foreground)">My Events</h1>
                     <p className="text-gray-500 text-sm mt-1">Manage and monitor your hosted events.</p>
                 </div>
-                {/* 
-                  NOTE: For now, creation is still handled by admin in some systems, 
-                  but we'll allow organizers to initiate it if permissions allow.
-                */}
-                <Link
-                    href="/admin/events/create"
-                    className="flex items-center justify-center gap-2 px-4 py-2.5 bg-primary text-white font-bold rounded-xl hover:bg-primary transition-all shadow-lg shadow-primary/25 active:scale-95"
-                >
-                    <Plus className="w-5 h-5" />
-                    Create New Event
-                </Link>
             </div>
 
             <div className="flex items-center gap-4 bg-(--card) p-4 rounded-2xl border border-(--card-border) shadow-sm">
