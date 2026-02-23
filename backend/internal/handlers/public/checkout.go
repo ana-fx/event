@@ -18,14 +18,15 @@ import (
 // Keys are now in .env, retrieved via os.Getenv()
 
 type CheckoutRequest struct {
-	EventID int        `json:"event_id"`
-	Items   []CartItem `json:"items"`
-	Name    string     `json:"name"`
-	Email   string     `json:"email"`
-	Phone   string     `json:"phone"`
-	City    string     `json:"city"`
-	NIK     string     `json:"nik"`
-	Gender  string     `json:"gender"`
+	EventID       int        `json:"event_id"`
+	Items         []CartItem `json:"items"`
+	Name          string     `json:"name"`
+	Email         string     `json:"email"`
+	Phone         string     `json:"phone"`
+	City          string     `json:"city"`
+	NIK           string     `json:"nik"`
+	Gender        string     `json:"gender"`
+	PaymentMethod string     `json:"payment_method"`
 }
 
 type CartItem struct {
@@ -133,10 +134,17 @@ func Checkout(w http.ResponseWriter, r *http.Request) {
 
 	// Payment Gateway Fee (pg_fee)
 	pgFee := 0.0
-	if event.PgFeeType == "fixed" {
-		pgFee = float64(int64(event.PgFee + 0.5))
+	if req.PaymentMethod == "bank_transfer" {
+		pgFee = float64(int64(event.PgFeeBank + 0.5))
+	} else if req.PaymentMethod == "qris" {
+		pgFee = float64(int64(subtotal*(event.PgFeeQris/100) + 0.5))
 	} else {
-		pgFee = float64(int64(subtotal*(event.PgFee/100) + 0.5))
+		// Fallback to legacy pg_fee if not specified
+		if event.PgFeeType == "fixed" {
+			pgFee = float64(int64(event.PgFee + 0.5))
+		} else {
+			pgFee = float64(int64(subtotal*(event.PgFee/100) + 0.5))
+		}
 	}
 
 	totalPrice := subtotal + serviceFee + ppn + platformFee + pgFee
@@ -145,19 +153,20 @@ func Checkout(w http.ResponseWriter, r *http.Request) {
 	code := fmt.Sprintf("INGATE-%d-%d", time.Now().Unix(), rand.Intn(1000))
 
 	trx := models.Transaction{
-		Code:       code,
-		EventID:    event.ID,
-		TicketID:   sql.NullInt64{Int64: int64(transactionItems[0].TicketID), Valid: true}, // Backward compat for first ticket
-		Name:       req.Name,
-		Email:      req.Email,
-		Phone:      req.Phone,
-		City:       req.City,
-		NIK:        req.NIK,
-		Gender:     req.Gender,
-		Quantity:   sql.NullInt64{Int64: int64(totalTickets), Valid: true},
-		TotalPrice: totalPrice,
-		Status:     "pending",
-		Items:      transactionItems,
+		Code:        code,
+		EventID:     event.ID,
+		TicketID:    sql.NullInt64{Int64: int64(transactionItems[0].TicketID), Valid: true}, // Backward compat for first ticket
+		Name:        req.Name,
+		Email:       req.Email,
+		Phone:       req.Phone,
+		City:        req.City,
+		NIK:         req.NIK,
+		Gender:      req.Gender,
+		Quantity:    sql.NullInt64{Int64: int64(totalTickets), Valid: true},
+		TotalPrice:  totalPrice,
+		Status:      "pending",
+		PaymentType: sql.NullString{String: req.PaymentMethod, Valid: req.PaymentMethod != ""},
+		Items:       transactionItems,
 	}
 
 	if err := models.CreateTransaction(&trx); err != nil {

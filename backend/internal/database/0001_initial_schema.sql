@@ -60,6 +60,8 @@ CREATE TABLE IF NOT EXISTS events (
     ppn_type VARCHAR(50) DEFAULT 'fixed' NOT NULL,
     pg_fee DECIMAL(12, 2) DEFAULT 0 NOT NULL,
     pg_fee_type VARCHAR(50) DEFAULT 'fixed' NOT NULL,
+    pg_fee_bank DECIMAL(12, 2) DEFAULT 4440 NOT NULL,
+    pg_fee_qris DECIMAL(12, 2) DEFAULT 0.7 NOT NULL,
     youtube_link TEXT NULL,
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,

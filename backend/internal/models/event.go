@@ -42,6 +42,8 @@ type Event struct {
 	PPNType                  string    `json:"ppn_type"`
 	PgFee                    float64   `json:"pg_fee"`
 	PgFeeType                string    `json:"pg_fee_type"`
+	PgFeeBank                float64   `json:"pg_fee_bank"`
+	PgFeeQris                float64   `json:"pg_fee_qris"`
 	MinPrice                 float64   `json:"min_price"`
 	YoutubeLink              *string   `json:"youtube_link"`
 	CreatedAt                time.Time `json:"created_at"`
@@ -105,7 +107,7 @@ func CreateEvent(e *Event) error {
 			reseller_fee_type, reseller_fee_value, 
 			organizer_fee_online_type, organizer_fee_online,
 			organizer_fee_reseller_type, organizer_fee_reseller,
-			pg_fee, pg_fee_type,
+			pg_fee, pg_fee_type, pg_fee_bank, pg_fee_qris,
 			organizer_id,
 			created_at, updated_at
 		) VALUES (
@@ -116,7 +118,9 @@ func CreateEvent(e *Event) error {
 			$20,
 			$21, $22, $23, $24, $25, $26,
 			$27, $28, $29, $30, $31, $32,
-			$33, $34, $35, $36, $37
+			$33, $34, $35, $36,
+			$37,
+			$38, $39
 		)
 		RETURNING id`
 
@@ -129,7 +133,7 @@ func CreateEvent(e *Event) error {
 		e.OrganizerTax, e.OrganizerTaxType, e.AdminFee, e.AdminFeeType, e.PPN, e.PPNType,
 		e.ResellerFeeType, e.ResellerFeeValue, e.OrganizerFeeOnlineType, e.OrganizerFeeOnline,
 		e.OrganizerFeeResellerType, e.OrganizerFeeReseller,
-		e.PgFee, e.PgFeeType,
+		e.PgFee, e.PgFeeType, e.PgFeeBank, e.PgFeeQris,
 		e.OrganizerID,
 		time.Now(), time.Now(),
 	).Scan(&e.ID)
@@ -148,10 +152,10 @@ func UpdateEvent(e *Event) error {
 			organizer_tax=$21, organizer_tax_type=$22, admin_fee=$23, admin_fee_type=$24, ppn=$25, ppn_type=$26,
 			reseller_fee_type=$27, reseller_fee_value=$28, organizer_fee_online_type=$29, organizer_fee_online=$30,
 			organizer_fee_reseller_type=$31, organizer_fee_reseller=$32,
-			pg_fee=$33, pg_fee_type=$34,
-			organizer_id=$35,
-			updated_at=$36
-		WHERE id=$37`
+			pg_fee=$33, pg_fee_type=$34, pg_fee_bank=$35, pg_fee_qris=$36,
+			organizer_id=$37,
+			updated_at=$38
+		WHERE id=$39`
 
 	_, err := database.DB.Exec(query,
 		e.Name, e.Slug, e.Category, e.Status, e.StartDate, e.EndDate, e.Description, e.Terms,
@@ -162,7 +166,7 @@ func UpdateEvent(e *Event) error {
 		e.OrganizerTax, e.OrganizerTaxType, e.AdminFee, e.AdminFeeType, e.PPN, e.PPNType,
 		e.ResellerFeeType, e.ResellerFeeValue, e.OrganizerFeeOnlineType, e.OrganizerFeeOnline,
 		e.OrganizerFeeResellerType, e.OrganizerFeeReseller,
-		e.PgFee, e.PgFeeType,
+		e.PgFee, e.PgFeeType, e.PgFeeBank, e.PgFeeQris,
 		e.OrganizerID,
 		time.Now(), e.ID,
 	)
@@ -207,7 +211,7 @@ func GetEventByID(id int) (*Event, error) {
 		&e.OrganizerTax, &e.OrganizerTaxType, &e.AdminFee, &e.AdminFeeType, &e.PPN, &e.PPNType,
 		&e.ResellerFeeType, &e.ResellerFeeValue, &e.OrganizerFeeOnlineType, &e.OrganizerFeeOnline,
 		&e.OrganizerFeeResellerType, &e.OrganizerFeeReseller,
-		&e.PgFee, &e.PgFeeType,
+		&e.PgFee, &e.PgFeeType, &e.PgFeeBank, &e.PgFeeQris,
 		&e.CreatedAt,
 		&e.OrganizerID,
 	)
@@ -290,7 +294,7 @@ func GetEventBySlug(slug string) (*Event, error) {
 		&e.OrganizerTax, &e.OrganizerTaxType, &e.AdminFee, &e.AdminFeeType, &e.PPN, &e.PPNType,
 		&e.ResellerFeeType, &e.ResellerFeeValue, &e.OrganizerFeeOnlineType, &e.OrganizerFeeOnline,
 		&e.OrganizerFeeResellerType, &e.OrganizerFeeReseller,
-		&e.PgFee, &e.PgFeeType,
+		&e.PgFee, &e.PgFeeType, &e.PgFeeBank, &e.PgFeeQris,
 		&e.CreatedAt,
 		&e.OrganizerID,
 	)

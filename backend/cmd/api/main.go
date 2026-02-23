@@ -56,11 +56,13 @@ func main() {
 	http.HandleFunc("/api/me", middleware.AuthMiddleware(handlers.GetMe))
 
 	// Admin Routes
+	adminOnly := middleware.RoleMiddleware("admin")
+
 	// Dashboard
-	http.HandleFunc("/api/admin/dashboard", middleware.AuthMiddleware(admin.DashboardStats))
+	http.HandleFunc("/api/admin/dashboard", middleware.AuthMiddleware(adminOnly(admin.DashboardStats)))
 
 	// Events
-	http.HandleFunc("/api/admin/events", middleware.AuthMiddleware(func(w http.ResponseWriter, r *http.Request) {
+	http.HandleFunc("/api/admin/events", middleware.AuthMiddleware(adminOnly(func(w http.ResponseWriter, r *http.Request) {
 		switch r.Method {
 		case http.MethodGet:
 			admin.ListEvents(w, r)
@@ -73,10 +75,10 @@ func main() {
 		default:
 			http.Error(w, "Method not allowed", http.StatusMethodNotAllowed)
 		}
-	}))
+	})))
 
 	// Tickets
-	http.HandleFunc("/api/admin/tickets", middleware.AuthMiddleware(func(w http.ResponseWriter, r *http.Request) {
+	http.HandleFunc("/api/admin/tickets", middleware.AuthMiddleware(adminOnly(func(w http.ResponseWriter, r *http.Request) {
 		switch r.Method {
 		case http.MethodGet:
 			admin.ListTickets(w, r)
@@ -89,10 +91,10 @@ func main() {
 		default:
 			http.Error(w, "Method not allowed", http.StatusMethodNotAllowed)
 		}
-	}))
+	})))
 
 	// Admin User Routes
-	http.HandleFunc("/api/admin/users", middleware.AuthMiddleware(func(w http.ResponseWriter, r *http.Request) {
+	http.HandleFunc("/api/admin/users", middleware.AuthMiddleware(adminOnly(func(w http.ResponseWriter, r *http.Request) {
 		switch r.Method {
 		case http.MethodGet:
 			admin.ListUsers(w, r)
@@ -105,10 +107,10 @@ func main() {
 		default:
 			http.Error(w, "Method not allowed", http.StatusMethodNotAllowed)
 		}
-	}))
+	})))
 
 	// Admin Organizer Routes
-	http.HandleFunc("/api/admin/organizers", middleware.AuthMiddleware(func(w http.ResponseWriter, r *http.Request) {
+	http.HandleFunc("/api/admin/organizers", middleware.AuthMiddleware(adminOnly(func(w http.ResponseWriter, r *http.Request) {
 		switch r.Method {
 		case http.MethodGet:
 			admin.ListOrganizers(w, r)
@@ -124,15 +126,15 @@ func main() {
 		default:
 			http.Error(w, "Method not allowed", http.StatusMethodNotAllowed)
 		}
-	}))
+	})))
 
 	// Admin Report Routes
-	http.HandleFunc("/api/admin/reports/transactions", middleware.AuthMiddleware(admin.TransactionReport))
-	http.HandleFunc("/api/admin/reports/event-tickets", middleware.AuthMiddleware(admin.GetEventTicketReport))
-	http.HandleFunc("/api/admin/reports/detail", middleware.AuthMiddleware(admin.GetTransactionDetail))
+	http.HandleFunc("/api/admin/reports/transactions", middleware.AuthMiddleware(adminOnly(admin.TransactionReport)))
+	http.HandleFunc("/api/admin/reports/event-tickets", middleware.AuthMiddleware(adminOnly(admin.GetEventTicketReport)))
+	http.HandleFunc("/api/admin/reports/detail", middleware.AuthMiddleware(adminOnly(admin.GetTransactionDetail)))
 
 	// Banners
-	http.HandleFunc("/api/admin/banners", middleware.AuthMiddleware(func(w http.ResponseWriter, r *http.Request) {
+	http.HandleFunc("/api/admin/banners", middleware.AuthMiddleware(adminOnly(func(w http.ResponseWriter, r *http.Request) {
 		switch r.Method {
 		case http.MethodGet:
 			admin.ListBanners(w, r)
@@ -145,10 +147,10 @@ func main() {
 		default:
 			http.Error(w, "Method not allowed", http.StatusMethodNotAllowed)
 		}
-	}))
+	})))
 
 	// Settings
-	http.HandleFunc("/api/admin/settings", middleware.AuthMiddleware(func(w http.ResponseWriter, r *http.Request) {
+	http.HandleFunc("/api/admin/settings", middleware.AuthMiddleware(adminOnly(func(w http.ResponseWriter, r *http.Request) {
 		switch r.Method {
 		case http.MethodGet:
 			admin.ListSettings(w, r)
@@ -157,10 +159,10 @@ func main() {
 		default:
 			http.Error(w, "Method not allowed", http.StatusMethodNotAllowed)
 		}
-	}))
+	})))
 
 	// Withdrawals (Event)
-	http.HandleFunc("/api/admin/withdrawals", middleware.AuthMiddleware(func(w http.ResponseWriter, r *http.Request) {
+	http.HandleFunc("/api/admin/withdrawals", middleware.AuthMiddleware(adminOnly(func(w http.ResponseWriter, r *http.Request) {
 		switch r.Method {
 		case http.MethodGet:
 			admin.ListWithdrawals(w, r)
@@ -169,10 +171,10 @@ func main() {
 		default:
 			http.Error(w, "Method not allowed", http.StatusMethodNotAllowed)
 		}
-	}))
+	})))
 
 	// Assignments
-	http.HandleFunc("/api/admin/events/assign-scanner", middleware.AuthMiddleware(func(w http.ResponseWriter, r *http.Request) {
+	http.HandleFunc("/api/admin/events/assign-scanner", middleware.AuthMiddleware(adminOnly(func(w http.ResponseWriter, r *http.Request) {
 		switch r.Method {
 		case http.MethodGet:
 			admin.GetEventScanners(w, r)
@@ -183,9 +185,9 @@ func main() {
 		default:
 			http.Error(w, "Method not allowed", http.StatusMethodNotAllowed)
 		}
-	}))
+	})))
 
-	http.HandleFunc("/api/admin/events/assign-reseller", middleware.AuthMiddleware(func(w http.ResponseWriter, r *http.Request) {
+	http.HandleFunc("/api/admin/events/assign-reseller", middleware.AuthMiddleware(adminOnly(func(w http.ResponseWriter, r *http.Request) {
 		switch r.Method {
 		case http.MethodGet:
 			admin.GetEventResellers(w, r)
@@ -196,10 +198,10 @@ func main() {
 		default:
 			http.Error(w, "Method not allowed", http.StatusMethodNotAllowed)
 		}
-	}))
+	})))
 
 	// Contacts
-	http.HandleFunc("/api/admin/contacts", middleware.AuthMiddleware(func(w http.ResponseWriter, r *http.Request) {
+	http.HandleFunc("/api/admin/contacts", middleware.AuthMiddleware(adminOnly(func(w http.ResponseWriter, r *http.Request) {
 		switch r.Method {
 		case http.MethodGet:
 			admin.ListContacts(w, r)
@@ -208,10 +210,10 @@ func main() {
 		default:
 			http.Error(w, "Method not allowed", http.StatusMethodNotAllowed)
 		}
-	}))
+	})))
 
 	// Finance (Deposits)
-	http.HandleFunc("/api/admin/finance/deposits", middleware.AuthMiddleware(func(w http.ResponseWriter, r *http.Request) {
+	http.HandleFunc("/api/admin/finance/deposits", middleware.AuthMiddleware(adminOnly(func(w http.ResponseWriter, r *http.Request) {
 		switch r.Method {
 		case http.MethodGet:
 			admin.GetUserDeposits(w, r)
@@ -220,8 +222,8 @@ func main() {
 		default:
 			http.Error(w, "Method not allowed", http.StatusMethodNotAllowed)
 		}
-	}))
-	http.HandleFunc("/api/admin/finance/balance", middleware.AuthMiddleware(admin.GetResellerBalance))
+	})))
+	http.HandleFunc("/api/admin/finance/balance", middleware.AuthMiddleware(adminOnly(admin.GetResellerBalance)))
 
 	// Organizer Routes
 	organizerOnly := middleware.RoleMiddleware("organizer", "admin")
