@@ -15,10 +15,12 @@ func DashboardStats(w http.ResponseWriter, r *http.Request) {
 	}
 
 	// Check if we should filter by organizer
+	var organizerIDVal int
 	var organizerID *int
 	if role, ok := r.Context().Value("userRole").(string); ok && role == "organizer" {
 		if uid, ok := r.Context().Value(models.UserIDKey).(int); ok {
-			organizerID = &uid
+			organizerIDVal = uid
+			organizerID = &organizerIDVal
 		}
 	}
 
