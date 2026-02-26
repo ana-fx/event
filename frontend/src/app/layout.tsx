@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { Plus_Jakarta_Sans, Syne } from "next/font/google";
 import "./globals.css";
 import ToastProvider from "@/components/providers/ToastProvider";
+import { SpeedInsights } from '@vercel/speed-insights/next';
 
 const plusJakartaSans = Plus_Jakarta_Sans({
   subsets: ["latin"],
@@ -66,6 +67,7 @@ export default function RootLayout({
       <body className="antialiased font-body">
         <ToastProvider />
         {children}
+        <SpeedInsights />
       </body>
     </html>
   );
