@@ -6,16 +6,20 @@ import CategorySection from "@/components/public/CategorySection";
 
 async function getEvents() {
   try {
-    // Priority: BACKEND_URL (for server-side fetch) > NEXT_PUBLIC_API_URL > Default localhost
-    let baseUrl = process.env.BACKEND_URL;
-    let apiUrl = "";
+    const backendUrl = process.env.BACKEND_URL;
+    const publicApiUrl = process.env.NEXT_PUBLIC_API_URL;
 
-    if (baseUrl) {
-      // Ensure backendUrl doesn't end with a slash for consistency
-      const cleanBase = baseUrl.endsWith('/') ? baseUrl.slice(0, -1) : baseUrl;
+    if (!backendUrl && !publicApiUrl) {
+      console.error('[Server] ERROR: Neither BACKEND_URL nor NEXT_PUBLIC_API_URL is set!');
+      return [];
+    }
+
+    let apiUrl = "";
+    if (backendUrl) {
+      const cleanBase = backendUrl.endsWith('/') ? backendUrl.slice(0, -1) : backendUrl;
       apiUrl = `${cleanBase}/api`;
     } else {
-      apiUrl = process.env.NEXT_PUBLIC_API_URL || "http://localhost:8080/api";
+      apiUrl = publicApiUrl!;
     }
 
     console.log(`[Server] Fetching events from: ${apiUrl}/events`);
