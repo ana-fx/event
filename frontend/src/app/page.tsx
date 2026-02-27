@@ -6,7 +6,17 @@ import CategorySection from "@/components/public/CategorySection";
 
 async function getEvents() {
   try {
-    const apiUrl = process.env.NEXT_PUBLIC_API_URL || "http://localhost:8080/api";
+    // Try to get API URL from env, fallback to BACKEND_URL + /api, then localhost
+    let apiUrl = process.env.NEXT_PUBLIC_API_URL;
+    
+    if (!apiUrl && process.env.BACKEND_URL) {
+      apiUrl = `${process.env.BACKEND_URL}/api`;
+    }
+    
+    if (!apiUrl) {
+      apiUrl = "http://localhost:8080/api";
+    }
+
     const res = await fetch(`${apiUrl}/events`, {
       cache: "no-store",
     });
