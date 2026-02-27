@@ -30,7 +30,10 @@ const nextConfig = {
     ignoreBuildErrors: true,
   },
   async rewrites() {
+    // BACKEND_URL must be set in Vercel Environment Variables.
+    // Fallback to localhost for local development only.
     const backendUrl = process.env.BACKEND_URL || 'http://localhost:8080';
+    console.log(`[next.config] Using BACKEND_URL: ${backendUrl}`);
     return [
       {
         source: '/api/:path*',
