@@ -6,25 +6,33 @@ import CategorySection from "@/components/public/CategorySection";
 
 async function getEvents() {
   try {
-    // Try to get API URL from env, fallback to BACKEND_URL + /api, then localhost
-    let apiUrl = process.env.NEXT_PUBLIC_API_URL;
-    
-    if (!apiUrl && process.env.BACKEND_URL) {
-      apiUrl = `${process.env.BACKEND_URL}/api`;
+    // Priority: BACKEND_URL (for server-side fetch) > NEXT_PUBLIC_API_URL > Default localhost
+    let baseUrl = process.env.BACKEND_URL;
+    let apiUrl = "";
+
+    if (baseUrl) {
+      // Ensure backendUrl doesn't end with a slash for consistency
+      const cleanBase = baseUrl.endsWith('/') ? baseUrl.slice(0, -1) : baseUrl;
+      apiUrl = `${cleanBase}/api`;
+    } else {
+      apiUrl = process.env.NEXT_PUBLIC_API_URL || "http://localhost:8080/api";
     }
-    
-    if (!apiUrl) {
-      apiUrl = "http://localhost:8080/api";
-    }
+
+    console.log(`[Server] Fetching events from: ${apiUrl}/events`);
 
     const res = await fetch(`${apiUrl}/events`, {
       cache: "no-store",
     });
-    if (!res.ok) return [];
+
+    if (!res.ok) {
+      console.error(`[Server] Failed to fetch events. Status: ${res.status}`);
+      return [];
+    }
+
     const data = await res.json();
     return data || [];
   } catch (error) {
-    console.error("Failed to fetch events:", error);
+    console.error("[Server] Error in getEvents:", error);
     return [];
   }
 }
