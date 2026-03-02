@@ -53,7 +53,30 @@ interface Event {
 export default async function Home() {
   const events = await getEvents();
 
-  const jsonLd = {
+  const organizationLd = {
+    "@context": "https://schema.org",
+    "@type": "Organization",
+    name: "Ingate",
+    url: "https://ingate.id",
+    logo: "https://ingate.id/logo-ingate.png",
+    sameAs: [
+      "https://www.instagram.com/ingate_id",
+    ],
+  };
+
+  const websiteLd = {
+    "@context": "https://schema.org",
+    "@type": "WebSite",
+    name: "Ingate",
+    url: "https://ingate.id",
+    potentialAction: {
+      "@type": "SearchAction",
+      target: "https://ingate.id/events?q={search_term_string}",
+      "query-input": "required name=search_term_string",
+    },
+  };
+
+  const itemListLd = {
     "@context": "https://schema.org",
     "@type": "ItemList",
     name: "Featured Events | Ingate",
@@ -124,7 +147,15 @@ export default async function Home() {
       {/* Structured Data */}
       <script
         type="application/ld+json"
-        dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(organizationLd) }}
+      />
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(websiteLd) }}
+      />
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(itemListLd) }}
       />
     </div>
   );

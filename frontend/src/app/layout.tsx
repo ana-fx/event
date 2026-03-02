@@ -24,6 +24,9 @@ export const metadata: Metadata = {
   authors: [{ name: "Ingate Team" }],
   creator: "Ingate",
   publisher: "Ingate",
+  alternates: {
+    canonical: '/',
+  },
   openGraph: {
     type: "website",
     locale: "id_ID",
