@@ -8,7 +8,7 @@
   --primary: #bad331;
   --secondary: #64748b;
   --brand-dark: #143a3c;
-  
+
   /* Bridging Next.js Font Variables to Tailwind-friendly classes */
   --font-body: var(--font-body);
   --font-heading: var(--font-heading);
@@ -25,6 +25,10 @@
   --foreground: #f8fafc;
   --card: #0f172a;
   --card-border: #1e293b;
+}
+
+html {
+  scroll-behavior: smooth;
 }
 
 body {

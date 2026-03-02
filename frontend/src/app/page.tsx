@@ -2,7 +2,6 @@ import Navbar from "@/components/public/Navbar";
 import Footer from "@/components/public/Footer";
 import Hero from "@/components/public/Hero";
 import EventList from "@/components/public/EventList";
-import CategorySection from "@/components/public/CategorySection";
 
 async function getEvents() {
   try {
@@ -88,8 +87,6 @@ export default async function Home() {
 
       <main className="flex-1">
         <Hero />
-        
-        <CategorySection />
 
         <section className="max-w-7xl mx-auto px-6 lg:px-10 py-24">
           <div className="flex flex-col md:flex-row justify-between items-start md:items-end mb-16 gap-8">

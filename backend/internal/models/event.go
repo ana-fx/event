@@ -193,7 +193,7 @@ func GetEventByID(id int) (*Event, error) {
 			e.organizer_tax, e.organizer_tax_type, e.admin_fee, e.admin_fee_type, e.ppn, e.ppn_type,
 			e.reseller_fee_type, e.reseller_fee_value, e.organizer_fee_online_type, e.organizer_fee_online,
 			e.organizer_fee_reseller_type, e.organizer_fee_reseller,
-			e.pg_fee, e.pg_fee_type,
+			e.pg_fee, e.pg_fee_type, e.pg_fee_bank, e.pg_fee_qris,
 			e.created_at,
 			e.organizer_id
 		FROM events e
@@ -277,7 +277,7 @@ func GetEventBySlug(slug string) (*Event, error) {
 			e.organizer_tax, e.organizer_tax_type, e.admin_fee, e.admin_fee_type, e.ppn, e.ppn_type,
 			e.reseller_fee_type, e.reseller_fee_value, e.organizer_fee_online_type, e.organizer_fee_online,
 			e.organizer_fee_reseller_type, e.organizer_fee_reseller,
-			e.pg_fee, e.pg_fee_type,
+			e.pg_fee, e.pg_fee_type, e.pg_fee_bank, e.pg_fee_qris,
 			e.created_at,
 			e.organizer_id
 		FROM events e

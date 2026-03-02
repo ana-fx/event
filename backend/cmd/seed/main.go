@@ -54,52 +54,81 @@ func main() {
 
 	// 5. Create Admin User
 	log.Println("Creating admin user...")
-	adminPassword, _ := bcrypt.GenerateFromPassword([]byte("admin@admin.com"), bcrypt.DefaultCost)
+	adminPassword, _ := bcrypt.GenerateFromPassword([]byte("admin@ingate.id"), bcrypt.DefaultCost)
 	admin := &models.User{
-		Name:     "Super Admin",
-		Email:    "admin@admin.com",
+		Name:     "Admin Ingate",
+		Email:    "admin@ingate.id",
 		Password: string(adminPassword),
 		Role:     "admin",
 		IsActive: true,
 		Username: sql.NullString{String: "admin", Valid: true},
 	}
 	if err := models.CreateUser(admin); err != nil {
-		log.Fatal("Failed to create admin user:", err)
+		log.Printf("Warning: admin user might already exist: %v", err)
 	}
 
 	// 6. Create Organizer User
 	log.Println("Creating organizer user...")
-	orgPassword, _ := bcrypt.GenerateFromPassword([]byte("organizer@test.com"), bcrypt.DefaultCost)
+	orgPassword, _ := bcrypt.GenerateFromPassword([]byte("organizer@ingate.id"), bcrypt.DefaultCost)
 	organizer := &models.User{
-		Name:          "Global Events Organizer",
-		Email:         "organizer@test.com",
+		Name:          "Ingate Promotions",
+		Email:         "organizer@ingate.id",
 		Password:      string(orgPassword),
 		Role:          "organizer",
 		IsActive:      true,
-		Username:      sql.NullString{String: "global_org", Valid: true},
-		OrganizerName: sql.NullString{String: "Global Events Inc.", Valid: true},
-		AboutUs:       sql.NullString{String: "Leading organizer of international festivals, tech expos, and food carnivals worldwide.", Valid: true},
+		Username:      sql.NullString{String: "ingate_org", Valid: true},
+		OrganizerName: sql.NullString{String: "Ingate Promotions", Valid: true},
+		AboutUs:       sql.NullString{String: "Leading organizer of international festivals and high-end events.", Valid: true},
 		Phone:         sql.NullString{String: "081234567890", Valid: true},
-		Province:      sql.NullString{String: "DKI Jakarta", Valid: true},
-		City:          sql.NullString{String: "Jakarta Selatan", Valid: true},
-		ZipCode:       sql.NullString{String: "12345", Valid: true},
-		Address:       sql.NullString{String: "Sudirman Central Business District (SCBD), Jakarta", Valid: true},
+		Province:      sql.NullString{String: "Jawa Timur", Valid: true},
+		City:          sql.NullString{String: "Ponorogo", Valid: true},
+		ZipCode:       sql.NullString{String: "63411", Valid: true},
+		Address:       sql.NullString{String: "Jl. Jendral Sudirman No. 1, Ponorogo", Valid: true},
 	}
 	if err := models.CreateUser(organizer); err != nil {
-		log.Fatal("Failed to create organizer user:", err)
+		log.Printf("Warning: organizer user might already exist: %v", err)
 	}
 
-	// 7. Create Sample Events
+	// 7. Create Sample Events with Rich Content
 	log.Println("Creating sample events...")
+	bannerPath := "/uploads/events/1770321313086990300.webp"
+	thumbPath := "/uploads/events/1770321313087489500.png"
+
 	events := []struct {
-		Name     string
-		Slug     string
-		Category string
-		City     string
+		Name        string
+		Slug        string
+		Category    string
+		City        string
+		Description string
 	}{
-		{"Jakarta Jazz Festival 2026", "jakarta-jazz-2026", "Music", "Jakarta"},
-		{"Tech Expo Asia 2026", "tech-expo-2026", "Technology", "Bandung"},
-		{"International Food Carnival", "food-carnival-2026", "Food", "Surabaya"},
+		{
+			Name:     "Jakarta International Jazz Festival 2026",
+			Slug:     "jakarta-jazz-2026",
+			Category: "Music",
+			City:     "Jakarta",
+			Description: `
+				<p>The biggest jazz festival in Southeast Asia is back. Featuring world-class musicians and local legends across 10 different stages.</p>
+				<p><strong>Highlights of 2026:</strong></p>
+				<ul>
+					<li>Exclusive backstage tours for VIP ticket holders.</li>
+					<li>Interactive music workshops with industry veterans.</li>
+					<li>Gourmet food festival featuring the best of Indonesian cuisine.</li>
+				</ul>`,
+		},
+		{
+			Name:     "Tech Expo Asia 2026",
+			Slug:     "tech-expo-2026",
+			Category: "Technology",
+			City:     "Bandung",
+			Description: `
+				<p>Experience the future of innovation at Tech Expo Asia 2026. Explore the latest in AI, Robotics, and Green Tech.</p>
+				<p><strong>What to expect:</strong></p>
+				<ul>
+					<li>Keynotes from world tech leaders.</li>
+					<li>Hands-on workshops.</li>
+					<li>Developer hackathons with massive prizes.</li>
+				</ul>`,
+		},
 	}
 
 	for _, eData := range events {
@@ -108,15 +137,23 @@ func main() {
 			Slug:          eData.Slug,
 			Category:      eData.Category,
 			Status:        "published",
+			BannerPath:    &bannerPath,
+			ThumbnailPath: &thumbPath,
 			StartDate:     time.Now().AddDate(0, 1, 0),
 			EndDate:       time.Now().AddDate(0, 1, 1),
-			Description:   fmt.Sprintf("Experience the biggest %s event of the year! Join thousands of enthusiasts at the %s in %s.", eData.Category, eData.Name, eData.City),
-			Terms:         stringPtr("1. Non-refundable ticket. 2. Must bring valid ID. 3. Follow all event protocols."),
+			Description:   eData.Description,
+			Terms:         stringPtr("<h3>Terms & Conditions</h3><ol><li>Tickets are non-refundable.</li><li>Bring valid ID matching the ticket holder name.</li><li>No sharp objects or prohibited substances allowed.</li></ol>"),
 			Location:      stringPtr("Grand Convention Hall"),
 			City:          stringPtr(eData.City),
 			Province:      stringPtr("Jawa"),
 			OrganizerID:   &organizer.ID,
 			OrganizerName: stringPtr(organizer.OrganizerName.String),
+
+			// SEO & Media
+			SeoTitle:       stringPtr(fmt.Sprintf("%s | Ingate Tickets", eData.Name)),
+			SeoDescription: stringPtr(fmt.Sprintf("Buy your tickets for %s at Ingate. Secure, easy, and fast booking.", eData.Name)),
+			GoogleMapEmbed: stringPtr("<iframe src=\"https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3966.822238495066!2d106.84155157485375!3d-6.154562093832598!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x2e69f5926ec09141%3A0xe6798b0492cb2c0d!2sJIEXPO%20Kemayoran!5e0!3m2!1sen!2sid!4v1715830000000!5m2!1sen!2sid\" width=\"100%\" height=\"450\" style=\"border:0;\" allowfullscreen=\"\" loading=\"lazy\" referrerpolicy=\"no-referrer-when-downgrade\"></iframe>"),
+			YoutubeLink:    stringPtr("https://www.youtube.com/watch?v=FjS6T8Xv2Ww"),
 
 			// Financial Settings
 			AdminFee:         5000,
@@ -125,8 +162,6 @@ func main() {
 			PPNType:          "percent",
 			OrganizerTax:     5,
 			OrganizerTaxType: "percent",
-			PgFee:            2500,
-			PgFeeType:        "fixed",
 			PgFeeBank:        4440,
 			PgFeeQris:        0.7,
 
@@ -150,7 +185,7 @@ func main() {
 		}{
 			{"Early Bird", 150000, 100},
 			{"General Admission", 250000, 500},
-			{"VIP", 750000, 50},
+			{"VIP Experience", 1500000, 50},
 		}
 
 		for _, tData := range tickets {
@@ -163,7 +198,7 @@ func main() {
 				IsActive:           true,
 				StartDate:          time.Now(),
 				EndDate:            event.StartDate,
-				Description:        sql.NullString{String: fmt.Sprintf("Access to %s", tData.Name), Valid: true},
+				Description:        sql.NullString{String: fmt.Sprintf("Access to %s and all festival areas.", tData.Name), Valid: true},
 			}
 			if err := models.CreateTicket(ticket); err != nil {
 				log.Fatalf("Failed to create ticket %s: %v", ticket.Name, err)
@@ -172,22 +207,33 @@ func main() {
 		log.Printf("Created event: %s with tickets", event.Name)
 	}
 
-	// 9. Create Banner
-	log.Println("Creating sample banner...")
-	banner := &models.Banner{
-		Slug:      "jazz-fest-2026",
-		Title:     "Jakarta Jazz Festival 2026",
-		ImagePath: "/uploads/events/1770321313086990300.webp",
-		LinkURL:   "/events/jakarta-jazz-2026",
-		IsActive:  true,
+	// 9. Create Banners
+	log.Println("Creating sample banners...")
+	banners := []struct {
+		Slug  string
+		Title string
+		URL   string
+	}{
+		{"jazz-fest-2026", "Jakarta Jazz Festival 2026", "/events/jakarta-jazz-2026"},
+		{"tech-expo-2026", "Tech Expo Asia 2026", "/events/tech-expo-2026"},
 	}
-	if err := models.CreateBanner(banner); err != nil {
-		log.Printf("Warning: failed to create banner: %v", err)
+
+	for _, bData := range banners {
+		banner := &models.Banner{
+			Slug:      bData.Slug,
+			Title:     bData.Title,
+			ImagePath: bannerPath,
+			LinkURL:   bData.URL,
+			IsActive:  true,
+		}
+		if err := models.CreateBanner(banner); err != nil {
+			log.Printf("Warning: failed to create banner %s: %v", bData.Slug, err)
+		}
 	}
 
 	log.Println("Database reset and seeding successful!")
-	log.Println("Admin: admin@admin.com / admin@admin.com")
-	log.Println("Organizer: organizer@test.com / organizer@test.com")
+	log.Println("Admin: admin@ingate.id / admin@ingate.id")
+	log.Println("Organizer: organizer@ingate.id / organizer@ingate.id")
 }
 
 func stringPtr(s string) *string {

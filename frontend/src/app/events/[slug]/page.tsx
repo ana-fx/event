@@ -219,10 +219,9 @@ export default async function EventDetailPage({ params }: { params: Promise<{ sl
                                 </div>
                             </div>
                         )}
-
-                        {/* Organizer Section */}
+                        {/* Organizer Info Section */}
                         <div className="p-10 rounded-[40px] bg-gray-50 border border-gray-100 flex flex-col md:flex-row gap-8 items-center">
-                            <div className="w-32 h-32 rounded-[32px] bg-white p-2 shadow-2xl relative overflow-hidden flex items-center justify-center">
+                            <div className="w-24 h-24 rounded-[28px] bg-white p-2 shadow-xl relative overflow-hidden flex items-center justify-center">
                                 {event.organizer_logo_path ? (
                                     <Image
                                         src={getImageUrl(event.organizer_logo_path)}
@@ -231,18 +230,16 @@ export default async function EventDetailPage({ params }: { params: Promise<{ sl
                                         className="object-cover p-2"
                                     />
                                 ) : (
-                                    <Globe className="w-12 h-12 text-gray-100" />
+                                    <Globe className="w-10 h-10 text-gray-100" />
                                 )}
                             </div>
                             <div className="flex-1 text-center md:text-left">
                                 <span className="text-[10px] font-black uppercase tracking-[0.3em] text-primary mb-2 block">Our Trusted Partner</span>
-                                <h3 className="text-3xl font-black text-brand-dark tracking-tight uppercase mb-4">{event.organizer_name || "Official Partner"}</h3>
-                                <p className="text-gray-500 max-w-md">Experience events crafted with excellence and brought to you by industry legends.</p>
+                                <h3 className="text-3xl font-black text-brand-dark tracking-tight uppercase mb-2">{event.organizer_name || "Official Partner"}</h3>
+                                <p className="text-gray-500 max-w-md text-sm">Experience events crafted with excellence and brought to you by industry legends.</p>
                             </div>
-                            <Link href="/contact" className="px-8 py-4 bg-white text-[11px] font-black uppercase tracking-widest border border-gray-200 rounded-2xl hover:bg-brand-dark hover:text-white transition-all">
-                                Contact Organizer
-                            </Link>
                         </div>
+
 
                         {/* Map & Venue Section */}
                         {event.google_map_embed && (

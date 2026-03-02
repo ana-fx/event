@@ -10,12 +10,12 @@ export default function Footer() {
                     {/* Brand Section */}
                     <div className="lg:w-5/12 space-y-8">
                         <Link href="/" className="inline-block">
-                            <Image 
-                                src="/logo-ingate.png" 
-                                alt="Ingate Logo" 
-                                width={140} 
-                                height={40} 
-                                className="h-8 md:h-10 w-auto object-contain brightness-0 invert"
+                            <Image
+                                src="/logo-ingate.png"
+                                alt="Ingate Logo"
+                                width={140}
+                                height={40}
+                                className="h-8 md:h-10 w-auto object-contain"
                             />
                         </Link>
                         <p className="text-white/50 leading-relaxed text-sm max-w-sm">
@@ -38,7 +38,6 @@ export default function Footer() {
                         <div>
                             <h3 className="font-bold text-white mb-6 uppercase text-[11px] tracking-widest">Company</h3>
                             <ul className="space-y-3 text-sm text-white/50">
-                                <li><a href="/about-us" className="hover:text-primary transition-colors">About Us</a></li>
                                 <li><a href="/contact" className="hover:text-primary transition-colors">Contact</a></li>
                                 <li><a href="/admin/login" className="hover:text-primary transition-colors">Staff Login</a></li>
                             </ul>
@@ -49,7 +48,7 @@ export default function Footer() {
                                 <li className="flex items-start gap-3">
                                     <MapPin className="w-5 h-5 text-white shrink-0 mt-0.5" />
                                     <span className="leading-relaxed">
-                                        Jl. Jendral Sudirman No. 1, Jakarta, Indonesia
+                                        Ponorogo, Jawa Timur
                                     </span>
                                 </li>
                                 <li className="flex items-center gap-3">

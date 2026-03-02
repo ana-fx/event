@@ -14,11 +14,11 @@ export default function Navbar() {
                 <div className="flex justify-between items-center h-24">
                     {/* Logo */}
                     <Link href="/" className="flex items-center group">
-                        <Image 
-                            src="/logo-ingate.png" 
-                            alt="Ingate Logo" 
-                            width={160} 
-                            height={48} 
+                        <Image
+                            src="/logo-ingate.png"
+                            alt="Ingate Logo"
+                            width={160}
+                            height={48}
                             className="h-10 md:h-12 w-auto object-contain"
                             priority
                         />
@@ -29,7 +29,6 @@ export default function Navbar() {
                         {[
                             { label: 'Home', path: '/' },
                             { label: 'Events', path: '/events' },
-                            { label: 'About', path: '/about-us' },
                             { label: 'Contact', path: '/contact' }
                         ].map((item) => (
                             <Link
@@ -65,7 +64,6 @@ export default function Navbar() {
                     {[
                         { label: 'Home', path: '/' },
                         { label: 'Events', path: '/events' },
-                        { label: 'About Us', path: '/about-us' },
                         { label: 'Contact', path: '/contact' }
                     ].map((item) => (
                         <Link
