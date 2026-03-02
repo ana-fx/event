@@ -36,7 +36,7 @@ function CheckoutContent({ params }: { params: { slug: string } }) {
         nik: "",
         gender: "Male",
         city: "",
-        paymentMethod: "bank_transfer",
+        paymentMethod: "midtrans",
         agreeTerms: false,
         confirmData: false
     });
@@ -137,12 +137,12 @@ function CheckoutContent({ params }: { params: { slug: string } }) {
             ppn = subtotal * (event.ppn / 100);
         }
 
-        // 4. Payment Gateway Fee
+        // 4. Payment Gateway Fee (Midtrans default)
         let pgFee = 0;
-        if (form.paymentMethod === "bank_transfer") {
-            pgFee = event.pg_fee_bank || 4440;
-        } else if (form.paymentMethod === "qris") {
+        if (form.paymentMethod === "qris") {
             pgFee = subtotal * ((event.pg_fee_qris || 0.7) / 100);
+        } else {
+            pgFee = event.pg_fee_bank || 4440;
         }
 
         const total = subtotal + serviceFee + handlingFee + ppn + pgFee;
@@ -339,35 +339,6 @@ function CheckoutContent({ params }: { params: { slug: string } }) {
                                 </div>
                             </section>
 
-                            {/* Payment Method Group */}
-                            <section className="space-y-6 sm:space-y-10">
-                                <div className="flex items-center gap-4 sm:gap-6">
-                                    <span className="w-8 h-8 sm:w-10 sm:h-10 rounded-full bg-primary text-white flex items-center justify-center font-black text-xs sm:text-sm font-heading">03</span>
-                                    <h3 className="text-lg sm:text-xl font-black text-[#1A1A1A] uppercase tracking-tighter font-heading">Payment Method</h3>
-                                </div>
-
-                                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                                    <button
-                                        type="button"
-                                        onClick={() => setForm({ ...form, paymentMethod: "bank_transfer" })}
-                                        className={`flex flex-col items-start p-6 rounded-2xl border-2 transition-all text-left ${form.paymentMethod === "bank_transfer" ? "border-primary bg-primary/5" : "border-slate-100 bg-white hover:border-slate-200"}`}
-                                    >
-                                        <span className="text-[10px] font-black uppercase tracking-widest text-primary mb-1">Method 01</span>
-                                        <span className="text-sm font-black text-brand-dark uppercase tracking-tighter">Bank Transfer (VA)</span>
-                                        <span className="text-[10px] text-gray-400 mt-2 font-bold">Admin Fee: {formatIDR(event?.pg_fee_bank || 4440)}</span>
-                                    </button>
-
-                                    <button
-                                        type="button"
-                                        onClick={() => setForm({ ...form, paymentMethod: "qris" })}
-                                        className={`flex flex-col items-start p-6 rounded-2xl border-2 transition-all text-left ${form.paymentMethod === "qris" ? "border-primary bg-primary/5" : "border-slate-100 bg-white hover:border-slate-200"}`}
-                                    >
-                                        <span className="text-[10px] font-black uppercase tracking-widest text-primary mb-1">Method 02</span>
-                                        <span className="text-sm font-black text-brand-dark uppercase tracking-tighter">QRIS / E-Wallet</span>
-                                        <span className="text-[10px] text-gray-400 mt-2 font-bold">Admin Fee: {(event?.pg_fee_qris || 0.7)}%</span>
-                                    </button>
-                                </div>
-                            </section>
 
                             {/* Aggrement Group */}
                             <div className="space-y-4 mt-0!">
