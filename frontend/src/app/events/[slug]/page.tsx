@@ -50,15 +50,35 @@ interface EventDetailResponse {
 
 async function getEvent(slug: string): Promise<EventDetailResponse | null> {
     try {
-        const apiUrl = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8080/api';
+        const backendUrl = process.env.BACKEND_URL;
+        const publicApiUrl = process.env.NEXT_PUBLIC_API_URL;
+
+        if (!backendUrl && !publicApiUrl) {
+            console.error('[Server] ERROR: Neither BACKEND_URL nor NEXT_PUBLIC_API_URL is set!');
+            return null;
+        }
+
+        let apiUrl = "";
+        if (backendUrl) {
+            const cleanBase = backendUrl.endsWith('/') ? backendUrl.slice(0, -1) : backendUrl;
+            apiUrl = `${cleanBase}/api`;
+        } else {
+            apiUrl = publicApiUrl!;
+        }
+
+        console.log(`[Server] Fetching event detail from: ${apiUrl}/events/detail?slug=${slug}`);
+
         const res = await fetch(`${apiUrl}/events/detail?slug=${slug}`, {
-            next: { revalidate: 0 }
+            cache: 'no-store'
         });
 
-        if (!res.ok) return null;
+        if (!res.ok) {
+            console.error(`[Server] Failed to fetch event detail. Status: ${res.status}`);
+            return null;
+        }
         return res.json();
     } catch (error) {
-        console.error("Failed to fetch event:", error);
+        console.error("[Server] Error in getEvent:", error);
         return null;
     }
 }
