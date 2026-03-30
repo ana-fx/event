@@ -5,22 +5,36 @@ import { Search } from "lucide-react";
 
 async function getEvents() {
     try {
-        const apiUrl = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8080/api';
-        const res = await fetch(`${apiUrl}/events`, {
-            cache: "no-store",
-            // next: { revalidate: 0 } // Alternative for App Router caching
-        });
+        const backendUrl = process.env.BACKEND_URL;
+        const publicApiUrl = process.env.NEXT_PUBLIC_API_URL;
 
-        if (!res.ok) {
-            console.error(`API Error: ${res.status} ${res.statusText}`);
+        if (!backendUrl && !publicApiUrl) {
+            console.error('[Server] ERROR: Neither BACKEND_URL nor NEXT_PUBLIC_API_URL is set!');
             return [];
         }
 
-        const data = await res.json();
-        console.log(`Fetched ${data?.length || 0} events from ${apiUrl}/events`);
-        return data;
+        let apiUrl = "";
+        if (backendUrl) {
+            const cleanBase = backendUrl.endsWith('/') ? backendUrl.slice(0, -1) : backendUrl;
+            apiUrl = `${cleanBase}/api`;
+        } else {
+            apiUrl = publicApiUrl!;
+        }
+
+        console.log(`[Server] Fetching events from: ${apiUrl}/events`);
+
+        const res = await fetch(`${apiUrl}/events`, {
+            cache: "no-store",
+        });
+
+        if (!res.ok) {
+            console.error(`[Server] Failed to fetch events. Status: ${res.status}`);
+            return [];
+        }
+
+        return await res.json();
     } catch (error) {
-        console.error("Failed to fetch events:", error);
+        console.error("[Server] Error in getEvents:", error);
         return [];
     }
 }

@@ -134,12 +134,12 @@ func GetAllTransactions(eventID int, organizerID *int) ([]Transaction, error) {
 func CreateTransaction(t *Transaction) error {
 	query := `
 		INSERT INTO transactions (
-			code, event_id, ticket_id, name, email, phone, city, nik, gender, quantity, total_price, status, created_at, updated_at
-		) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14)
+			code, event_id, ticket_id, name, email, phone, city, nik, gender, quantity, total_price, status, payment_type, created_at, updated_at
+		) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14, $15)
 		RETURNING id`
 
 	err := database.DB.QueryRow(query,
-		t.Code, t.EventID, t.TicketID, t.Name, t.Email, t.Phone, t.City, t.NIK, t.Gender, t.Quantity, t.TotalPrice, t.Status, time.Now(), time.Now(),
+		t.Code, t.EventID, t.TicketID, t.Name, t.Email, t.Phone, t.City, t.NIK, t.Gender, t.Quantity, t.TotalPrice, t.Status, t.PaymentType, time.Now(), time.Now(),
 	).Scan(&t.ID)
 	if err != nil {
 		return err
