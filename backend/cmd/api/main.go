@@ -232,10 +232,26 @@ func main() {
 		switch r.Method {
 		case http.MethodGet:
 			admin.ListEvents(w, r)
+		case http.MethodPost:
+			admin.CreateEvent(w, r)
 		case http.MethodPut:
 			admin.UpdateEvent(w, r)
 		case http.MethodDelete:
 			admin.DeleteEvent(w, r)
+		default:
+			http.Error(w, "Method not allowed", http.StatusMethodNotAllowed)
+		}
+	})))
+	http.HandleFunc("/api/organizer/tickets", middleware.AuthMiddleware(organizerOnly(func(w http.ResponseWriter, r *http.Request) {
+		switch r.Method {
+		case http.MethodGet:
+			admin.ListTickets(w, r)
+		case http.MethodPost:
+			admin.CreateTicket(w, r)
+		case http.MethodPut:
+			admin.UpdateTicket(w, r)
+		case http.MethodDelete:
+			admin.DeleteTicket(w, r)
 		default:
 			http.Error(w, "Method not allowed", http.StatusMethodNotAllowed)
 		}

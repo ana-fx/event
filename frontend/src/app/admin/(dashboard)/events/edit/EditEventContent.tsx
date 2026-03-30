@@ -485,7 +485,8 @@ function AssignmentsTab({ eventId }: { eventId: string }) {
 }
 
 // --- TAB 3: TICKETS ---
-function TicketsTab({ eventId }: { eventId: string }) {
+function TicketsTab({ eventId, isOrganizer = false }: { eventId: string; isOrganizer?: boolean }) {
+    const ticketEndpoint = isOrganizer ? "/organizer/tickets" : "/admin/tickets";
     const [tickets, setTickets] = useState<Ticket[]>([]);
     const [loading, setLoading] = useState(true);
     const [isModalOpen, setIsModalOpen] = useState(false);
@@ -499,7 +500,7 @@ function TicketsTab({ eventId }: { eventId: string }) {
     const fetchTickets = async () => {
         setLoading(true);
         try {
-            const res = await axiosInstance.get(`/admin/tickets?event_id=${eventId}`);
+            const res = await axiosInstance.get(`${ticketEndpoint}?event_id=${eventId}`);
             setTickets(res.data || []);
         } catch (e) { toast.error("Failed to load tickets"); }
         finally { setLoading(false); }
@@ -533,10 +534,10 @@ function TicketsTab({ eventId }: { eventId: string }) {
         try {
             const payload = { ...formData, event_id: Number(eventId) };
             if (editingTicket) {
-                await axiosInstance.put(`/admin/tickets?id=${editingTicket.id}`, payload);
+                await axiosInstance.put(`${ticketEndpoint}?id=${editingTicket.id}`, payload);
                 toast.success("Ticket updated");
             } else {
-                await axiosInstance.post(`/admin/tickets`, payload);
+                await axiosInstance.post(ticketEndpoint, payload);
                 toast.success("Ticket created");
             }
             setIsModalOpen(false);
@@ -550,7 +551,7 @@ function TicketsTab({ eventId }: { eventId: string }) {
     const handleDelete = async (id: number) => {
         if (!confirm("Are you sure?")) return;
         try {
-            await axiosInstance.delete(`/admin/tickets?id=${id}`);
+            await axiosInstance.delete(`${ticketEndpoint}?id=${id}`);
             toast.success("Ticket deleted");
             fetchTickets();
         } catch { toast.error("Failed to delete ticket"); }
@@ -885,7 +886,7 @@ export default function EditEventContent({ isOrganizer = false }: { isOrganizer?
                     {activeTab === "details" && (
                         <EventDetailsTab id={id!} initialData={eventData} refresh={fetchEvent} isOrganizer={isOrganizer} />
                     )}
-                    {activeTab === "tickets" && <TicketsTab eventId={id!} />}
+                    {activeTab === "tickets" && <TicketsTab eventId={id!} isOrganizer={isOrganizer} />}
                     {!isOrganizer && activeTab === "finance" && (
                         <FinanceTab id={id!} initialData={eventData} refresh={fetchEvent} />
                     )}
