@@ -25,6 +25,12 @@ interface AssignedReseller extends User {
     commission_value: number;
 }
 
+interface MerchandiseVariant {
+    name: string;
+    options: string[];
+    is_required: boolean;
+}
+
 interface Ticket {
     id: number;
     event_id: number;
@@ -36,6 +42,7 @@ interface Ticket {
     start_date: string;
     end_date: string;
     is_active: boolean;
+    merchandise_variants?: MerchandiseVariant[];
 }
 
 // --- TAB 1: DETAILS ---
@@ -492,10 +499,9 @@ function TicketsTab({ eventId, isOrganizer = false }: { eventId: string; isOrgan
     const [isModalOpen, setIsModalOpen] = useState(false);
     const [editingTicket, setEditingTicket] = useState<Ticket | null>(null);
 
-    const [formData, setFormData] = useState({
-        name: "", description: "", price: 0, quota: 0, max_purchase_per_user: 5,
-        start_date: "", end_date: "", is_active: true
-    });
+    const emptyForm = { name: "", description: "", price: 0, quota: 0, max_purchase_per_user: 5, start_date: "", end_date: "", is_active: true, merchandise_variants: [] as MerchandiseVariant[] };
+    const [formData, setFormData] = useState(emptyForm);
+    const [newVariantOption, setNewVariantOption] = useState("");
 
     const fetchTickets = async () => {
         setLoading(true);
@@ -520,12 +526,14 @@ function TicketsTab({ eventId, isOrganizer = false }: { eventId: string; isOrgan
                 max_purchase_per_user: ticket.max_purchase_per_user,
                 start_date: ticket.start_date,
                 end_date: ticket.end_date,
-                is_active: ticket.is_active
+                is_active: ticket.is_active,
+                merchandise_variants: ticket.merchandise_variants || []
             });
         } else {
             setEditingTicket(null);
-            setFormData({ name: "", description: "", price: 0, quota: 0, max_purchase_per_user: 5, start_date: "", end_date: "", is_active: true });
+            setFormData(emptyForm);
         }
+        setNewVariantOption("");
         setIsModalOpen(true);
     };
 
@@ -623,6 +631,110 @@ function TicketsTab({ eventId, isOrganizer = false }: { eventId: string; isOrgan
                             <div>
                                 <RichTextEditor label="Description" value={formData.description} onChange={val => setFormData({ ...formData, description: val })} />
                             </div>
+
+                            {/* Merchandise Variants */}
+                            <div className="border border-(--card-border) rounded-xl p-4 space-y-4">
+                                <div className="flex justify-between items-center">
+                                    <div>
+                                        <p className="font-bold text-(--foreground)">Merchandise (Optional)</p>
+                                        <p className="text-xs text-gray-400">Include merchandise in ticket price</p>
+                                    </div>
+                                    <button
+                                        type="button"
+                                        onClick={() => setFormData({ ...formData, merchandise_variants: [...formData.merchandise_variants, { name: "", options: [], is_required: false }] })}
+                                        className="px-3 py-1.5 bg-primary/10 text-primary font-bold rounded-lg text-sm hover:bg-primary/20 flex items-center gap-1"
+                                    >
+                                        <Plus className="w-4 h-4" /> Add Variant
+                                    </button>
+                                </div>
+
+                                {formData.merchandise_variants.map((v, vi) => (
+                                    <div key={vi} className="bg-(--background) border border-(--card-border) rounded-lg p-4 space-y-3">
+                                        <div className="flex gap-2 items-start">
+                                            <input
+                                                placeholder="Variant name (e.g. T-Shirt Size)"
+                                                className="flex-1 border border-(--card-border) rounded-lg px-3 py-2 bg-(--background) text-(--foreground) outline-none focus:border-primary text-sm"
+                                                value={v.name}
+                                                onChange={e => {
+                                                    const updated = [...formData.merchandise_variants];
+                                                    updated[vi] = { ...updated[vi], name: e.target.value };
+                                                    setFormData({ ...formData, merchandise_variants: updated });
+                                                }}
+                                            />
+                                            <label className="flex items-center gap-1.5 text-sm font-bold text-(--foreground) opacity-70 shrink-0 pt-2">
+                                                <input
+                                                    type="checkbox"
+                                                    checked={v.is_required}
+                                                    onChange={e => {
+                                                        const updated = [...formData.merchandise_variants];
+                                                        updated[vi] = { ...updated[vi], is_required: e.target.checked };
+                                                        setFormData({ ...formData, merchandise_variants: updated });
+                                                    }}
+                                                    className="w-4 h-4"
+                                                />
+                                                Required
+                                            </label>
+                                            <button
+                                                type="button"
+                                                onClick={() => setFormData({ ...formData, merchandise_variants: formData.merchandise_variants.filter((_, i) => i !== vi) })}
+                                                className="p-2 text-red-500 hover:bg-red-50 rounded-lg shrink-0"
+                                            >
+                                                <Trash className="w-4 h-4" />
+                                            </button>
+                                        </div>
+                                        <div className="flex flex-wrap gap-2">
+                                            {v.options.map((opt, oi) => (
+                                                <span key={oi} className="flex items-center gap-1 bg-primary/10 text-primary text-xs font-bold px-2 py-1 rounded-full">
+                                                    {opt}
+                                                    <button
+                                                        type="button"
+                                                        onClick={() => {
+                                                            const updated = [...formData.merchandise_variants];
+                                                            updated[vi] = { ...updated[vi], options: updated[vi].options.filter((_, i) => i !== oi) };
+                                                            setFormData({ ...formData, merchandise_variants: updated });
+                                                        }}
+                                                        className="ml-0.5 text-primary/60 hover:text-red-500"
+                                                    >×</button>
+                                                </span>
+                                            ))}
+                                            <div className="flex gap-1">
+                                                <input
+                                                    placeholder="Add option"
+                                                    className="border border-(--card-border) rounded-lg px-2 py-1 text-xs bg-(--background) text-(--foreground) outline-none focus:border-primary w-24"
+                                                    value={newVariantOption}
+                                                    onChange={e => setNewVariantOption(e.target.value)}
+                                                    onKeyDown={e => {
+                                                        if (e.key === 'Enter') {
+                                                            e.preventDefault();
+                                                            const val = newVariantOption.trim();
+                                                            if (val) {
+                                                                const updated = [...formData.merchandise_variants];
+                                                                updated[vi] = { ...updated[vi], options: [...updated[vi].options, val] };
+                                                                setFormData({ ...formData, merchandise_variants: updated });
+                                                                setNewVariantOption("");
+                                                            }
+                                                        }
+                                                    }}
+                                                />
+                                                <button
+                                                    type="button"
+                                                    onClick={() => {
+                                                        const val = newVariantOption.trim();
+                                                        if (val) {
+                                                            const updated = [...formData.merchandise_variants];
+                                                            updated[vi] = { ...updated[vi], options: [...updated[vi].options, val] };
+                                                            setFormData({ ...formData, merchandise_variants: updated });
+                                                            setNewVariantOption("");
+                                                        }
+                                                    }}
+                                                    className="px-2 py-1 bg-primary/10 text-primary rounded-lg text-xs font-bold hover:bg-primary/20"
+                                                >+</button>
+                                            </div>
+                                        </div>
+                                    </div>
+                                ))}
+                            </div>
+
                             <div className="pt-4 flex justify-end gap-2">
                                 <button type="button" onClick={() => setIsModalOpen(false)} className="px-4 py-2 text-gray-600 font-bold hover:bg-gray-100 rounded-lg">Cancel</button>
                                 <button type="submit" className="px-6 py-2 bg-primary text-white font-bold rounded-lg hover:bg-primary">Save Ticket</button>

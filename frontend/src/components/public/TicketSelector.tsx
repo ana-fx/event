@@ -6,6 +6,13 @@ import { format } from "date-fns";
 import toast from "react-hot-toast";
 import { cn } from "@/lib/utils";
 
+interface MerchandiseVariant {
+    id: number;
+    name: string;
+    options: string[];
+    is_required: boolean;
+}
+
 interface Ticket {
     id: number;
     event_id: number;
@@ -17,10 +24,12 @@ interface Ticket {
     start_date: string;
     end_date: string;
     is_active: boolean;
+    merchandise_variants?: MerchandiseVariant[];
 }
 
 export default function TicketSelector({ tickets, eventSlug }: { tickets: Ticket[], eventSlug: string }) {
     const [selection, setSelection] = useState<{ [key: number]: number }>({});
+    const [merchandiseSelections, setMerchandiseSelections] = useState<{ [ticketId: number]: { [variantName: string]: string } }>({});
 
     const updateQuantity = (ticketId: number, delta: number, max: number) => {
         setSelection(prev => {
@@ -28,6 +37,13 @@ export default function TicketSelector({ tickets, eventSlug }: { tickets: Ticket
             const next = Math.max(0, Math.min(max, current + delta));
             return { ...prev, [ticketId]: next };
         });
+    };
+
+    const selectMerchandise = (ticketId: number, variantName: string, option: string) => {
+        setMerchandiseSelections(prev => ({
+            ...prev,
+            [ticketId]: { ...(prev[ticketId] || {}), [variantName]: option }
+        }));
     };
 
     const totalQty = Object.values(selection).reduce((a, b) => a + b, 0);
@@ -42,12 +58,30 @@ export default function TicketSelector({ tickets, eventSlug }: { tickets: Ticket
             return;
         }
 
+        // Validate required merchandise selections
+        for (const [id, qty] of Object.entries(selection)) {
+            if (qty <= 0) continue;
+            const ticket = tickets.find(t => t.id === Number(id));
+            if (!ticket?.merchandise_variants) continue;
+            for (const v of ticket.merchandise_variants) {
+                if (v.is_required && !merchandiseSelections[ticket.id]?.[v.name]) {
+                    toast.error(`Please select ${v.name} for ${ticket.name}`);
+                    return;
+                }
+            }
+        }
+
         const selectedTickets = Object.entries(selection)
             .filter(([_, qty]) => qty > 0)
             .map(([id, qty]) => `${id}-${qty}`)
             .join(',');
 
-        window.location.href = `/checkout/${eventSlug}?t=${selectedTickets}`;
+        // Encode merchandise selections as base64 JSON
+        const msParam = Object.keys(merchandiseSelections).length > 0
+            ? `&ms=${btoa(JSON.stringify(merchandiseSelections))}`
+            : '';
+
+        window.location.href = `/checkout/${eventSlug}?t=${selectedTickets}${msParam}`;
     };
 
     const activeTickets = (tickets || []).filter(t => t?.is_active);
@@ -133,6 +167,36 @@ export default function TicketSelector({ tickets, eventSlug }: { tickets: Ticket
                                             </button>
                                         </div>
                                     </div>
+
+                                    {/* Merchandise Variant Selector */}
+                                    {(selection[ticket.id] || 0) > 0 && ticket.merchandise_variants && ticket.merchandise_variants.length > 0 && (
+                                        <div className="mt-4 space-y-3 border-t border-gray-100 pt-4">
+                                            {ticket.merchandise_variants.map(v => (
+                                                <div key={v.id}>
+                                                    <p className="text-[9px] font-black uppercase tracking-[0.15em] text-gray-400 mb-2">
+                                                        {v.name}{v.is_required ? ' *' : ''}
+                                                    </p>
+                                                    <div className="flex flex-wrap gap-2">
+                                                        {v.options.map(opt => (
+                                                            <button
+                                                                key={opt}
+                                                                type="button"
+                                                                onClick={() => selectMerchandise(ticket.id, v.name, opt)}
+                                                                className={cn(
+                                                                    "px-3 py-1.5 rounded-xl text-[10px] font-black uppercase tracking-wider transition-all border",
+                                                                    merchandiseSelections[ticket.id]?.[v.name] === opt
+                                                                        ? "bg-brand-dark text-white border-brand-dark"
+                                                                        : "bg-white text-gray-500 border-gray-200 hover:border-brand-dark hover:text-brand-dark"
+                                                                )}
+                                                            >
+                                                                {opt}
+                                                            </button>
+                                                        ))}
+                                                    </div>
+                                                </div>
+                                            ))}
+                                        </div>
+                                    )}
                                 </div>
                             ))
                         )}

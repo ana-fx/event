@@ -21,12 +21,14 @@ function CheckoutContent({ params }: { params: { slug: string } }) {
     const searchParams = useSearchParams();
     const router = useRouter();
     const tParam = searchParams.get("t");
+    const msParam = searchParams.get("ms");
 
     const [items, setItems] = useState<CartItem[]>([]);
     const [tickets, setTickets] = useState<any[]>([]);
     const [event, setEvent] = useState<any>(null);
     const [loading, setLoading] = useState(true);
     const [processing, setProcessing] = useState(false);
+    const [merchandiseSelections, setMerchandiseSelections] = useState<{ [ticketId: number]: { [variantName: string]: string } }>({});
 
     // Form Data
     const [form, setForm] = useState({
@@ -52,6 +54,13 @@ function CheckoutContent({ params }: { params: { slug: string } }) {
                         return { id: Number(id), qty: Number(qty) };
                     });
                     setItems(parsed);
+
+                    if (msParam) {
+                        try {
+                            const decoded = JSON.parse(atob(msParam));
+                            setMerchandiseSelections(decoded);
+                        } catch { /* ignore malformed ms param */ }
+                    }
 
                     // 2. Fetch Event & Ticket Details by Slug
                     // Client-side: Always use relative path
@@ -179,7 +188,8 @@ function CheckoutContent({ params }: { params: { slug: string } }) {
                 event_id: event.id,
                 items: items.map(item => ({
                     ticket_id: item.id,
-                    quantity: item.qty
+                    quantity: item.qty,
+                    merchandise_selections: merchandiseSelections[item.id] || null
                 })),
                 name: form.name,
                 email: form.email,
@@ -437,6 +447,9 @@ function CheckoutContent({ params }: { params: { slug: string } }) {
                                             <div className="space-y-1">
                                                 <p className="font-black text-[#1A1A1A] text-[14px] sm:text-[16px] font-heading tracking-tight leading-none">{ticket?.name || `Category #${item.id}`}</p>
                                                 <p className="text-[11px] sm:text-[12px] font-bold text-gray-400 font-body">{item.qty} Ticket{item.qty > 1 ? 's' : ''} &bull; {formatIDR(ticket?.price || 0)}</p>
+                                                {merchandiseSelections[item.id] && Object.entries(merchandiseSelections[item.id]).map(([k, v]) => (
+                                                    <p key={k} className="text-[10px] font-bold text-primary font-body">{k}: {v}</p>
+                                                ))}
                                             </div>
                                             <p className="font-black text-[#1A1A1A] text-[14px] sm:text-[16px] font-heading leading-none">{formatIDR((ticket?.price || 0) * item.qty)}</p>
                                         </div>

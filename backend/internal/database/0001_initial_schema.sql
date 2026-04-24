@@ -110,6 +110,17 @@ CREATE TABLE IF NOT EXISTS transactions (
     deleted_at TIMESTAMP NULL
 );
 
+CREATE TABLE IF NOT EXISTS merchandise_variants (
+    id         SERIAL PRIMARY KEY,
+    ticket_id  INTEGER REFERENCES tickets(id) ON DELETE CASCADE,
+    name       VARCHAR(255) NOT NULL,
+    options    TEXT         NOT NULL,
+    is_required BOOLEAN DEFAULT FALSE,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    deleted_at TIMESTAMP NULL
+);
+
 CREATE TABLE IF NOT EXISTS transaction_items (
     id SERIAL PRIMARY KEY,
     transaction_id INTEGER REFERENCES transactions(id) ON DELETE CASCADE,
@@ -117,6 +128,7 @@ CREATE TABLE IF NOT EXISTS transaction_items (
     name VARCHAR(255) NOT NULL,
     price DECIMAL(15, 2) NOT NULL,
     quantity INTEGER NOT NULL,
+    merchandise_selections JSONB DEFAULT NULL,
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
@@ -203,6 +215,7 @@ DROP TABLE IF EXISTS event_scanner;
 DROP TABLE IF EXISTS contacts;
 DROP TABLE IF EXISTS transaction_items;
 DROP TABLE IF EXISTS transactions;
+DROP TABLE IF EXISTS merchandise_variants;
 DROP TABLE IF EXISTS tickets;
 DROP TABLE IF EXISTS events;
 DROP TABLE IF EXISTS users;

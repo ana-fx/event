@@ -40,6 +40,7 @@ func main() {
 	http.HandleFunc("/api/events/detail", public.GetEvent) // Query: ?slug=...
 	http.HandleFunc("/api/checkout", public.Checkout)
 	http.HandleFunc("/api/payment/notification", public.PaymentWebhook)
+	http.HandleFunc("/api/payment/verify", public.VerifyPayment)
 	http.HandleFunc("/api/banners", public.ListBanners)
 	http.HandleFunc("/api/contact", public.SubmitContact)
 	http.HandleFunc("/api/transaction/status", public.GetTransactionStatus)

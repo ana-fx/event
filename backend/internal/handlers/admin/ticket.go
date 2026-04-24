@@ -9,7 +9,6 @@ import (
 	"time"
 )
 
-// Request struct for parsing JSON body
 type TicketRequest struct {
 	EventID            int     `json:"event_id"`
 	Name               string  `json:"name"`
@@ -20,6 +19,11 @@ type TicketRequest struct {
 	StartDate          string  `json:"start_date"`
 	EndDate            string  `json:"end_date"`
 	IsActive           bool    `json:"is_active"`
+	MerchandiseVariants []struct {
+		Name       string   `json:"name"`
+		Options    []string `json:"options"`
+		IsRequired bool     `json:"is_required"`
+	} `json:"merchandise_variants"`
 }
 
 func CreateTicket(w http.ResponseWriter, r *http.Request) {
@@ -60,6 +64,20 @@ func CreateTicket(w http.ResponseWriter, r *http.Request) {
 	if err := models.CreateTicket(&t); err != nil {
 		http.Error(w, "Failed to create ticket: "+err.Error(), http.StatusInternalServerError)
 		return
+	}
+
+	for _, mv := range req.MerchandiseVariants {
+		v := models.MerchandiseVariant{
+			TicketID:   t.ID,
+			Name:       mv.Name,
+			Options:    mv.Options,
+			IsRequired: mv.IsRequired,
+		}
+		if err := models.CreateMerchandiseVariant(&v); err != nil {
+			http.Error(w, "Failed to create merchandise variant: "+err.Error(), http.StatusInternalServerError)
+			return
+		}
+		t.MerchandiseVariants = append(t.MerchandiseVariants, v)
 	}
 
 	w.WriteHeader(http.StatusCreated)
@@ -105,6 +123,22 @@ func UpdateTicket(w http.ResponseWriter, r *http.Request) {
 	if err := models.UpdateTicket(&t); err != nil {
 		http.Error(w, "Failed to update ticket: "+err.Error(), http.StatusInternalServerError)
 		return
+	}
+
+	// Replace merchandise variants
+	_ = models.DeleteMerchandiseVariantsByTicketID(id)
+	for _, mv := range req.MerchandiseVariants {
+		v := models.MerchandiseVariant{
+			TicketID:   id,
+			Name:       mv.Name,
+			Options:    mv.Options,
+			IsRequired: mv.IsRequired,
+		}
+		if err := models.CreateMerchandiseVariant(&v); err != nil {
+			http.Error(w, "Failed to update merchandise variant: "+err.Error(), http.StatusInternalServerError)
+			return
+		}
+		t.MerchandiseVariants = append(t.MerchandiseVariants, v)
 	}
 
 	w.Header().Set("Content-Type", "application/json")

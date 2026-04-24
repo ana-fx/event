@@ -30,8 +30,9 @@ type CheckoutRequest struct {
 }
 
 type CartItem struct {
-	TicketID int `json:"ticket_id"`
-	Quantity int `json:"quantity"`
+	TicketID              int               `json:"ticket_id"`
+	Quantity              int               `json:"quantity"`
+	MerchandiseSelections map[string]string `json:"merchandise_selections"`
 }
 
 func Checkout(w http.ResponseWriter, r *http.Request) {
@@ -88,14 +89,25 @@ func Checkout(w http.ResponseWriter, r *http.Request) {
 			return
 		}
 
+		// Validate required merchandise selections
+		for _, v := range ticket.MerchandiseVariants {
+			if v.IsRequired {
+				if _, ok := item.MerchandiseSelections[v.Name]; !ok {
+					http.Error(w, fmt.Sprintf("Merchandise selection required for %s: %s", ticket.Name, v.Name), http.StatusBadRequest)
+					return
+				}
+			}
+		}
+
 		subtotalFloat += ticket.Price * float64(item.Quantity)
 		totalTickets += item.Quantity
 
 		transactionItems = append(transactionItems, models.TransactionItem{
-			TicketID: ticket.ID,
-			Name:     ticket.Name,
-			Price:    ticket.Price,
-			Quantity: item.Quantity,
+			TicketID:              ticket.ID,
+			Name:                  ticket.Name,
+			Price:                 ticket.Price,
+			Quantity:              item.Quantity,
+			MerchandiseSelections: item.MerchandiseSelections,
 		})
 
 		itemDetails = append(itemDetails, map[string]interface{}{

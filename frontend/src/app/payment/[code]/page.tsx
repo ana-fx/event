@@ -61,15 +61,17 @@ export default function PaymentPage({ params }: { params: Promise<{ code: string
 
         // @ts-ignore
         window.snap.pay(transaction.snap_token.String, {
-            onSuccess: function (result: any) {
+            onSuccess: async function () {
+                await api.post(`/payment/verify?code=${code}`);
                 toast.success("Payment successful!");
                 router.push(`/success/${code}`);
             },
-            onPending: function (result: any) {
+            onPending: async function () {
+                await api.post(`/payment/verify?code=${code}`);
                 toast.success("Payment pending, please complete it.");
                 router.push(`/success/${code}`);
             },
-            onError: function (result: any) {
+            onError: function () {
                 toast.error("Payment failed!");
                 setProcessing(false);
             },

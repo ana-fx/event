@@ -2,6 +2,7 @@ package models
 
 import (
 	"database/sql"
+	"encoding/json"
 	"event-backend/internal/database"
 	"fmt"
 	"time"
@@ -38,14 +39,15 @@ type Transaction struct {
 }
 
 type TransactionItem struct {
-	ID            int       `json:"id"`
-	TransactionID int       `json:"transaction_id"`
-	TicketID      int       `json:"ticket_id"`
-	Name          string    `json:"name"`
-	Price         float64   `json:"price"`
-	Quantity      int       `json:"quantity"`
-	CreatedAt     time.Time `json:"created_at"`
-	UpdatedAt     time.Time `json:"updated_at"`
+	ID                    int               `json:"id"`
+	TransactionID         int               `json:"transaction_id"`
+	TicketID              int               `json:"ticket_id"`
+	Name                  string            `json:"name"`
+	Price                 float64           `json:"price"`
+	Quantity              int               `json:"quantity"`
+	MerchandiseSelections map[string]string `json:"merchandise_selections,omitempty"`
+	CreatedAt             time.Time         `json:"created_at"`
+	UpdatedAt             time.Time         `json:"updated_at"`
 }
 
 func GetAllTransactions(eventID int, organizerID *int) ([]Transaction, error) {
@@ -99,14 +101,12 @@ func GetAllTransactions(eventID int, organizerID *int) ([]Transaction, error) {
 		// Prepare query for items
 		// PostgreSQL ANY needs array
 		itemsQuery := `
-			SELECT id, transaction_id, ticket_id, name, price, quantity, created_at 
-			FROM transaction_items 
+			SELECT id, transaction_id, ticket_id, name, price, quantity, merchandise_selections, created_at
+			FROM transaction_items
 			WHERE transaction_id = ANY($1)`
 
 		itemRows, err := database.DB.Query(itemsQuery, pq.Array(transactionIDs))
 		if err != nil {
-			// Log error but don't fail the whole report? Or fail?
-			// For now, let's return error
 			return nil, fmt.Errorf("failed to load items: %v", err)
 		}
 		defer itemRows.Close()
@@ -115,7 +115,11 @@ func GetAllTransactions(eventID int, organizerID *int) ([]Transaction, error) {
 		itemsMap := make(map[int][]TransactionItem)
 		for itemRows.Next() {
 			var ti TransactionItem
-			if err := itemRows.Scan(&ti.ID, &ti.TransactionID, &ti.TicketID, &ti.Name, &ti.Price, &ti.Quantity, &ti.CreatedAt); err == nil {
+			var msJSON *string
+			if err := itemRows.Scan(&ti.ID, &ti.TransactionID, &ti.TicketID, &ti.Name, &ti.Price, &ti.Quantity, &msJSON, &ti.CreatedAt); err == nil {
+				if msJSON != nil {
+					_ = json.Unmarshal([]byte(*msJSON), &ti.MerchandiseSelections)
+				}
 				itemsMap[ti.TransactionID] = append(itemsMap[ti.TransactionID], ti)
 			}
 		}
@@ -148,10 +152,16 @@ func CreateTransaction(t *Transaction) error {
 	// Insert Items if any
 	for i := range t.Items {
 		t.Items[i].TransactionID = t.ID
+		var msJSON *string
+		if len(t.Items[i].MerchandiseSelections) > 0 {
+			b, _ := json.Marshal(t.Items[i].MerchandiseSelections)
+			s := string(b)
+			msJSON = &s
+		}
 		_, err := database.DB.Exec(`
-			INSERT INTO transaction_items (transaction_id, ticket_id, name, price, quantity, created_at, updated_at)
-			VALUES ($1, $2, $3, $4, $5, $6, $7)`,
-			t.ID, t.Items[i].TicketID, t.Items[i].Name, t.Items[i].Price, t.Items[i].Quantity, time.Now(), time.Now(),
+			INSERT INTO transaction_items (transaction_id, ticket_id, name, price, quantity, merchandise_selections, created_at, updated_at)
+			VALUES ($1, $2, $3, $4, $5, $6, $7, $8)`,
+			t.ID, t.Items[i].TicketID, t.Items[i].Name, t.Items[i].Price, t.Items[i].Quantity, msJSON, time.Now(), time.Now(),
 		)
 		if err != nil {
 			return fmt.Errorf("failed to insert transaction item: %v", err)
@@ -186,12 +196,16 @@ func GetTransactionByCode(code string) (*Transaction, error) {
 	}
 
 	// Load Items
-	rows, err := database.DB.Query(`SELECT id, transaction_id, ticket_id, name, price, quantity, created_at FROM transaction_items WHERE transaction_id = $1`, t.ID)
+	rows, err := database.DB.Query(`SELECT id, transaction_id, ticket_id, name, price, quantity, merchandise_selections, created_at FROM transaction_items WHERE transaction_id = $1`, t.ID)
 	if err == nil {
 		defer rows.Close()
 		for rows.Next() {
 			var item TransactionItem
-			if err := rows.Scan(&item.ID, &item.TransactionID, &item.TicketID, &item.Name, &item.Price, &item.Quantity, &item.CreatedAt); err == nil {
+			var msJSON *string
+			if err := rows.Scan(&item.ID, &item.TransactionID, &item.TicketID, &item.Name, &item.Price, &item.Quantity, &msJSON, &item.CreatedAt); err == nil {
+				if msJSON != nil {
+					_ = json.Unmarshal([]byte(*msJSON), &item.MerchandiseSelections)
+				}
 				t.Items = append(t.Items, item)
 			}
 		}
