@@ -45,9 +45,11 @@ func main() {
 	http.HandleFunc("/api/contact", public.SubmitContact)
 	http.HandleFunc("/api/transaction/status", public.GetTransactionStatus)
 
-	// Scanner Routes
-	http.HandleFunc("/api/scanner/verify", middleware.AuthMiddleware(scanner.Verify))
-	http.HandleFunc("/api/scanner/redeem", middleware.AuthMiddleware(scanner.Redeem))
+	// Scanner Routes (only role: scanner)
+	scannerOnly := middleware.RoleMiddleware("scanner")
+	http.HandleFunc("/api/scanner/events", middleware.AuthMiddleware(scannerOnly(scanner.GetAssignedEvents)))
+	http.HandleFunc("/api/scanner/verify", middleware.AuthMiddleware(scannerOnly(scanner.Verify)))
+	http.HandleFunc("/api/scanner/redeem", middleware.AuthMiddleware(scannerOnly(scanner.Redeem)))
 
 	// Reseller Routes
 	http.HandleFunc("/api/reseller/start", middleware.AuthMiddleware(reseller.GetStart))

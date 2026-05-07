@@ -1,115 +1,109 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import axiosInstance from "@/lib/axios";
-import { toast } from "react-hot-toast";
-import { QrCode, CheckCircle, XCircle, Search, LogOut } from "lucide-react";
-import Cookies from "js-cookie";
-import { useRouter } from "next/navigation";
+import { Calendar, MapPin, ScanBarcode, AlertCircle } from "lucide-react";
+import Link from "next/link";
 
-export default function ScannerPortal() {
-    const [code, setCode] = useState("");
-    const [loading, setLoading] = useState(false);
-    const [result, setResult] = useState<any>(null);
-    const router = useRouter();
+interface AssignedEvent {
+    id: number;
+    name: string;
+    banner_path: string | null;
+    start_date: string;
+    end_date: string;
+    location: string | null;
+    city: string | null;
+    status: string;
+}
 
-    const handleScan = async (e: React.FormEvent) => {
-        e.preventDefault();
-        if (!code) return;
-        setLoading(true);
-        setResult(null);
+export default function ScannerDashboard() {
+    const [events, setEvents] = useState<AssignedEvent[]>([]);
+    const [loading, setLoading] = useState(true);
+    const [error, setError] = useState<string | null>(null);
 
-        try {
-            // First verify
-            const verifyRes = await axiosInstance.post("/tickets/verify", { code });
-            const ticket = verifyRes.data;
+    useEffect(() => {
+        axiosInstance.get("/scanner/events")
+            .then((res) => setEvents(res.data ?? []))
+            .catch(() => setError("Gagal memuat daftar event"))
+            .finally(() => setLoading(false));
+    }, []);
 
-            if (ticket.status === 'valid') {
-                // If valid, auto-redeem? Or ask for confirmation?
-                // Let's simple redeem for now or just show valid.
-                // Requirement: "Scan/Verify Ticket Interface". usually implies redeeming entry.
-                // Let's call redeem.
-                try {
-                    await axiosInstance.post("/tickets/redeem", { code });
-                    setResult({ status: "success", message: "Ticket Valid & Redeemed", ticket });
-                    toast.success("Entry Allowed");
-                } catch (redeemErr: any) {
-                    setResult({ status: "error", message: redeemErr.response?.data?.error || "Failed to redeem" });
-                }
-            } else {
-                setResult({ status: "error", message: "Ticket is " + ticket.status, ticket });
-                toast.error("Ticket Invalid");
-            }
-        } catch (error: any) {
-            setResult({ status: "error", message: error.response?.data?.error || "Invalid Code" });
-            toast.error("Invalid Code");
-        } finally {
-            setLoading(false);
-        }
-    };
-
-    const handleLogout = () => {
-        Cookies.remove("token");
-        Cookies.remove("user");
-        router.push("/admin/login");
-    };
+    if (loading) {
+        return (
+            <div className="flex items-center justify-center min-h-[60vh]">
+                <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary" />
+            </div>
+        );
+    }
 
     return (
-        <div className="min-h-screen bg-brand-dark text-white flex flex-col">
-            {/* Header */}
-            <div className="p-4 flex justify-between items-center bg-gray-800 shadow-md">
-                <h1 className="font-bold text-lg flex items-center gap-2">
-                    <QrCode className="text-primary" /> Scanner Portal
-                </h1>
-                <button onClick={handleLogout} className="text-gray-400 hover:text-white"><LogOut className="w-5 h-5" /></button>
+        <div className="p-6 max-w-3xl mx-auto">
+            <div className="mb-6">
+                <h1 className="text-2xl font-bold text-white">Event Saya</h1>
+                <p className="text-gray-400 text-sm mt-1">Pilih event untuk mulai scan tiket</p>
             </div>
 
-            {/* Main Content */}
-            <div className="flex-1 flex flex-col items-center justify-center p-6 space-y-8">
-
-                <div className="w-full max-w-sm">
-                    <form onSubmit={handleScan} className="relative">
-                        <input
-                            type="text"
-                            value={code}
-                            onChange={(e) => setCode(e.target.value)}
-                            placeholder="Enter Ticket Code"
-                            className="w-full bg-gray-800 border border-gray-700 rounded-2xl py-4 pl-6 pr-14 text-lg focus:ring-2 focus:ring-primary outline-none transition-all placeholder:text-gray-500"
-                            autoFocus
-                        />
-                        <button
-                            type="submit"
-                            disabled={loading || !code}
-                            className="absolute right-2 top-2 bottom-2 bg-primary hover:bg-primary text-white p-3 rounded-xl transition-colors disabled:opacity-50"
-                        >
-                            {loading ? <div className="w-5 h-5 border-2 border-white/30 border-t-white rounded-full animate-spin" /> : <Search className="w-5 h-5" />}
-                        </button>
-                    </form>
-                    <p className="text-center text-gray-500 text-sm mt-4">Type code or use external scanner</p>
+            {error && (
+                <div className="flex items-center gap-2 bg-red-900/40 border border-red-700 text-red-300 rounded-xl p-4 mb-6">
+                    <AlertCircle className="w-5 h-5 shrink-0" />
+                    <span>{error}</span>
                 </div>
+            )}
 
-                {/* Result Card */}
-                {result && (
-                    <div className={`w-full max-w-sm p-8 rounded-3xl text-center animate-in fade-in zoom-in duration-300 ${result.status === 'success' ? 'bg-green-600' : 'bg-red-600'}`}>
-                        {result.status === 'success' ? (
-                            <CheckCircle className="w-20 h-20 mx-auto text-white/90 mb-4" />
+            {!error && events.length === 0 && (
+                <div className="text-center py-20 text-gray-500">
+                    <ScanBarcode className="w-12 h-12 mx-auto mb-3 opacity-40" />
+                    <p className="text-lg font-medium">Belum ada event yang ditugaskan</p>
+                    <p className="text-sm mt-1">Hubungi admin untuk mendapatkan penugasan event</p>
+                </div>
+            )}
+
+            <div className="space-y-4">
+                {events.map((event) => (
+                    <div key={event.id} className="bg-gray-900 border border-gray-800 rounded-2xl overflow-hidden flex gap-4 p-4 hover:border-gray-700 transition-colors">
+                        {/* Banner thumbnail */}
+                        {event.banner_path ? (
+                            <img
+                                src={`/uploads/${event.banner_path}`}
+                                alt={event.name}
+                                className="w-20 h-20 object-cover rounded-xl shrink-0"
+                            />
                         ) : (
-                            <XCircle className="w-20 h-20 mx-auto text-white/90 mb-4" />
-                        )}
-                        <h2 className="text-2xl font-bold mb-2">{result.message}</h2>
-                        {result.ticket && (
-                            <div className="text-white/80 mt-2 text-sm">
-                                <p>{result.ticket.event_name}</p>
-                                <p className="font-mono mt-1">{result.ticket.code}</p>
-                                {result.ticket.holder_name && <p className="mt-1 font-bold">{result.ticket.holder_name}</p>}
+                            <div className="w-20 h-20 bg-gray-800 rounded-xl shrink-0 flex items-center justify-center">
+                                <Calendar className="w-7 h-7 text-gray-600" />
                             </div>
                         )}
-                        <button onClick={() => { setResult(null); setCode(""); }} className="mt-6 bg-white text-brand-dark px-6 py-3 rounded-xl font-bold hover:bg-gray-100 transition-colors w-full">
-                            Scan Next
-                        </button>
-                    </div>
-                )}
 
+                        {/* Info */}
+                        <div className="flex-1 min-w-0">
+                            <h2 className="font-semibold text-white truncate">{event.name}</h2>
+                            <div className="flex items-center gap-1.5 text-gray-400 text-sm mt-1">
+                                <Calendar className="w-3.5 h-3.5 shrink-0" />
+                                <span>{new Date(event.start_date).toLocaleDateString("id-ID", { day: "numeric", month: "long", year: "numeric" })}</span>
+                            </div>
+                            {(event.city || event.location) && (
+                                <div className="flex items-center gap-1.5 text-gray-400 text-sm mt-0.5">
+                                    <MapPin className="w-3.5 h-3.5 shrink-0" />
+                                    <span className="truncate">{event.city || event.location}</span>
+                                </div>
+                            )}
+                            <span className={`inline-block mt-2 text-xs px-2 py-0.5 rounded-full font-medium ${event.status === "published" ? "bg-green-900/50 text-green-400" : "bg-yellow-900/50 text-yellow-400"}`}>
+                                {event.status}
+                            </span>
+                        </div>
+
+                        {/* Action */}
+                        <div className="flex items-center shrink-0">
+                            <Link
+                                href={`/scanner/scan/${event.id}`}
+                                className="flex items-center gap-2 bg-primary hover:bg-primary/90 text-white px-4 py-2 rounded-xl text-sm font-medium transition-colors"
+                            >
+                                <ScanBarcode className="w-4 h-4" />
+                                Scan
+                            </Link>
+                        </div>
+                    </div>
+                ))}
             </div>
         </div>
     );
