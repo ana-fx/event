@@ -89,6 +89,21 @@ func main() {
 		log.Printf("Warning: organizer user might already exist: %v", err)
 	}
 
+	// 6.5. Create Scanner User
+	log.Println("Creating scanner user...")
+	scannerPassword, _ := bcrypt.GenerateFromPassword([]byte("scanner@ingate.id"), bcrypt.DefaultCost)
+	scannerUser := &models.User{
+		Name:     "Scanner User",
+		Email:    "scanner@ingate.id",
+		Password: string(scannerPassword),
+		Role:     "scanner",
+		IsActive: true,
+		Username: sql.NullString{String: "scanner_1", Valid: true},
+	}
+	if err := models.CreateUser(scannerUser); err != nil {
+		log.Printf("Warning: scanner user might already exist: %v", err)
+	}
+
 	// 7. Create Sample Events with Rich Content
 	log.Println("Creating sample events...")
 	bannerPath := "/uploads/events/1770321313086990300.webp"
@@ -231,9 +246,59 @@ func main() {
 		}
 	}
 
+	// 10. Create Sample Successful Transaction for Scanning
+	log.Println("Creating sample successful transaction...")
+	// Fetch the first event and its ticket
+	var firstEvent models.Event
+	err = database.DB.QueryRow(`SELECT id, name FROM events LIMIT 1`).Scan(&firstEvent.ID, &firstEvent.Name)
+	if err == nil {
+		var firstTicket models.Ticket
+		err = database.DB.QueryRow(`SELECT id, name, price FROM tickets WHERE event_id = $1 LIMIT 1`, firstEvent.ID).Scan(&firstTicket.ID, &firstTicket.Name, &firstTicket.Price)
+		if err == nil {
+			trx := &models.Transaction{
+				Code:        "INV-TEST-SCAN-001",
+				EventID:     firstEvent.ID,
+				TicketID:    sql.NullInt64{Int64: int64(firstTicket.ID), Valid: true},
+				Name:        "Test Scanner User",
+				Email:       "scanner.test@ingate.id",
+				Phone:       "081234567891",
+				City:        "Jakarta",
+				NIK:         "1234567890123456",
+				Gender:      "male",
+				Quantity:    sql.NullInt64{Int64: 2, Valid: true},
+				TotalPrice:  firstTicket.Price * 2,
+				Status:      "paid",
+				PaymentType: sql.NullString{String: "bank_transfer", Valid: true},
+				Items: []models.TransactionItem{
+					{
+						TicketID: firstTicket.ID,
+						Name:     firstTicket.Name,
+						Price:    firstTicket.Price,
+						Quantity: 2,
+					},
+				},
+			}
+			if err := models.CreateTransaction(trx); err != nil {
+				log.Printf("Warning: failed to create sample transaction: %v", err)
+			} else {
+				log.Printf("Created transaction: %s for event ID: %d", trx.Code, firstEvent.ID)
+				
+				// Assign scanner user as scanner to this event
+				var scannerID int
+				err = database.DB.QueryRow(`SELECT id FROM users WHERE email = 'scanner@ingate.id'`).Scan(&scannerID)
+				if err == nil {
+					database.DB.Exec(`INSERT INTO event_scanner (event_id, user_id) VALUES ($1, $2) ON CONFLICT DO NOTHING`, firstEvent.ID, scannerID)
+					log.Printf("Assigned scanner to event ID: %d as scanner", firstEvent.ID)
+				}
+			}
+		}
+	}
+
 	log.Println("Database reset and seeding successful!")
 	log.Println("Admin: admin@ingate.id / admin@ingate.id")
 	log.Println("Organizer: organizer@ingate.id / organizer@ingate.id")
+	log.Println("Scanner: scanner@ingate.id / scanner@ingate.id")
+	log.Println("Test Transaction Code to Scan: INV-TEST-SCAN-001")
 }
 
 func stringPtr(s string) *string {

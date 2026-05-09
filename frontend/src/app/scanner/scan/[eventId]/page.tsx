@@ -1,14 +1,14 @@
 "use client";
 
-import { useState } from "react";
-import { use } from "react";
+import { useState, useEffect, useRef, use } from "react";
 import axiosInstance from "@/lib/axios";
 import { toast } from "react-hot-toast";
 import {
     Search, CheckCircle, XCircle, ArrowLeft,
-    User, Mail, Ticket, AlertTriangle,
+    User, Mail, Ticket, AlertTriangle, Camera, CameraOff
 } from "lucide-react";
 import Link from "next/link";
+import { Html5QrcodeScanner } from "html5-qrcode";
 
 interface VerifyResult {
     valid: boolean;
@@ -33,10 +33,11 @@ export default function ScanPage({ params }: { params: Promise<{ eventId: string
     const [scanState, setScanState] = useState<ScanState>("idle");
     const [verifyResult, setVerifyResult] = useState<VerifyResult | null>(null);
     const [errorMsg, setErrorMsg] = useState("");
+    const [cameraOpen, setCameraOpen] = useState(true);
+    const scannerRef = useRef<Html5QrcodeScanner | null>(null);
 
-    const handleVerify = async (e: React.FormEvent) => {
-        e.preventDefault();
-        if (!code.trim()) return;
+    const verifyCodeAction = async (scanCode: string) => {
+        if (!scanCode.trim()) return;
 
         setLoading(true);
         setScanState("idle");
@@ -45,7 +46,7 @@ export default function ScanPage({ params }: { params: Promise<{ eventId: string
 
         try {
             const res = await axiosInstance.post("/scanner/verify", {
-                code: code.trim(),
+                code: scanCode.trim(),
                 event_id: Number(eventId),
             });
             const data: VerifyResult = res.data;
@@ -59,13 +60,18 @@ export default function ScanPage({ params }: { params: Promise<{ eventId: string
                 toast.error(data.msg);
             }
         } catch (err: any) {
-            const msg = err.response?.data || "Tiket tidak ditemukan";
+            const msg = err.response?.data || "Ticket not found";
             setScanState("error");
             setErrorMsg(msg);
             toast.error(msg);
         } finally {
             setLoading(false);
         }
+    };
+
+    const handleVerify = async (e: React.FormEvent) => {
+        e.preventDefault();
+        verifyCodeAction(code);
     };
 
     const handleRedeem = async () => {
@@ -76,9 +82,9 @@ export default function ScanPage({ params }: { params: Promise<{ eventId: string
                 event_id: Number(eventId),
             });
             setScanState("redeemed");
-            toast.success("Tiket berhasil di-redeem!");
+            toast.success("Ticket successfully redeemed!");
         } catch (err: any) {
-            const msg = err.response?.data || "Gagal redeem tiket";
+            const msg = err.response?.data || "Failed to redeem ticket";
             setScanState("error");
             setErrorMsg(msg);
             toast.error(msg);
@@ -92,7 +98,44 @@ export default function ScanPage({ params }: { params: Promise<{ eventId: string
         setScanState("idle");
         setVerifyResult(null);
         setErrorMsg("");
+        setCameraOpen(true);
     };
+
+    useEffect(() => {
+        if (cameraOpen) {
+            const scanner = new Html5QrcodeScanner(
+                "qr-reader",
+                { fps: 10, qrbox: { width: 250, height: 250 } },
+                false
+            );
+
+            scanner.render(
+                (decodedText) => {
+                    setCode(decodedText);
+                    setCameraOpen(false);
+                    verifyCodeAction(decodedText);
+                    scanner.clear();
+                },
+                (error) => {
+                    // Ignore background scan errors
+                }
+            );
+
+            scannerRef.current = scanner;
+        } else {
+            if (scannerRef.current) {
+                scannerRef.current.clear().catch(console.error);
+                scannerRef.current = null;
+            }
+        }
+
+        return () => {
+            if (scannerRef.current) {
+                scannerRef.current.clear().catch(console.error);
+            }
+        };
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [cameraOpen]);
 
     return (
         <div className="p-6 max-w-md mx-auto">
@@ -101,10 +144,32 @@ export default function ScanPage({ params }: { params: Promise<{ eventId: string
                 href="/scanner"
                 className="inline-flex items-center gap-1.5 text-gray-400 hover:text-white text-sm mb-6 transition-colors"
             >
-                <ArrowLeft className="w-4 h-4" /> Kembali ke Dashboard
+                <ArrowLeft className="w-4 h-4" /> Back to Dashboard
             </Link>
 
-            <h1 className="text-xl font-bold text-white mb-6">Scan Tiket</h1>
+            <div className="flex items-center justify-between mb-6">
+                <h1 className="text-xl font-bold text-white">Scan Ticket</h1>
+                {(scanState === "idle" || scanState === "error") && (
+                    <button
+                        type="button"
+                        onClick={() => setCameraOpen(!cameraOpen)}
+                        className={`p-2 rounded-xl border transition-colors flex items-center gap-2 ${
+                            cameraOpen 
+                                ? "bg-red-500/20 border-red-500/50 text-red-400 hover:bg-red-500/30" 
+                                : "bg-gray-800 border-gray-700 text-gray-400 hover:bg-gray-700 hover:text-white"
+                        }`}
+                    >
+                        {cameraOpen ? <CameraOff className="w-5 h-5" /> : <Camera className="w-5 h-5" />}
+                    </button>
+                )}
+            </div>
+
+            {/* QR Scanner Container */}
+            {cameraOpen && (scanState === "idle" || scanState === "error") && (
+                <div className="mb-6 rounded-2xl overflow-hidden border border-gray-700 bg-gray-900 [&>div]:!border-0">
+                    <div id="qr-reader" className="w-full"></div>
+                </div>
+            )}
 
             {/* Input Form */}
             {(scanState === "idle" || scanState === "error") && (
@@ -113,7 +178,7 @@ export default function ScanPage({ params }: { params: Promise<{ eventId: string
                         type="text"
                         value={code}
                         onChange={(e) => setCode(e.target.value)}
-                        placeholder="Masukkan kode tiket..."
+                        placeholder="Enter ticket code..."
                         className="w-full bg-gray-800 border border-gray-700 rounded-2xl py-4 pl-6 pr-14 text-base focus:ring-2 focus:ring-primary outline-none transition-all placeholder:text-gray-500 text-white"
                         autoFocus
                         autoComplete="off"
@@ -132,7 +197,7 @@ export default function ScanPage({ params }: { params: Promise<{ eventId: string
             )}
 
             {scanState === "error" && (
-                <p className="text-sm text-gray-400 text-center mb-2">Ketik atau scan kode berikutnya</p>
+                <p className="text-sm text-gray-400 text-center mb-2">Type or scan the next code</p>
             )}
 
             {/* Error Result */}
@@ -149,7 +214,7 @@ export default function ScanPage({ params }: { params: Promise<{ eventId: string
                     {/* Status bar */}
                     <div className="bg-blue-600 px-4 py-3 flex items-center gap-2">
                         <Ticket className="w-5 h-5 text-white" />
-                        <span className="text-white font-semibold">Tiket Valid — Konfirmasi Masuk</span>
+                        <span className="text-white font-semibold">Valid Ticket — Confirm Entry</span>
                     </div>
 
                     {/* Ticket info */}
@@ -157,7 +222,7 @@ export default function ScanPage({ params }: { params: Promise<{ eventId: string
                         <div className="flex items-center gap-3">
                             <User className="w-4 h-4 text-gray-400 shrink-0" />
                             <div>
-                                <p className="text-xs text-gray-500">Nama Pemegang</p>
+                                <p className="text-xs text-gray-500">Holder Name</p>
                                 <p className="text-white font-medium">{verifyResult.data.Name}</p>
                             </div>
                         </div>
@@ -171,13 +236,13 @@ export default function ScanPage({ params }: { params: Promise<{ eventId: string
                         <div className="flex items-center gap-3">
                             <Ticket className="w-4 h-4 text-gray-400 shrink-0" />
                             <div>
-                                <p className="text-xs text-gray-500">Jumlah Tiket</p>
-                                <p className="text-white">{verifyResult.quantity ?? 1} tiket</p>
+                                <p className="text-xs text-gray-500">Quantity</p>
+                                <p className="text-white">{verifyResult.quantity ?? 1} ticket(s)</p>
                             </div>
                         </div>
                         {verifyResult.items && verifyResult.items.length > 0 && (
                             <div className="border-t border-gray-800 pt-3">
-                                <p className="text-xs text-gray-500 mb-2">Detail Tiket</p>
+                                <p className="text-xs text-gray-500 mb-2">Ticket Details</p>
                                 <ul className="space-y-1">
                                     {verifyResult.items.map((item) => (
                                         <li key={item.ID} className="flex justify-between text-sm text-gray-300">
@@ -196,7 +261,7 @@ export default function ScanPage({ params }: { params: Promise<{ eventId: string
                             onClick={handleReset}
                             className="flex-1 py-3 rounded-xl border border-gray-700 text-gray-300 hover:bg-gray-800 transition-colors font-medium"
                         >
-                            Batal
+                            Cancel
                         </button>
                         <button
                             onClick={handleRedeem}
@@ -205,7 +270,7 @@ export default function ScanPage({ params }: { params: Promise<{ eventId: string
                         >
                             {loading
                                 ? <div className="w-5 h-5 border-2 border-white/30 border-t-white rounded-full animate-spin mx-auto" />
-                                : "Izinkan Masuk"
+                                : "Allow Entry"
                             }
                         </button>
                     </div>
@@ -216,7 +281,7 @@ export default function ScanPage({ params }: { params: Promise<{ eventId: string
             {scanState === "redeemed" && (
                 <div className="bg-green-950/60 border border-green-800 rounded-2xl p-8 text-center animate-in fade-in zoom-in duration-200">
                     <CheckCircle className="w-20 h-20 text-green-400 mx-auto mb-4" />
-                    <h2 className="text-2xl font-bold text-white mb-1">Masuk Diizinkan</h2>
+                    <h2 className="text-2xl font-bold text-white mb-1">Entry Allowed</h2>
                     {verifyResult?.data && (
                         <p className="text-green-300">{verifyResult.data.Name}</p>
                     )}
@@ -224,7 +289,7 @@ export default function ScanPage({ params }: { params: Promise<{ eventId: string
                         onClick={handleReset}
                         className="mt-6 w-full bg-white text-gray-900 py-3 rounded-xl font-bold hover:bg-gray-100 transition-colors"
                     >
-                        Scan Berikutnya
+                        Scan Next
                     </button>
                 </div>
             )}
@@ -233,7 +298,7 @@ export default function ScanPage({ params }: { params: Promise<{ eventId: string
             {scanState === "error" && errorMsg.toLowerCase().includes("already") && (
                 <div className="flex items-start gap-2 bg-yellow-900/30 border border-yellow-700/50 rounded-xl p-3 mt-3">
                     <AlertTriangle className="w-4 h-4 text-yellow-400 mt-0.5 shrink-0" />
-                    <p className="text-yellow-300 text-sm">Tiket ini sudah pernah digunakan sebelumnya.</p>
+                    <p className="text-yellow-300 text-sm">This ticket has already been used.</p>
                 </div>
             )}
         </div>
