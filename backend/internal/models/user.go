@@ -26,6 +26,7 @@ type User struct {
 	ZipCode          sql.NullString `json:"zip_code"`
 	Address          sql.NullString `json:"address"`
 	ProfilePhotoPath sql.NullString `json:"profile_photo_path"`
+	CreatedBy        sql.NullInt64  `json:"created_by"`
 }
 
 type contextKey string
@@ -33,13 +34,13 @@ type contextKey string
 const UserIDKey contextKey = "userID"
 
 func GetUserByEmail(email string) (*User, error) {
-	stmt := `SELECT id, name, email, password, role, is_active, username, organizer_name, about_us, phone, province, city, zip_code, address, profile_photo_path FROM users WHERE email = $1`
+	stmt := `SELECT id, name, email, password, role, is_active, username, organizer_name, about_us, phone, province, city, zip_code, address, profile_photo_path, created_by FROM users WHERE email = $1`
 	row := database.DB.QueryRow(stmt, email)
 
 	var user User
 	err := row.Scan(
 		&user.ID, &user.Name, &user.Email, &user.Password, &user.Role, &user.IsActive,
-		&user.Username, &user.OrganizerName, &user.AboutUs, &user.Phone, &user.Province, &user.City, &user.ZipCode, &user.Address, &user.ProfilePhotoPath,
+		&user.Username, &user.OrganizerName, &user.AboutUs, &user.Phone, &user.Province, &user.City, &user.ZipCode, &user.Address, &user.ProfilePhotoPath, &user.CreatedBy,
 	)
 	if err != nil {
 		if err == sql.ErrNoRows {
@@ -52,13 +53,13 @@ func GetUserByEmail(email string) (*User, error) {
 }
 
 func GetUserByID(id int) (*User, error) {
-	stmt := `SELECT id, name, email, role, is_active, username, organizer_name, about_us, phone, province, city, zip_code, address, profile_photo_path FROM users WHERE id = $1`
+	stmt := `SELECT id, name, email, role, is_active, username, organizer_name, about_us, phone, province, city, zip_code, address, profile_photo_path, created_by FROM users WHERE id = $1`
 	row := database.DB.QueryRow(stmt, id)
 
 	var user User
 	err := row.Scan(
 		&user.ID, &user.Name, &user.Email, &user.Role, &user.IsActive,
-		&user.Username, &user.OrganizerName, &user.AboutUs, &user.Phone, &user.Province, &user.City, &user.ZipCode, &user.Address, &user.ProfilePhotoPath,
+		&user.Username, &user.OrganizerName, &user.AboutUs, &user.Phone, &user.Province, &user.City, &user.ZipCode, &user.Address, &user.ProfilePhotoPath, &user.CreatedBy,
 	)
 	if err != nil {
 		if err == sql.ErrNoRows {
@@ -71,7 +72,7 @@ func GetUserByID(id int) (*User, error) {
 }
 
 func GetAllUsers() ([]User, error) {
-	rows, err := database.DB.Query(`SELECT id, name, email, role, is_active, username, organizer_name, about_us, phone, province, city, zip_code, address, profile_photo_path FROM users ORDER BY id DESC`)
+	rows, err := database.DB.Query(`SELECT id, name, email, role, is_active, username, organizer_name, about_us, phone, province, city, zip_code, address, profile_photo_path, created_by FROM users ORDER BY id DESC`)
 	if err != nil {
 		return nil, err
 	}
@@ -82,7 +83,7 @@ func GetAllUsers() ([]User, error) {
 		var u User
 		err := rows.Scan(
 			&u.ID, &u.Name, &u.Email, &u.Role, &u.IsActive,
-			&u.Username, &u.OrganizerName, &u.AboutUs, &u.Phone, &u.Province, &u.City, &u.ZipCode, &u.Address, &u.ProfilePhotoPath,
+			&u.Username, &u.OrganizerName, &u.AboutUs, &u.Phone, &u.Province, &u.City, &u.ZipCode, &u.Address, &u.ProfilePhotoPath, &u.CreatedBy,
 		)
 		if err != nil {
 			return nil, err
@@ -92,12 +93,30 @@ func GetAllUsers() ([]User, error) {
 	return users, nil
 }
 
+func GetScannersByCreator(creatorID int) ([]User, error) {
+	rows, err := database.DB.Query(`SELECT id, name, email, role, is_active, created_by FROM users WHERE role='scanner' AND created_by=$1 ORDER BY id DESC`, creatorID)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+
+	var users []User
+	for rows.Next() {
+		var u User
+		if err := rows.Scan(&u.ID, &u.Name, &u.Email, &u.Role, &u.IsActive, &u.CreatedBy); err != nil {
+			return nil, err
+		}
+		users = append(users, u)
+	}
+	return users, nil
+}
+
 func CreateUser(u *User) error {
-	query := `INSERT INTO users (name, email, password, role, is_active, username, organizer_name, about_us, phone, province, city, zip_code, address, profile_photo_path, created_at, updated_at) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14, $15, $16) RETURNING id`
+	query := `INSERT INTO users (name, email, password, role, is_active, username, organizer_name, about_us, phone, province, city, zip_code, address, profile_photo_path, created_by, created_at, updated_at) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14, $15, $16, $17) RETURNING id`
 	return database.DB.QueryRow(query,
 		u.Name, u.Email, u.Password, u.Role, u.IsActive,
 		u.Username, u.OrganizerName, u.AboutUs, u.Phone, u.Province, u.City, u.ZipCode, u.Address, u.ProfilePhotoPath,
-		time.Now(), time.Now(),
+		u.CreatedBy, time.Now(), time.Now(),
 	).Scan(&u.ID)
 }
 

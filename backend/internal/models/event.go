@@ -396,6 +396,20 @@ func GetEventScanners(eventID int) ([]User, error) {
 	return users, nil
 }
 
+// EventBelongsToOrganizer checks if the event's organizer_id matches
+func EventBelongsToOrganizer(eventID, organizerID int) bool {
+	var count int
+	database.DB.QueryRow(`SELECT COUNT(*) FROM events WHERE id=$1 AND organizer_id=$2`, eventID, organizerID).Scan(&count)
+	return count > 0
+}
+
+// ScannerBelongsToOrganizer checks if the scanner was created by the organizer
+func ScannerBelongsToOrganizer(scannerID, organizerID int) bool {
+	var count int
+	database.DB.QueryRow(`SELECT COUNT(*) FROM users WHERE id=$1 AND role='scanner' AND created_by=$2`, scannerID, organizerID).Scan(&count)
+	return count > 0
+}
+
 func AssignReseller(eventID, userID int, commissionType string, commissionValue float64) error {
 	_, err := database.DB.Exec(`
 		INSERT INTO event_reseller (event_id, user_id, commission_type, commission_value, organizer_fee, created_at, updated_at) 

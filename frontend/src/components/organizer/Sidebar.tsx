@@ -11,7 +11,8 @@ import {
     Settings,
     LogOut,
     ChevronRight,
-    X
+    X,
+    ScanBarcode
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import Cookies from "js-cookie";
@@ -26,6 +27,7 @@ interface MenuItem {
 const menuItems: MenuItem[] = [
     { name: "Dashboard", href: "/organizer", icon: LayoutDashboard },
     { name: "My Events", href: "/organizer/events", icon: Calendar },
+    { name: "Scanners", href: "/organizer/scanners", icon: ScanBarcode },
     { name: "Reports", href: "/organizer/reports", icon: BarChart3 },
     { name: "Settings", href: "/organizer/settings", icon: Settings },
 ];

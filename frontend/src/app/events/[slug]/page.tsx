@@ -1,6 +1,7 @@
 import { notFound } from "next/navigation";
 import Image from "next/image";
 import { Calendar, MapPin, Clock, Share2, Info, ChevronLeft, Globe } from "lucide-react";
+// Globe still used in fallback organizer block
 import Navbar from "@/components/public/Navbar";
 import Footer from "@/components/public/Footer";
 import TicketSelector from "@/components/public/TicketSelector";
@@ -8,6 +9,7 @@ import { Metadata } from "next";
 import { getImageUrl } from "@/lib/utils";
 import Link from "next/link";
 import MobileBookingBar from "@/components/public/MobileBookingBar";
+import OrganizerModal from "@/components/public/OrganizerModal";
 
 // Define Types (match backend response)
 interface Event {
@@ -23,6 +25,7 @@ interface Event {
     thumbnail_path: string | null;
     seo_title: string;
     seo_description: string;
+    organizer_id: number | null;
     organizer_name: string;
     organizer_logo_path: string | null;
     google_map_embed: string | null;
@@ -240,25 +243,24 @@ export default async function EventDetailPage({ params }: { params: Promise<{ sl
                             </div>
                         )}
                         {/* Organizer Info Section */}
-                        <div className="p-10 rounded-[40px] bg-gray-50 border border-gray-100 flex flex-col md:flex-row gap-8 items-center">
-                            <div className="w-24 h-24 rounded-[28px] bg-white p-2 shadow-xl relative overflow-hidden flex items-center justify-center">
-                                {event.organizer_logo_path ? (
-                                    <Image
-                                        src={getImageUrl(event.organizer_logo_path)}
-                                        alt={event.organizer_name}
-                                        fill
-                                        className="object-cover p-2"
-                                    />
-                                ) : (
-                                    <Globe className="w-10 h-10 text-gray-100" />
-                                )}
+                        {event.organizer_id ? (
+                            <OrganizerModal
+                                organizerId={event.organizer_id}
+                                organizerName={event.organizer_name || "Official Partner"}
+                                organizerLogo={event.organizer_logo_path}
+                            />
+                        ) : (
+                            <div className="p-10 rounded-[40px] bg-gray-50 border border-gray-100 flex flex-col md:flex-row gap-8 items-center">
+                                <div className="w-24 h-24 rounded-[28px] bg-white p-2 shadow-xl relative overflow-hidden flex items-center justify-center">
+                                    <Globe className="w-10 h-10 text-gray-300" />
+                                </div>
+                                <div className="flex-1 text-center md:text-left">
+                                    <span className="text-[10px] font-black uppercase tracking-[0.3em] text-primary mb-2 block">Our Trusted Partner</span>
+                                    <h3 className="text-3xl font-black text-brand-dark tracking-tight uppercase mb-2">{event.organizer_name || "Official Partner"}</h3>
+                                    <p className="text-gray-500 max-w-md text-sm">Experience events crafted with excellence and brought to you by industry legends.</p>
+                                </div>
                             </div>
-                            <div className="flex-1 text-center md:text-left">
-                                <span className="text-[10px] font-black uppercase tracking-[0.3em] text-primary mb-2 block">Our Trusted Partner</span>
-                                <h3 className="text-3xl font-black text-brand-dark tracking-tight uppercase mb-2">{event.organizer_name || "Official Partner"}</h3>
-                                <p className="text-gray-500 max-w-md text-sm">Experience events crafted with excellence and brought to you by industry legends.</p>
-                            </div>
-                        </div>
+                        )}
 
 
                         {/* Map & Venue Section */}

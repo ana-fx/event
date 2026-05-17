@@ -338,7 +338,7 @@ function EventDetailsTab({ id, initialData, refresh, isOrganizer }: { id: string
 }
 
 // --- TAB 2: ASSIGNMENTS ---
-function AssignmentsTab({ eventId }: { eventId: string }) {
+function AssignmentsTab({ eventId, isOrganizer = false }: { eventId: string; isOrganizer?: boolean }) {
     const [scanners, setScanners] = useState<User[]>([]);
     const [resellers, setResellers] = useState<AssignedReseller[]>([]);
     const [availableUsers, setAvailableUsers] = useState<User[]>([]);
@@ -349,18 +349,26 @@ function AssignmentsTab({ eventId }: { eventId: string }) {
     const [commissionType, setCommissionType] = useState("fixed");
     const [commissionValue, setCommissionValue] = useState("0");
 
+    const scannerAssignEndpoint = isOrganizer ? `/organizer/events/assign-scanner` : `/admin/events/assign-scanner`;
+    const scannersListEndpoint = isOrganizer ? `/organizer/scanners` : `/admin/users`;
+
     const fetchData = async () => {
         setLoading(true);
         try {
-            const [scannersRes, resellersRes, usersRes] = await Promise.all([
-                axiosInstance.get(`/admin/events/assign-scanner?event_id=${eventId}`),
-                axiosInstance.get(`/admin/events/assign-reseller?event_id=${eventId}`),
-                axiosInstance.get(`/admin/users`)
-            ]);
-            setScanners(scannersRes.data || []);
-            setResellers(resellersRes.data || []);
-            setAvailableUsers(usersRes.data || []);
-        } catch (error) {
+            const promises: Promise<any>[] = [
+                axiosInstance.get(`${scannerAssignEndpoint}?event_id=${eventId}`),
+                axiosInstance.get(scannersListEndpoint),
+            ];
+            if (!isOrganizer) {
+                promises.push(
+                    axiosInstance.get(`/admin/events/assign-reseller?event_id=${eventId}`)
+                );
+            }
+            const results = await Promise.all(promises);
+            setScanners(results[0].data || []);
+            setAvailableUsers(results[1].data || []);
+            if (!isOrganizer) setResellers(results[2].data || []);
+        } catch {
             toast.error("Failed to load assignments");
         } finally {
             setLoading(false);
@@ -373,7 +381,7 @@ function AssignmentsTab({ eventId }: { eventId: string }) {
     const handleAssignScanner = async () => {
         if (!selectedScanner) return;
         try {
-            await axiosInstance.post("/admin/events/assign-scanner", {
+            await axiosInstance.post(scannerAssignEndpoint, {
                 event_id: Number(eventId),
                 user_id: Number(selectedScanner)
             });
@@ -409,7 +417,10 @@ function AssignmentsTab({ eventId }: { eventId: string }) {
 
     if (loading) return <div>Loading assignments...</div>;
 
-    const availableScannersList = availableUsers.filter(u => u.role === 'scanner' && !scanners.find(s => s.id === u.id));
+    // For organizer mode, availableUsers is already filtered to their scanners
+    const availableScannersList = isOrganizer
+        ? (availableUsers as User[]).filter(u => !scanners.find(s => s.id === u.id))
+        : availableUsers.filter(u => u.role === 'scanner' && !scanners.find(s => s.id === u.id));
     const availableResellersList = availableUsers.filter(u => u.role === 'reseller' && !resellers.find(r => r.id === u.id));
 
     return (
@@ -421,7 +432,11 @@ function AssignmentsTab({ eventId }: { eventId: string }) {
                     <div className="flex justify-between items-center mb-6 border-b border-(--card-border) pb-4">
                         <div>
                             <h3 className="text-xl font-bold text-(--foreground)">Assigned Scanners</h3>
-                            <p className="text-sm text-gray-500 mt-1">Manage personnel who can scan tickets for this event.</p>
+                            <p className="text-sm text-gray-500 mt-1">
+                                {isOrganizer
+                                    ? "Assign your scanners to this event."
+                                    : "Manage personnel who can scan tickets for this event."}
+                            </p>
                         </div>
                         <div className="w-10 h-10 bg-primary/10 rounded-full flex items-center justify-center text-primary">
                             <ScanBarcode className="w-5 h-5" />
@@ -435,9 +450,12 @@ function AssignmentsTab({ eventId }: { eventId: string }) {
                                 onChange={(val) => setSelectedScanner(val)}
                                 className="py-3 rounded-xl border-primary focus:border-primary"
                                 containerClassName="mb-1"
-                                placeholder="Select a scanner to assign..."
+                                placeholder={availableScannersList.length === 0 ? "No scanners available" : "Select a scanner to assign..."}
                                 options={availableScannersList.map(u => ({ label: `${u.name} — ${u.email}`, value: String(u.id) }))}
                             />
+                            {isOrganizer && availableScannersList.length === 0 && (
+                                <p className="text-xs text-gray-400 mt-1">Create scanner accounts first via the Users panel.</p>
+                            )}
                         </div>
                         <button
                             onClick={handleAssignScanner}
@@ -461,7 +479,7 @@ function AssignmentsTab({ eventId }: { eventId: string }) {
                                     </div>
                                 </div>
                                 <button
-                                    onClick={() => handleUnassign("/admin/events/assign-scanner", s.id)}
+                                    onClick={() => handleUnassign(scannerAssignEndpoint, s.id)}
                                     className="p-2 text-gray-400 hover:text-red-500 hover:bg-red-50 rounded-lg transition-all"
                                     title="Unassign User"
                                 >
@@ -480,13 +498,8 @@ function AssignmentsTab({ eventId }: { eventId: string }) {
                 </div>
             </div>
 
-            {/* Resellers Section Hidden */}
-            {/* <div className="relative group">
-                <div className="absolute -inset-0.5 bg-linear-to-r from-emerald-500 to-teal-500 rounded-2xl opacity-20 group-hover:opacity-30 transition duration-500 blur-sm"></div>
-                <div className="relative bg-(--card) p-8 rounded-2xl border border-(--card-border) shadow-xl">
-                    ...
-                </div>
-            </div> */}
+            {/* Resellers Section — admin only */}
+            {/* Hidden for now */}
         </div>
     );
 }
@@ -984,7 +997,7 @@ export default function EditEventContent({ isOrganizer = false }: { isOrganizer?
                         { key: "tickets", label: "Tickets" },
                         { key: "finance", label: "Finance" },
                         { key: "assignments", label: "Assignments" },
-                    ].filter(tab => !isOrganizer || (tab.key === "details" || tab.key === "tickets"))}
+                    ].filter(tab => !isOrganizer || (tab.key === "details" || tab.key === "tickets" || tab.key === "assignments"))}
                 />
             </div>
 
@@ -1002,8 +1015,8 @@ export default function EditEventContent({ isOrganizer = false }: { isOrganizer?
                     {!isOrganizer && activeTab === "finance" && (
                         <FinanceTab id={id!} initialData={eventData} refresh={fetchEvent} />
                     )}
-                    {!isOrganizer && activeTab === "assignments" && (
-                        <AssignmentsTab eventId={id!} />
+                    {activeTab === "assignments" && (
+                        <AssignmentsTab eventId={id!} isOrganizer={isOrganizer} />
                     )}
                 </>
             )}

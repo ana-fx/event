@@ -64,7 +64,7 @@ export default function ScannerDashboard() {
                         {/* Banner thumbnail */}
                         {event.banner_path ? (
                             <img
-                                src={`/uploads/${event.banner_path}`}
+                                src={`/${event.banner_path}`}
                                 alt={event.name}
                                 className="w-20 h-20 object-cover rounded-xl shrink-0"
                             />

@@ -5,10 +5,10 @@ import axiosInstance from "@/lib/axios";
 import { toast } from "react-hot-toast";
 import {
     Search, CheckCircle, XCircle, ArrowLeft,
-    User, Mail, Ticket, AlertTriangle, Camera, CameraOff
+    User, Mail, Ticket, AlertTriangle, Camera, CameraOff, RefreshCw
 } from "lucide-react";
 import Link from "next/link";
-import { Html5QrcodeScanner } from "html5-qrcode";
+import jsQR from "jsqr";
 
 interface VerifyResult {
     valid: boolean;
@@ -34,16 +34,115 @@ export default function ScanPage({ params }: { params: Promise<{ eventId: string
     const [verifyResult, setVerifyResult] = useState<VerifyResult | null>(null);
     const [errorMsg, setErrorMsg] = useState("");
     const [cameraOpen, setCameraOpen] = useState(true);
-    const scannerRef = useRef<Html5QrcodeScanner | null>(null);
+    const [cameras, setCameras] = useState<MediaDeviceInfo[]>([]);
+    const [selectedCameraId, setSelectedCameraId] = useState<string>("");
+
+    const videoRef = useRef<HTMLVideoElement>(null);
+    const canvasRef = useRef<HTMLCanvasElement>(null);
+    const ctxRef = useRef<CanvasRenderingContext2D | null>(null);
+    const streamRef = useRef<MediaStream | null>(null);
+    const rafRef = useRef<number>(0);
+    const scanningRef = useRef(false);
+
+    const stopCamera = () => {
+        scanningRef.current = false;
+        cancelAnimationFrame(rafRef.current);
+        if (streamRef.current) {
+            streamRef.current.getTracks().forEach(t => t.stop());
+            streamRef.current = null;
+        }
+        if (videoRef.current) {
+            videoRef.current.srcObject = null;
+        }
+        ctxRef.current = null;
+    };
+
+    const scanFrame = () => {
+        const video = videoRef.current;
+        const canvas = canvasRef.current;
+        if (!video || !canvas || !scanningRef.current) return;
+        if (video.readyState !== video.HAVE_ENOUGH_DATA) {
+            rafRef.current = requestAnimationFrame(scanFrame);
+            return;
+        }
+        canvas.width = video.videoWidth;
+        canvas.height = video.videoHeight;
+        if (!ctxRef.current) {
+            ctxRef.current = canvas.getContext("2d", { willReadFrequently: true });
+        }
+        const ctx = ctxRef.current;
+        if (!ctx) return;
+        ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
+        const imageData = ctx.getImageData(0, 0, canvas.width, canvas.height);
+        const result = jsQR(imageData.data, imageData.width, imageData.height);
+        if (result?.data) {
+            scanningRef.current = false;
+            setCode(result.data);
+            setCameraOpen(false);
+            verifyCodeAction(result.data);
+            return;
+        }
+        rafRef.current = requestAnimationFrame(scanFrame);
+    };
+
+    const startCamera = async (deviceId?: string) => {
+        stopCamera();
+        try {
+            const constraints: MediaStreamConstraints = {
+                video: deviceId
+                    ? { deviceId: { exact: deviceId } }
+                    : { facingMode: "environment" }
+            };
+            const stream = await navigator.mediaDevices.getUserMedia(constraints);
+            streamRef.current = stream;
+            if (videoRef.current) {
+                videoRef.current.srcObject = stream;
+                try {
+                    await videoRef.current.play();
+                } catch (err: any) {
+                    if (err.name === "AbortError") return; // StrictMode double-mount, safe to ignore
+                    throw err;
+                }
+                scanningRef.current = true;
+                rafRef.current = requestAnimationFrame(scanFrame);
+            }
+
+            // Enumerate cameras after permission granted
+            const devices = await navigator.mediaDevices.enumerateDevices();
+            const videoDevices = devices.filter(d => d.kind === "videoinput");
+            setCameras(videoDevices);
+            if (!selectedCameraId) {
+                const active = stream.getVideoTracks()[0].getSettings().deviceId;
+                if (active) setSelectedCameraId(active);
+            }
+        } catch (err) {
+            console.error("Camera error:", err);
+            toast.error("Camera access denied");
+            setCameraOpen(false);
+        }
+    };
+
+    useEffect(() => {
+        if (!cameraOpen) {
+            stopCamera();
+            return;
+        }
+        startCamera(selectedCameraId || undefined);
+        return () => stopCamera();
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [cameraOpen]);
+
+    const switchCamera = async (deviceId: string) => {
+        setSelectedCameraId(deviceId);
+        await startCamera(deviceId);
+    };
 
     const verifyCodeAction = async (scanCode: string) => {
         if (!scanCode.trim()) return;
-
         setLoading(true);
         setScanState("idle");
         setVerifyResult(null);
         setErrorMsg("");
-
         try {
             const res = await axiosInstance.post("/scanner/verify", {
                 code: scanCode.trim(),
@@ -51,7 +150,6 @@ export default function ScanPage({ params }: { params: Promise<{ eventId: string
             });
             const data: VerifyResult = res.data;
             setVerifyResult(data);
-
             if (data.valid) {
                 setScanState("verified");
             } else {
@@ -101,45 +199,8 @@ export default function ScanPage({ params }: { params: Promise<{ eventId: string
         setCameraOpen(true);
     };
 
-    useEffect(() => {
-        if (cameraOpen) {
-            const scanner = new Html5QrcodeScanner(
-                "qr-reader",
-                { fps: 10, qrbox: { width: 250, height: 250 } },
-                false
-            );
-
-            scanner.render(
-                (decodedText) => {
-                    setCode(decodedText);
-                    setCameraOpen(false);
-                    verifyCodeAction(decodedText);
-                    scanner.clear();
-                },
-                (error) => {
-                    // Ignore background scan errors
-                }
-            );
-
-            scannerRef.current = scanner;
-        } else {
-            if (scannerRef.current) {
-                scannerRef.current.clear().catch(console.error);
-                scannerRef.current = null;
-            }
-        }
-
-        return () => {
-            if (scannerRef.current) {
-                scannerRef.current.clear().catch(console.error);
-            }
-        };
-        // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [cameraOpen]);
-
     return (
         <div className="p-6 max-w-md mx-auto">
-            {/* Back */}
             <Link
                 href="/scanner"
                 className="inline-flex items-center gap-1.5 text-gray-400 hover:text-white text-sm mb-6 transition-colors"
@@ -152,10 +213,10 @@ export default function ScanPage({ params }: { params: Promise<{ eventId: string
                 {(scanState === "idle" || scanState === "error") && (
                     <button
                         type="button"
-                        onClick={() => setCameraOpen(!cameraOpen)}
-                        className={`p-2 rounded-xl border transition-colors flex items-center gap-2 ${
-                            cameraOpen 
-                                ? "bg-red-500/20 border-red-500/50 text-red-400 hover:bg-red-500/30" 
+                        onClick={() => setCameraOpen(p => !p)}
+                        className={`p-2 rounded-xl border transition-colors ${
+                            cameraOpen
+                                ? "bg-red-500/20 border-red-500/50 text-red-400 hover:bg-red-500/30"
                                 : "bg-gray-800 border-gray-700 text-gray-400 hover:bg-gray-700 hover:text-white"
                         }`}
                     >
@@ -164,14 +225,39 @@ export default function ScanPage({ params }: { params: Promise<{ eventId: string
                 )}
             </div>
 
-            {/* QR Scanner Container */}
+            {/* Camera View */}
             {cameraOpen && (scanState === "idle" || scanState === "error") && (
-                <div className="mb-6 rounded-2xl overflow-hidden border border-gray-700 bg-gray-900 [&>div]:!border-0">
-                    <div id="qr-reader" className="w-full"></div>
+                <div className="mb-4">
+                    <div className="rounded-2xl overflow-hidden border border-gray-700 bg-black aspect-square">
+                        <video
+                            ref={videoRef}
+                            className="w-full h-full object-cover"
+                            muted
+                            playsInline
+                        />
+                    </div>
+                    <canvas ref={canvasRef} className="hidden" />
+
+                    {cameras.length > 1 && (
+                        <div className="mt-2 flex items-center gap-2">
+                            <RefreshCw className="w-4 h-4 text-gray-500 shrink-0" />
+                            <select
+                                value={selectedCameraId}
+                                onChange={e => switchCamera(e.target.value)}
+                                className="flex-1 bg-gray-800 border border-gray-700 text-gray-300 text-sm rounded-xl px-3 py-2 outline-none focus:border-primary"
+                            >
+                                {cameras.map(c => (
+                                    <option key={c.deviceId} value={c.deviceId}>
+                                        {c.label || `Camera ${c.deviceId.slice(0, 8)}`}
+                                    </option>
+                                ))}
+                            </select>
+                        </div>
+                    )}
                 </div>
             )}
 
-            {/* Input Form */}
+            {/* Manual Input */}
             {(scanState === "idle" || scanState === "error") && (
                 <form onSubmit={handleVerify} className="relative mb-4">
                     <input
@@ -180,7 +266,6 @@ export default function ScanPage({ params }: { params: Promise<{ eventId: string
                         onChange={(e) => setCode(e.target.value)}
                         placeholder="Enter ticket code..."
                         className="w-full bg-gray-800 border border-gray-700 rounded-2xl py-4 pl-6 pr-14 text-base focus:ring-2 focus:ring-primary outline-none transition-all placeholder:text-gray-500 text-white"
-                        autoFocus
                         autoComplete="off"
                     />
                     <button
@@ -208,16 +293,13 @@ export default function ScanPage({ params }: { params: Promise<{ eventId: string
                 </div>
             )}
 
-            {/* Verified — show detail + confirm redeem */}
+            {/* Verified */}
             {scanState === "verified" && verifyResult?.data && (
                 <div className="bg-gray-900 border border-gray-700 rounded-2xl overflow-hidden animate-in fade-in zoom-in duration-200">
-                    {/* Status bar */}
                     <div className="bg-blue-600 px-4 py-3 flex items-center gap-2">
                         <Ticket className="w-5 h-5 text-white" />
                         <span className="text-white font-semibold">Valid Ticket — Confirm Entry</span>
                     </div>
-
-                    {/* Ticket info */}
                     <div className="p-5 space-y-3">
                         <div className="flex items-center gap-3">
                             <User className="w-4 h-4 text-gray-400 shrink-0" />
@@ -254,8 +336,6 @@ export default function ScanPage({ params }: { params: Promise<{ eventId: string
                             </div>
                         )}
                     </div>
-
-                    {/* Actions */}
                     <div className="px-5 pb-5 flex gap-3">
                         <button
                             onClick={handleReset}
@@ -277,7 +357,7 @@ export default function ScanPage({ params }: { params: Promise<{ eventId: string
                 </div>
             )}
 
-            {/* Redeemed success */}
+            {/* Redeemed */}
             {scanState === "redeemed" && (
                 <div className="bg-green-950/60 border border-green-800 rounded-2xl p-8 text-center animate-in fade-in zoom-in duration-200">
                     <CheckCircle className="w-20 h-20 text-green-400 mx-auto mb-4" />
@@ -294,7 +374,6 @@ export default function ScanPage({ params }: { params: Promise<{ eventId: string
                 </div>
             )}
 
-            {/* Warning for already redeemed (msg from verify) */}
             {scanState === "error" && errorMsg.toLowerCase().includes("already") && (
                 <div className="flex items-start gap-2 bg-yellow-900/30 border border-yellow-700/50 rounded-xl p-3 mt-3">
                     <AlertTriangle className="w-4 h-4 text-yellow-400 mt-0.5 shrink-0" />

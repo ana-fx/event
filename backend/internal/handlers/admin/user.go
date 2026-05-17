@@ -1,6 +1,7 @@
 package admin
 
 import (
+	"database/sql"
 	"encoding/json"
 	"event-backend/internal/models"
 	"net/http"
@@ -40,6 +41,12 @@ func CreateUser(w http.ResponseWriter, r *http.Request) {
 	if req.Name == "" || req.Email == "" || req.Password == "" {
 		http.Error(w, "Name, Email, and Password required", http.StatusBadRequest)
 		return
+	}
+
+	// Set created_by to the caller's ID (important for organizer-created scanners)
+	callerID, ok := r.Context().Value(models.UserIDKey).(int)
+	if ok && callerID > 0 {
+		req.CreatedBy = sql.NullInt64{Int64: int64(callerID), Valid: true}
 	}
 
 	hashed, err := bcrypt.GenerateFromPassword([]byte(req.Password), bcrypt.DefaultCost)

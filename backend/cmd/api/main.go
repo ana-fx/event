@@ -4,6 +4,7 @@ import (
 	"event-backend/internal/database"
 	"event-backend/internal/handlers"
 	"event-backend/internal/handlers/admin"
+	"event-backend/internal/handlers/organizer"
 	"event-backend/internal/handlers/public"
 	"event-backend/internal/handlers/reseller"
 	"event-backend/internal/handlers/scanner"
@@ -41,6 +42,7 @@ func main() {
 	http.HandleFunc("/api/checkout", public.Checkout)
 	http.HandleFunc("/api/payment/notification", public.PaymentWebhook)
 	http.HandleFunc("/api/payment/verify", public.VerifyPayment)
+	http.HandleFunc("/api/organizers/profile", public.GetOrganizerProfile)
 	http.HandleFunc("/api/banners", public.ListBanners)
 	http.HandleFunc("/api/contact", public.SubmitContact)
 	http.HandleFunc("/api/transaction/status", public.GetTransactionStatus)
@@ -50,6 +52,7 @@ func main() {
 	http.HandleFunc("/api/scanner/events", middleware.AuthMiddleware(scannerOnly(scanner.GetAssignedEvents)))
 	http.HandleFunc("/api/scanner/verify", middleware.AuthMiddleware(scannerOnly(scanner.Verify)))
 	http.HandleFunc("/api/scanner/redeem", middleware.AuthMiddleware(scannerOnly(scanner.Redeem)))
+	http.HandleFunc("/api/scanner/report", middleware.AuthMiddleware(scannerOnly(scanner.GetScanReport)))
 
 	// Reseller Routes
 	http.HandleFunc("/api/reseller/start", middleware.AuthMiddleware(reseller.GetStart))
@@ -263,6 +266,32 @@ func main() {
 	http.HandleFunc("/api/organizer/reports/tickets", middleware.AuthMiddleware(organizerOnly(admin.GetEventTicketReport)))
 	http.HandleFunc("/api/organizer/profile", middleware.AuthMiddleware(organizerOnly(handlers.GetOrganizerProfile)))
 	http.HandleFunc("/api/organizer/profile/update", middleware.AuthMiddleware(organizerOnly(handlers.UpdateOrganizerProfile)))
+
+	// Organizer Scanner Management (scoped to scanners created by the organizer)
+	http.HandleFunc("/api/organizer/scanners", middleware.AuthMiddleware(organizerOnly(func(w http.ResponseWriter, r *http.Request) {
+		switch r.Method {
+		case http.MethodGet:
+			organizer.ListScanners(w, r)
+		case http.MethodPost:
+			organizer.CreateScanner(w, r)
+		case http.MethodDelete:
+			organizer.DeleteScanner(w, r)
+		default:
+			http.Error(w, "Method not allowed", http.StatusMethodNotAllowed)
+		}
+	})))
+	http.HandleFunc("/api/organizer/events/assign-scanner", middleware.AuthMiddleware(organizerOnly(func(w http.ResponseWriter, r *http.Request) {
+		switch r.Method {
+		case http.MethodGet:
+			organizer.GetOrganizerEventScanners(w, r)
+		case http.MethodPost:
+			organizer.AssignOrganizerScanner(w, r)
+		case http.MethodDelete:
+			organizer.UnassignOrganizerScanner(w, r)
+		default:
+			http.Error(w, "Method not allowed", http.StatusMethodNotAllowed)
+		}
+	})))
 
 	// Static Files
 	http.Handle("/uploads/", http.StripPrefix("/uploads/", http.FileServer(http.Dir("storage/uploads"))))
